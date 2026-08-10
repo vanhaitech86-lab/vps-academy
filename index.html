@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <meta name="theme-color" content="#1a3a6b">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="format-detection" content="telephone=yes">
+  <title>VPS Academy – Nền tảng đào tạo trực tuyến</title>
+  <meta name="description" content="VPS Academy – Nền tảng đào tạo trực tuyến chuyên nghiệp dành cho nhân viên và khách hàng VPS. Thiết bị văn phòng, AI, kỹ năng bán hàng.">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/mobile.css">
+</head>
+<body data-page="home">
+
+<!-- ─── QR Login Modal ────────────────────────────────────── -->
+<div class="qr-modal-overlay" id="qrLoginModal">
+  <div class="qr-modal-box">
+    <button class="qr-close" onclick="closeQR()">✕</button>
+    <div class="qr-title">📱 Quét mã QR để đăng nhập</div>
+    <div class="qr-sub">Mở camera điện thoại, quét mã QR bên dưới hoặc chọn tài khoản demo để đăng nhập nhanh</div>
+    <div class="qr-code-wrap">
+      <div class="qr-corner qr-corner-tl"></div>
+      <div class="qr-corner qr-corner-tr"></div>
+      <div class="qr-corner qr-corner-bl"></div>
+      <div class="qr-corner qr-corner-br"></div>
+      <div class="qr-scanning-line"></div>
+      <svg width="160" height="160" viewBox="0 0 160 160" style="display:block;">
+        <!-- QR Pattern - VPS Academy login URL -->
+        <rect width="160" height="160" fill="white"/>
+        <!-- Top-left finder -->
+        <rect x="8" y="8" width="44" height="44" rx="4" fill="#1a3a6b"/>
+        <rect x="14" y="14" width="32" height="32" rx="2" fill="white"/>
+        <rect x="20" y="20" width="20" height="20" rx="1" fill="#1a3a6b"/>
+        <!-- Top-right finder -->
+        <rect x="108" y="8" width="44" height="44" rx="4" fill="#1a3a6b"/>
+        <rect x="114" y="14" width="32" height="32" rx="2" fill="white"/>
+        <rect x="120" y="20" width="20" height="20" rx="1" fill="#1a3a6b"/>
+        <!-- Bottom-left finder -->
+        <rect x="8" y="108" width="44" height="44" rx="4" fill="#1a3a6b"/>
+        <rect x="14" y="114" width="32" height="32" rx="2" fill="white"/>
+        <rect x="20" y="120" width="20" height="20" rx="1" fill="#1a3a6b"/>
+        <!-- Data modules -->
+        <rect x="60" y="8" width="8" height="8" fill="#1a3a6b"/><rect x="72" y="8" width="8" height="8" fill="#1a3a6b"/>
+        <rect x="60" y="20" width="8" height="8" fill="#1a3a6b"/><rect x="84" y="20" width="8" height="8" fill="#1a3a6b"/>
+        <rect x="72" y="32" width="8" height="8" fill="#1a3a6b"/><rect x="60" y="44" width="8" height="8" fill="#1a3a6b"/>
+        <rect x="84" y="44" width="8" height="8" fill="#1a3a6b"/><rect x="60" y="60" width="8" height="8" fill="#1a3a6b"/>
+        <rect x="72" y="60" width="8" height="8" fill="#1a3a6b"/><rect x="84" y="60" width="8" height="8" fill="#1a3a6b"/>
+        <rect x="96" y="60" width="8" height="8" fill="#1a3a6b"/><rect x="108" y="60" width="8" height="8" fill="#1a3a6b"/>
+        <rect x="8" y="60" width="8" height="8" fill="#1a3a6b"/><rect x="20" y="60" width="8" height="8" fill="#1a3a6b"/>
+        <rect x="44" y="60" width="8" height="8" fill="#1a3a6b"/><rect x="8" y="72" width="8" height="8" fill="#1a3a6b"/>
+        <rect x="32" y="72" width="8" height="8" fill="#1a3a6b"/><rect x="60" y="72" width="8" height="8" fill="#1a3a6b"/>
+        <rect x="84" y="72" width="8" height="8" fill="#1a3a6b"/><rect x="108" y="72" width="8" height="8" fill="#1a3a6b"/>
+        <rect x="132" y="72" width="8" height="8" fill="#1a3a6b"/><rect x="144" y="72" width="8" height="8" fill="#1a3a6b"/>
+        <rect x="8" y="84" width="8" height="8" fill="#1a3a6b"/><rect x="20" y="84" width="8" height="8" fill="#1a3a6b"/>
+        <rect x="44" y="84" width="8" height="8" fill="#1a3a6b"/><rect x="60" y="84" width="8" height="8" fill="#1a3a6b"/>
+        <rect x="72" y="84" width="8" height="8" fill="#1a3a6b"/><rect x="96" y="84" width="8" height="8" fill="#1a3a6b"/>
+        <rect x="120" y="84" width="8" height="8" fill="#1a3a6b"/><rect x="144" y="84" width="8" height="8" fill="#1a3a6b"/>
+        <rect x="8" y="96" width="8" height="8" fill="#1a3a6b"/><rect x="32" y="96" width="8" height="8" fill="#1a3a6b"/>
+        <rect x="60" y="96" width="8" height="8" fill="#1a3a6b"/><rect x="84" y="96" width="8" height="8" fill="#1a3a6b"/>
+        <rect x="108" y="96" width="8" height="8" fill="#1a3a6b"/><rect x="132" y="96" width="8" height="8" fill="#1a3a6b"/>
+        <rect x="60" y="108" width="8" height="8" fill="#1a3a6b"/><rect x="72" y="108" width="8" height="8" fill="#1a3a6b"/>
+        <rect x="96" y="108" width="8" height="8" fill="#1a3a6b"/><rect x="120" y="108" width="8" height="8" fill="#1a3a6b"/>
+        <rect x="144" y="108" width="8" height="8" fill="#1a3a6b"/><rect x="60" y="120" width="8" height="8" fill="#1a3a6b"/>
+        <rect x="84" y="120" width="8" height="8" fill="#1a3a6b"/><rect x="108" y="120" width="8" height="8" fill="#1a3a6b"/>
+        <rect x="132" y="120" width="8" height="8" fill="#1a3a6b"/><rect x="60" y="132" width="8" height="8" fill="#1a3a6b"/>
+        <rect x="72" y="132" width="8" height="8" fill="#1a3a6b"/><rect x="96" y="132" width="8" height="8" fill="#1a3a6b"/>
+        <rect x="120" y="132" width="8" height="8" fill="#1a3a6b"/><rect x="144" y="132" width="8" height="8" fill="#1a3a6b"/>
+        <rect x="60" y="144" width="8" height="8" fill="#1a3a6b"/><rect x="84" y="144" width="8" height="8" fill="#1a3a6b"/>
+        <rect x="108" y="144" width="8" height="8" fill="#1a3a6b"/>
+      </svg>
+    </div>
+    <div style="font-size:12px;color:var(--gray-400);margin-bottom:12px;">Hoặc chọn tài khoản đăng nhập nhanh:</div>
+    <div class="qr-demo-accounts">
+      <div class="qr-demo-item" onclick="qrLogin('admin@vps.vn','admin123')">
+        <span class="qr-demo-icon">👑</span>
+        <div class="qr-demo-info"><div class="name">Admin VPS</div><div class="role">Quản trị viên</div></div>
+      </div>
+      <div class="qr-demo-item" onclick="qrLogin('nhanvien.moi@vps.vn','123456')">
+        <span class="qr-demo-icon">🆕</span>
+        <div class="qr-demo-info"><div class="name">Nhân viên mới</div><div class="role">nhanvien.moi@vps.vn</div></div>
+      </div>
+      <div class="qr-demo-item" onclick="qrLogin('nhanvien.cu@vps.vn','123456')">
+        <span class="qr-demo-icon">👨‍💼</span>
+        <div class="qr-demo-info"><div class="name">Nhân viên</div><div class="role">nhanvien.cu@vps.vn</div></div>
+      </div>
+      <div class="qr-demo-item" onclick="qrLogin('khachhang@gmail.com','123456')">
+        <span class="qr-demo-icon">👤</span>
+        <div class="qr-demo-info"><div class="name">Khách hàng</div><div class="role">khachhang@gmail.com</div></div>
+      </div>
+    </div>
+    <button class="qr-login-btn" onclick="window.location.href='auth.html'">🔐 Đăng nhập bằng tài khoản</button>
+  </div>
+</div>
+
+<!-- ─── Mobile Nav Overlay & Panel ───────────────────────── -->
+<div class="mobile-nav-overlay" id="mobileNavOverlay" onclick="closeMobileNav()"></div>
+<div class="mobile-nav-panel" id="mobileNavPanel">
+  <a href="index.html" class="nav-link"><span class="nav-icon">🏠</span> Trang chủ</a>
+  <a href="courses.html" class="nav-link"><span class="nav-icon">📚</span> Khóa học</a>
+  <a href="#" class="nav-link" id="mobileAdminLink" style="display:none;"><span class="nav-icon">⚙️</span> Quản trị</a>
+  <div style="padding:16px 24px;border-top:1px solid rgba(255,255,255,.1);margin-top:8px;">
+    <button onclick="openQR()" style="width:100%;padding:12px;background:rgba(255,255,255,.1);color:white;border:1px solid rgba(255,255,255,.2);border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;margin-bottom:10px;display:flex;align-items:center;gap:8px;justify-content:center;">📷 Quét mã QR đăng nhập</button>
+  </div>
+  <a href="auth.html" class="btn btn-login" id="mobileLoginBtn" style="margin:0 24px 10px;">🔐 Đăng nhập</a>
+  <a href="auth.html?tab=register" class="btn-register" id="mobileRegisterBtn">📝 Đăng ký tài khoản</a>
+  <div id="mobileUserInfo" style="display:none;padding:16px 24px;">
+    <div style="color:rgba(255,255,255,.6);font-size:12px;margin-bottom:8px;">Đăng nhập với:</div>
+    <div style="color:white;font-weight:700;" id="mobileUserName"></div>
+    <div style="color:var(--secondary);font-size:12px;margin-bottom:12px;" id="mobileUserRole"></div>
+    <button onclick="Auth.logout()" style="width:100%;padding:10px;background:rgba(231,76,60,.2);color:#ff6b6b;border:1px solid rgba(231,76,60,.3);border-radius:8px;font-size:13px;cursor:pointer;">🚪 Đăng xuất</button>
+  </div>
+</div>
+
+<!-- ─── Header ─────────────────────────────────────────────── -->
+<header class="site-header">
+  <div class="header-inner">
+    <a href="index.html" class="logo">
+      <div class="logo-icon">🎓</div>
+      <div class="logo-text">
+        <strong>VPS Academy</strong>
+        <span>E-Learning Platform</span>
+      </div>
+    </a>
+
+    <form class="header-search" id="globalSearchForm">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="globalSearchInput" placeholder="Tìm kiếm khóa học, chủ đề...">
+    </form>
+
+    <nav class="header-nav">
+      <a href="index.html" class="nav-link active"><span class="nav-icon">🏠</span> Trang chủ</a>
+      <a href="courses.html" class="nav-link"><span class="nav-icon">📚</span> Khóa học</a>
+      <a href="auth.html?tab=register" class="nav-link" id="registerNavBtn"><span class="nav-icon">📝</span> Đăng ký</a>
+      <a href="admin.html" class="nav-link" id="adminNavLink" style="display:none;"><span class="nav-icon">⚙️</span> Quản trị</a>
+      <button onclick="openQR()" class="nav-link" style="background:none;border:none;cursor:pointer;color:rgba(255,255,255,.8);" title="Quét QR đăng nhập"><span class="nav-icon">📷</span> QR Login</button>
+      <a href="auth.html" class="btn btn-login" id="loginBtn">
+        <span>Đăng nhập</span>
+      </a>
+      <div class="user-menu" id="userMenu">
+        <button class="user-avatar-btn" id="userAvatarBtn">
+          <span id="userAvatar">U</span>
+        </button>
+        <div class="user-dropdown" id="userDropdown">
+          <div class="dropdown-header">
+            <div class="name" id="userName">User</div>
+            <div class="role" id="userRoleBadge"></div>
+          </div>
+          <a href="courses.html" class="dropdown-item"><span class="di-icon">📚</span> Khóa học của tôi</a>
+          <div class="dropdown-divider"></div>
+          <a href="#" class="dropdown-item logout" data-action="logout"><span class="di-icon">🚪</span> Đăng xuất</a>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Hamburger Button (mobile only) -->
+    <button class="mobile-menu-btn" id="mobileMenuBtn" onclick="toggleMobileNav()" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<!-- ─── Hero Slider ────────────────────────────────────────── -->
+<section class="hero">
+  <div class="hero-slider" id="heroSlider">
+    <!-- Slide 1 -->
+    <div class="hero-slide active">
+      <div class="hero-bg"></div>
+      <div class="hero-content">
+        <div class="hero-left">
+          <div class="hero-badge">🚀 Nền tảng đào tạo thiết bị văn phòng & AI</div>
+          <h1 class="hero-title">Nâng tầm <span>kỹ năng</span><br>Bứt phá <span>sự nghiệp</span></h1>
+          <p class="hero-desc">VPS Academy cung cấp khóa học chuyên sâu về thiết bị văn phòng, giải pháp in ấn, AI cho doanh nghiệp và kỹ năng bán hàng – giúp bạn phát triển toàn diện.</p>
+          <div class="hero-actions">
+            <a href="courses.html" class="btn btn-primary btn-lg">📚 Khám phá khóa học</a>
+            <a href="auth.html" class="btn btn-outline btn-lg">🔐 Đăng nhập ngay</a>
+          </div>
+          <div class="hero-stats">
+            <div class="hero-stat"><div class="number" id="statCourses">6</div><div class="label">Khóa học</div></div>
+            <div class="hero-stat"><div class="number" id="statUsers">5</div><div class="label">Học viên</div></div>
+            <div class="hero-stat"><div class="number" id="statResults">0</div><div class="label">Bài thi</div></div>
+          </div>
+        </div>
+        <div class="hero-visual">
+          <div class="hero-card-float">
+            <div class="card-title">📈 Khóa học nổi bật</div>
+            <div class="course-mini">
+              <div class="course-mini-icon" style="background:rgba(124,58,237,.2)">🤖</div>
+              <div class="course-mini-info">
+                <div class="title">AI cho Doanh nghiệp</div>
+                <div class="meta">6 giờ · 4 bài học</div>
+              </div>
+              <span class="course-mini-badge" style="background:rgba(40,167,69,.2);color:#28a745;">Mới</span>
+            </div>
+            <div class="course-mini">
+              <div class="course-mini-icon" style="background:rgba(26,58,107,.2)">🖨️</div>
+              <div class="course-mini-info">
+                <div class="title">Máy photocopy & Máy in</div>
+                <div class="meta">5 giờ · 4 bài học</div>
+              </div>
+              <span class="course-mini-badge" style="background:rgba(245,166,35,.2);color:#f5a623;">Hot</span>
+            </div>
+            <div class="course-mini">
+              <div class="course-mini-icon" style="background:rgba(217,119,6,.2)">🔧</div>
+              <div class="course-mini-info">
+                <div class="title">PaperCut – Giải pháp in ấn</div>
+                <div class="meta">8 giờ · 4 bài học</div>
+              </div>
+              <span class="course-mini-badge" style="background:rgba(23,162,184,.2);color:#17a2b8;">Top</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="hero-controls">
+        <button class="hero-dot active" data-idx="0"></button>
+        <button class="hero-dot" data-idx="1"></button>
+        <button class="hero-dot" data-idx="2"></button>
+      </div>
+    </div>
+
+    <!-- Slide 2 -->
+    <div class="hero-slide">
+      <div class="hero-bg" style="background:linear-gradient(135deg,#0d3b2e,#1a6b50,#0d2b0d)"></div>
+      <div class="hero-content">
+        <div class="hero-left">
+          <div class="hero-badge">🎯 Đào tạo nhân viên mới</div>
+          <h1 class="hero-title">Onboarding <span>hiệu quả</span><br>trong <span>7 ngày đầu</span></h1>
+          <p class="hero-desc">Chương trình đào tạo toàn diện dành riêng cho nhân viên mới: quy trình bán hàng, vận hành thiết bị, kỹ năng tư vấn khách hàng và quy trình nội bộ.</p>
+          <div class="hero-actions">
+            <a href="courses.html?cat=7" class="btn btn-primary btn-lg">📋 Xem chương trình</a>
+          </div>
+        </div>
+        <div class="hero-visual">
+          <div class="hero-card-float">
+            <div class="card-title">📋 Lộ trình nhân viên mới</div>
+            <div class="course-mini"><div class="course-mini-icon" style="background:rgba(40,167,69,.2)">📋</div><div class="course-mini-info"><div class="title">Quy trình tiếp nhận đơn hàng</div><div class="meta">4 giờ · Bắt buộc</div></div><span class="course-mini-badge" style="background:rgba(40,167,69,.2);color:#28a745;">✓</span></div>
+            <div class="course-mini"><div class="course-mini-icon" style="background:rgba(26,58,107,.2)">🖨️</div><div class="course-mini-info"><div class="title">Máy photocopy – Vận hành</div><div class="meta">5 giờ · Bắt buộc</div></div><span class="course-mini-badge" style="background:rgba(245,166,35,.2);color:#f5a623;">→</span></div>
+            <div class="course-mini"><div class="course-mini-icon" style="background:rgba(245,166,35,.2)">💡</div><div class="course-mini-info"><div class="title">Kỹ năng Tư vấn bán hàng</div><div class="meta">6 giờ · Khuyến nghị</div></div><span class="course-mini-badge" style="background:rgba(108,117,125,.2);color:#6c757d;">→</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 3 -->
+    <div class="hero-slide">
+      <div class="hero-bg" style="background:linear-gradient(135deg,#1a0d3b,#3b2a6b,#1a0d5a)"></div>
+      <div class="hero-content">
+        <div class="hero-left">
+          <div class="hero-badge">🤖 Học ứng dụng AI cho doanh nghiệp</div>
+          <h1 class="hero-title">Ứng dụng <span>AI thực chiến</span><br>vào <span>văn phòng</span></h1>
+          <p class="hero-desc">Khóa học AI thực tế: ChatGPT, Copilot, tự động hóa workflow với Make.com và xây dựng chatbot AI hỗ trợ khách hàng cho doanh nghiệp của bạn.</p>
+          <div class="hero-actions">
+            <a href="courses.html?cat=1" class="btn btn-primary btn-lg">🤖 Học AI ngay</a>
+          </div>
+        </div>
+        <div class="hero-visual">
+          <div class="hero-card-float">
+            <div class="card-title">🤖 Khóa học AI nổi bật</div>
+            <div class="course-mini"><div class="course-mini-icon" style="background:rgba(124,58,237,.2)">🤖</div><div class="course-mini-info"><div class="title">AI cho Doanh nghiệp – Nhập môn</div><div class="meta">6 giờ · Cơ bản</div></div><span class="course-mini-badge" style="background:rgba(245,166,35,.2);color:#f5a623;">Hot</span></div>
+            <div class="course-mini"><div class="course-mini-icon" style="background:rgba(26,58,107,.2)">⚙️</div><div class="course-mini-info"><div class="title">AI tự động hóa văn phòng</div><div class="meta">10 giờ · Nâng cao</div></div><span class="course-mini-badge" style="background:rgba(231,76,60,.2);color:#e74c3c;">Pro</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <button class="hero-prev" id="sliderPrev">‹</button>
+  <button class="hero-next" id="sliderNext">›</button>
+</section>
+
+<!-- ─── Category Bar ───────────────────────────────────────── -->
+<div class="category-bar">
+  <div class="category-bar-inner" id="categoryBar">
+    <!-- Rendered by JS -->
+  </div>
+</div>
+
+<!-- ─── Courses Section ────────────────────────────────────── -->
+<section class="section">
+  <div class="container">
+    <div class="section-header">
+      <div>
+        <h2 class="section-title">Khóa học <span>dành cho bạn</span></h2>
+        <p class="section-desc">Được phân loại theo quyền truy cập của tài khoản bạn</p>
+      </div>
+      <a href="courses.html" class="see-all">Xem tất cả →</a>
+    </div>
+    <div class="courses-grid" id="coursesGrid">
+      <!-- Rendered by JS -->
+    </div>
+  </div>
+</section>
+
+<!-- ─── Features Section ───────────────────────────────────── -->
+<section class="section" style="background:white;border-top:1px solid var(--gray-200);">
+  <div class="container">
+    <div class="section-header text-center" style="justify-content:center;flex-direction:column;align-items:center;">
+      <h2 class="section-title">Tại sao chọn <span>VPS Academy?</span></h2>
+      <p class="section-desc">Nền tảng học tập được thiết kế riêng cho VPS – kinh doanh thiết bị máy móc văn phòng và giải pháp in ấn</p>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:24px;margin-top:40px;">
+      <div style="background:var(--gray-50);border-radius:var(--radius-lg);padding:32px;text-align:center;" class="fade-in-up stagger-1">
+        <div style="font-size:44px;margin-bottom:16px;">🎯</div>
+        <h3 style="font-size:18px;font-weight:700;color:var(--gray-800);margin-bottom:8px;">Học theo lộ trình</h3>
+        <p style="color:var(--gray-500);font-size:14px;line-height:1.7;">Nội dung được thiết kế theo vai trò và lộ trình phát triển của từng nhân viên</p>
+      </div>
+      <div style="background:var(--gray-50);border-radius:var(--radius-lg);padding:32px;text-align:center;" class="fade-in-up stagger-2">
+        <div style="font-size:44px;margin-bottom:16px;">📝</div>
+        <h3 style="font-size:18px;font-weight:700;color:var(--gray-800);margin-bottom:8px;">Kiểm tra & Đánh giá</h3>
+        <p style="color:var(--gray-500);font-size:14px;line-height:1.7;">Bài quiz sau mỗi khóa học giúp củng cố kiến thức và lưu kết quả về hệ thống</p>
+      </div>
+      <div style="background:var(--gray-50);border-radius:var(--radius-lg);padding:32px;text-align:center;" class="fade-in-up stagger-3">
+        <div style="font-size:44px;margin-bottom:16px;">📊</div>
+        <h3 style="font-size:18px;font-weight:700;color:var(--gray-800);margin-bottom:8px;">Theo dõi tiến độ</h3>
+        <p style="color:var(--gray-500);font-size:14px;line-height:1.7;">Dashboard cá nhân hiển thị tiến trình học tập và thành tích của từng học viên</p>
+      </div>
+      <div style="background:var(--gray-50);border-radius:var(--radius-lg);padding:32px;text-align:center;" class="fade-in-up stagger-4">
+        <div style="font-size:44px;margin-bottom:16px;">🔐</div>
+        <h3 style="font-size:18px;font-weight:700;color:var(--gray-800);margin-bottom:8px;">Phân quyền chặt chẽ</h3>
+        <p style="color:var(--gray-500);font-size:14px;line-height:1.7;">Nội dung được bảo vệ và phân quyền theo vai trò: nhân viên mới, nhân viên, khách hàng</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── Footer ─────────────────────────────────────────────── -->
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="footer-logo">
+          <div class="f-logo-icon">🎓</div>
+          <div><f-logo-text><strong>VPS Academy</strong></f-logo-text></div>
+        </div>
+        <p>Nền tảng đào tạo trực tuyến chuyên nghiệp của VPS – đào tạo nghiệp vụ thiết bị văn phòng, AI và kỹ năng bán hàng cho nhân viên và khách hàng.</p>
+        <!-- Social Links -->
+        <div class="footer-social" id="footerSocial" style="display:flex;gap:10px;margin-top:16px;">
+          <a href="#" id="fbLink" class="social-btn" title="Facebook" target="_blank" style="display:flex;align-items:center;justify-content:center;width:36px;height:36px;background:rgba(255,255,255,.12);border-radius:50%;color:white;font-size:18px;text-decoration:none;transition:all .2s;" onmouseover="this.style.background='#1877f2'" onmouseout="this.style.background='rgba(255,255,255,.12)'">&#x1F1EB;</a>
+          <a href="#" id="ytLink" class="social-btn" title="YouTube" target="_blank" style="display:flex;align-items:center;justify-content:center;width:36px;height:36px;background:rgba(255,255,255,.12);border-radius:50%;color:white;font-size:18px;text-decoration:none;transition:all .2s;" onmouseover="this.style.background='#ff0000'" onmouseout="this.style.background='rgba(255,255,255,.12)'">&#x25B6;</a>
+          <a href="#" id="zaloLink" class="social-btn" title="Zalo OA" target="_blank" style="display:flex;align-items:center;justify-content:center;width:36px;height:36px;background:rgba(255,255,255,.12);border-radius:50%;color:white;font-size:16px;font-weight:700;text-decoration:none;transition:all .2s;" onmouseover="this.style.background='#0068ff'" onmouseout="this.style.background='rgba(255,255,255,.12)'">Z</a>
+        </div>
+      </div>
+      <div>
+        <h4 class="footer-col-title">Khóa học</h4>
+        <div class="footer-links">
+          <a href="courses.html?cat=1">🤖 AI cho Doanh nghiệp</a>
+          <a href="courses.html?cat=2">🖨️ Máy photocopy &amp; Máy in</a>
+          <a href="courses.html?cat=3">💻 Thiết bị văn phòng</a>
+          <a href="courses.html?cat=4">📹 Thiết bị họp &amp; Bảo mật</a>
+          <a href="courses.html?cat=5">🔧 Giải pháp in ấn</a>
+          <a href="courses.html?cat=6">💡 Kỹ năng bán hàng</a>
+        </div>
+      </div>
+      <div>
+        <h4 class="footer-col-title">Nền tảng</h4>
+        <div class="footer-links">
+          <a href="index.html">Trang chủ</a>
+          <a href="courses.html">Danh sách khóa học</a>
+          <a href="auth.html">Đăng nhập</a>
+          <a href="auth.html?tab=register">Đăng ký</a>
+          <a href="admin.html">Quản trị viên</a>
+        </div>
+      </div>
+      <div>
+        <h4 class="footer-col-title">Liên hệ</h4>
+        <div class="footer-links">
+          <a href="tel:0988739896">📞 Hotline: 0988 739 896</a>
+          <a href="mailto:contact@vpsgroup.vn">📧 contact@vpsgroup.vn</a>
+          <a href="https://vpsgroup.vn" target="_blank">🌐 vpsgroup.vn</a>
+          <a href="#">📍 Hà Nội, Việt Nam</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2026 <span class="accent">VPS Academy</span>. Bản quyền thuộc về <strong>Haitech AI – VPS</strong>.</p>
+      <p style="font-size:12px;">Phiên bản 1.0.0</p>
+    </div>
+  </div>
+</footer>
+
+<!-- ─── Mobile Search Bar ─────────────────────────────────── -->
+<div class="mobile-search-bar">
+  <div class="mobile-search-inner">
+    <span>🔍</span>
+    <input type="text" placeholder="Tìm khóa học, chủ đề..." id="mobileSearchInput" oninput="if(window.filterCourses)filterCourses('all',null)">
+  </div>
+</div>
+
+<!-- ─── Mobile Bottom Navigation ──────────────────────────── -->
+<nav class="mobile-bottom-nav" id="mobileBottomNav">
+  <a href="index.html" class="bn-item active ripple">
+    <span class="bn-icon">🏠</span>
+    <span class="bn-label">Trang chủ</span>
+  </a>
+  <a href="courses.html" class="bn-item ripple">
+    <span class="bn-icon">📚</span>
+    <span class="bn-label">Khóa học</span>
+  </a>
+  <a href="#" onclick="openQR();return false;" class="bn-item bn-qr ripple">
+    <span class="bn-icon">📷</span>
+    <span class="bn-label">QR Login</span>
+  </a>
+  <a href="auth.html" class="bn-item ripple" id="bnLogin">
+    <span class="bn-icon">🔐</span>
+    <span class="bn-label">Đăng nhập</span>
+  </a>
+  <a href="admin.html" class="bn-item ripple" id="bnAdmin" style="display:none;">
+    <span class="bn-icon">⚙️</span>
+    <span class="bn-label">Quản trị</span>
+  </a>
+</nav>
+
+<script src="js/data.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/app.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const user = Auth.getCurrentUser();
+    const badge = document.getElementById('userRoleBadge');
+    if (badge && user) badge.textContent = ROLE_LABELS[user.role] || user.role;
+
+    // Hide Đăng ký nav link when logged in
+    const regBtn = document.getElementById('registerNavBtn');
+    if (regBtn && user) regBtn.style.display = 'none';
+
+    // Load social links from settings saved by admin
+    try {
+      const s = JSON.parse(localStorage.getItem('vps_site_settings')) || {};
+      const fbLink = document.getElementById('fbLink');
+      const ytLink = document.getElementById('ytLink');
+      const zaloLink = document.getElementById('zaloLink');
+      if (fbLink && s.facebook) fbLink.href = s.facebook;
+      if (ytLink && s.youtube) ytLink.href = s.youtube;
+      if (zaloLink && s.zalo) zaloLink.href = s.zalo;
+    } catch(e) {}
+  });
+</script>
+<script>
+  // ─── QR Login Functions ──────────────────────────────────────
+  function openQR() {
+    document.getElementById('qrLoginModal').classList.add('show');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeQR() {
+    document.getElementById('qrLoginModal').classList.remove('show');
+    document.body.style.overflow = '';
+  }
+  function qrLogin(email, pass) {
+    const result = Auth.login(email, pass);
+    if (result.success) {
+      closeQR();
+      showToast('✅ Đăng nhập thành công! Chào ' + result.user.name, 'success');
+      setTimeout(() => window.location.reload(), 800);
+    } else {
+      showToast('❌ ' + result.message, 'error');
+    }
+  }
+
+  // ─── Mobile Nav Functions ────────────────────────────────────
+  function toggleMobileNav() {
+    const panel = document.getElementById('mobileNavPanel');
+    const overlay = document.getElementById('mobileNavOverlay');
+    const btn = document.getElementById('mobileMenuBtn');
+    const isOpen = panel.classList.contains('open');
+    if (isOpen) {
+      panel.classList.remove('open');
+      overlay.classList.remove('show');
+      btn.classList.remove('open');
+      document.body.style.overflow = '';
+    } else {
+      panel.classList.add('open');
+      overlay.classList.add('show');
+      btn.classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+  }
+  function closeMobileNav() {
+    document.getElementById('mobileNavPanel').classList.remove('open');
+    document.getElementById('mobileNavOverlay').classList.remove('show');
+    document.getElementById('mobileMenuBtn').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  // Update mobile nav state based on login
+  document.addEventListener('DOMContentLoaded', () => {
+    const user = Auth.getCurrentUser();
+    const mobileLogin = document.getElementById('mobileLoginBtn');
+    const mobileRegister = document.getElementById('mobileRegisterBtn');
+    const mobileUserInfo = document.getElementById('mobileUserInfo');
+    const mobileAdmin = document.getElementById('mobileAdminLink');
+    if (user) {
+      if (mobileLogin) mobileLogin.style.display = 'none';
+      if (mobileRegister) mobileRegister.style.display = 'none';
+      if (mobileUserInfo) {
+        mobileUserInfo.style.display = 'block';
+        document.getElementById('mobileUserName').textContent = user.name;
+        document.getElementById('mobileUserRole').textContent = ROLE_LABELS[user.role] || user.role;
+      }
+      if (mobileAdmin && user.role === 'admin') {
+        mobileAdmin.style.display = 'flex';
+        mobileAdmin.href = 'admin.html';
+      }
+    }
+  });
+
+  // Close QR on backdrop click
+  document.getElementById('qrLoginModal').addEventListener('click', function(e) {
+    if (e.target === this) closeQR();
+  });
+</script>
+</body>
+</html>

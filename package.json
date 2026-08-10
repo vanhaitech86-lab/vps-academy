@@ -1,0 +1,13 @@
+{
+  "name": "vps-academy",
+  "version": "1.0.0",
+  "description": "VPS Academy - Nền tảng đào tạo trực tuyến",
+  "main": "index.html",
+  "scripts": {
+    "start": "npx serve .",
+    "deploy": "npx vercel --prod"
+  },
+  "keywords": ["elearning", "vps", "academy", "lms"],
+  "author": "VPS Securities",
+  "license": "UNLICENSED"
+}

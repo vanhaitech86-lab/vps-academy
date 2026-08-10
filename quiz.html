@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bài kiểm tra – VPS Academy</title>
+  <meta name="theme-color" content="#1a3a6b">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/mobile.css">
+</head>
+<body style="background:var(--gray-100);">
+
+<!-- Header -->
+<header class="site-header">
+  <div class="header-inner">
+    <a href="index.html" class="logo">
+      <div class="logo-icon">🎓</div>
+      <div class="logo-text"><strong>VPS Academy</strong><span>Bài kiểm tra</span></div>
+    </a>
+    <div style="flex:1;padding:0 24px;">
+      <div id="quizCourseTitle" style="color:rgba(255,255,255,.7);font-size:14px;font-weight:600;"></div>
+    </div>
+    <nav class="header-nav">
+      <div class="user-menu" id="userMenu" style="display:flex;">
+        <button class="user-avatar-btn" id="userAvatarBtn"><span id="userAvatar">U</span></button>
+        <div class="user-dropdown" id="userDropdown">
+          <div class="dropdown-header"><div class="name" id="userName"></div></div>
+          <div class="dropdown-divider"></div>
+          <a href="#" class="dropdown-item logout" data-action="logout"><span class="di-icon">🚪</span> Đăng xuất</a>
+        </div>
+      </div>
+    </nav>
+  </div>
+</header>
+
+<div id="quizApp" style="min-height:calc(100vh - 68px);padding:24px 0;">
+  <!-- Rendered by JS -->
+</div>
+
+<script src="js/data.js"></script>
+<script src="js/auth.js"></script>
+<script>
+(function() {
+  const params = new URLSearchParams(window.location.search);
+  const courseId = params.get('course');
+  const isReview = params.get('review') === '1';
+  const app = document.getElementById('quizApp');
+
+  // Auth check
+  if (!Auth.requireLogin()) return;
+  const user = Auth.getCurrentUser();
+
+  // Update header
+  document.addEventListener('DOMContentLoaded', () => {
+    const av = document.getElementById('userAvatar');
+    const un = document.getElementById('userName');
+    if (av) av.textContent = user.name.charAt(0);
+    if (un) un.textContent = user.name;
+  });
+
+  const course = CourseDB.getById(courseId);
+  if (!course) { window.location.href = 'courses.html'; return; }
+
+  document.getElementById('quizCourseTitle').textContent = '📚 ' + course.title;
+  document.title = 'Bài kiểm tra – ' + course.title;
+
+  const quiz = QuizDB.getByCourse(courseId);
+  if (!quiz) {
+    app.innerHTML = `<div class="container"><div class="empty-state"><div class="empty-icon">📝</div><div class="empty-title">Chưa có bài kiểm tra</div><a href="course-detail.html?id=${courseId}" class="btn btn-primary">← Quay lại khóa học</a></div></div>`;
+    return;
+  }
+
+  const existingResult = ResultDB.getUserCourseResult(user.id, courseId);
+
+  // Show existing result if review mode
+  if (isReview && existingResult) {
+    showResult(existingResult.score, existingResult.correctCount, quiz.questions.length, existingResult.timeTaken, true);
+    return;
+  }
+
+  // ─── Quiz State ────────────────────────────────────────────
+  let currentQ = 0;
+  let answers = new Array(quiz.questions.length).fill(null);
+  let timeLeft = quiz.timeLimit * 60;
+  let timerInterval = null;
+  let startTime = Date.now();
+  let quizSubmitted = false;
+
+  function renderQuiz() {
+    const q = quiz.questions[currentQ];
+    const letters = ['A', 'B', 'C', 'D'];
+    app.innerHTML = `
+      <div class="quiz-wrapper">
+        <!-- Header -->
+        <div class="quiz-header">
+          <div class="quiz-progress-info">
+            <div class="quiz-qnum">Câu ${currentQ + 1} / ${quiz.questions.length}</div>
+            <div class="quiz-title-sm">${quiz.title}</div>
+          </div>
+          <div class="quiz-timer" id="quizTimer">⏱ <span id="timerDisplay">--:--</span></div>
+        </div>
+
+        <!-- Progress -->
+        <div class="progress-bar" style="height:8px;margin-bottom:20px;">
+          <div class="progress-fill" style="width:${((currentQ) / quiz.questions.length) * 100}%"></div>
+        </div>
+
+        <!-- Question Card -->
+        <div class="quiz-card">
+          <div class="quiz-question-num">Câu hỏi ${currentQ + 1}</div>
+          <div class="quiz-question-text">${q.text}</div>
+          <div class="quiz-options" id="optionsContainer">
+            ${q.options.map((opt, i) => `
+              <div class="quiz-option ${answers[currentQ] === i ? 'selected' : ''}" onclick="selectOption(${i})" id="opt-${i}">
+                <div class="quiz-option-letter">${letters[i]}</div>
+                <div class="quiz-option-text">${opt}</div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+
+        <!-- Navigation -->
+        <div class="quiz-nav">
+          <div class="quiz-nav-dots">
+            ${quiz.questions.map((_, i) => `
+              <button class="quiz-nav-dot ${answers[i] !== null ? 'answered' : ''} ${i === currentQ ? 'current' : ''}" 
+                onclick="goToQuestion(${i})" title="Câu ${i + 1}">${i + 1}</button>
+            `).join('')}
+          </div>
+          <div style="display:flex;gap:10px;">
+            ${currentQ > 0 ? `<button class="btn btn-secondary btn-sm" onclick="goToQuestion(${currentQ - 1})">‹ Trước</button>` : ''}
+            ${currentQ < quiz.questions.length - 1 
+              ? `<button class="btn btn-primary btn-sm" onclick="goToQuestion(${currentQ + 1})">Tiếp theo ›</button>`
+              : `<button class="btn btn-primary btn-sm" onclick="confirmSubmit()" style="background:var(--success);">✅ Nộp bài</button>`}
+          </div>
+        </div>
+
+        <!-- Submit when answered all -->
+        <div style="margin-top:20px;text-align:center;">
+          <button class="btn btn-primary" onclick="confirmSubmit()" style="background:var(--gradient-gold);">
+            📤 Nộp bài (${answers.filter(a => a !== null).length}/${quiz.questions.length} câu đã trả lời)
+          </button>
+        </div>
+      </div>`;
+    startTimer();
+  }
+
+  window.selectOption = function(idx) {
+    if (quizSubmitted) return;
+    answers[currentQ] = idx;
+    document.querySelectorAll('.quiz-option').forEach((el, i) => {
+      el.classList.toggle('selected', i === idx);
+    });
+    // Update nav dots
+    document.querySelectorAll('.quiz-nav-dot').forEach((dot, i) => {
+      if (i === currentQ && answers[i] !== null) dot.classList.add('answered');
+    });
+  };
+
+  window.goToQuestion = function(idx) {
+    currentQ = idx;
+    renderQuiz();
+  };
+
+  window.confirmSubmit = function() {
+    const unanswered = answers.filter(a => a === null).length;
+    if (unanswered > 0) {
+      if (!confirm(`Bạn còn ${unanswered} câu chưa trả lời. Vẫn nộp bài?`)) return;
+    }
+    submitQuiz();
+  };
+
+  function submitQuiz() {
+    if (quizSubmitted) return;
+    quizSubmitted = true;
+    clearInterval(timerInterval);
+    const timeTaken = Math.floor((Date.now() - startTime) / 1000);
+    let correctCount = 0;
+    answers.forEach((ans, i) => {
+      if (ans === quiz.questions[i].correct) correctCount++;
+    });
+    const score = Math.round((correctCount / quiz.questions.length) * 100);
+    // Save result
+    ResultDB.save({ userId: user.id, courseId: parseInt(courseId), quizId: quiz.id, score, correctCount, totalQuestions: quiz.questions.length, answers: [...answers], timeTaken, passed: score >= quiz.passingScore });
+    showResult(score, correctCount, quiz.questions.length, timeTaken, false);
+  }
+
+  function showResult(score, correct, total, timeTaken, fromSave) {
+    const passed = score >= quiz.passingScore;
+    const mins = Math.floor(timeTaken / 60);
+    const secs = timeTaken % 60;
+    app.innerHTML = `
+      <div class="quiz-wrapper">
+        <div class="quiz-result fade-in-up">
+          <div class="result-icon">${passed ? '🏆' : '📚'}</div>
+          <div class="result-score ${passed ? 'pass' : 'fail'}">${score}%</div>
+          <div class="result-label">${passed ? '🎉 Chúc mừng! Bạn đã vượt qua!' : '💪 Chưa đạt – Hãy thử lại!'}</div>
+          <div class="result-sub">Điểm đạt yêu cầu: ${quiz.passingScore}% &nbsp;|&nbsp; Bài: <strong>${quiz.title}</strong></div>
+          <div class="result-details">
+            <div class="result-detail">
+              <div class="val" style="color:${passed ? 'var(--success)' : 'var(--danger)'}">${correct}/${total}</div>
+              <div class="lbl">Câu đúng</div>
+            </div>
+            <div class="result-detail">
+              <div class="val">${score}%</div>
+              <div class="lbl">Điểm số</div>
+            </div>
+            <div class="result-detail">
+              <div class="val">${mins}:${String(secs).padStart(2,'0')}</div>
+              <div class="lbl">Thời gian</div>
+            </div>
+          </div>
+          <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+            <a href="course-detail.html?id=${courseId}" class="btn btn-secondary">← Quay lại khóa học</a>
+            ${!fromSave ? `<button class="btn btn-primary" onclick="window.location.reload()">🔄 Làm lại</button>` : ''}
+            <a href="courses.html" class="btn btn-outline" style="color:var(--gray-800);border-color:var(--gray-300);">📚 Tất cả khóa học</a>
+          </div>
+          ${!passed ? `<div style="margin-top:24px;padding:16px 20px;background:rgba(26,58,107,.06);border-radius:var(--radius);border-left:4px solid var(--primary);text-align:left;font-size:14px;color:var(--gray-600);">💡 <strong>Gợi ý:</strong> Hãy xem lại các bài học trong khóa học và thử lại bài kiểm tra để đạt điểm tối thiểu ${quiz.passingScore}%.</div>` : ''}
+        </div>
+      </div>`;
+  }
+
+  function startTimer() {
+    clearInterval(timerInterval);
+    const display = document.getElementById('timerDisplay');
+    const timerEl = document.getElementById('quizTimer');
+    if (!display) return;
+    function updateDisplay() {
+      const m = Math.floor(timeLeft / 60);
+      const s = timeLeft % 60;
+      if (display) display.textContent = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+      if (timerEl) timerEl.classList.toggle('warning', timeLeft <= 60);
+      if (timeLeft <= 0) { clearInterval(timerInterval); submitQuiz(); }
+      timeLeft--;
+    }
+    updateDisplay();
+    timerInterval = setInterval(updateDisplay, 1000);
+  }
+
+  // Start quiz
+  renderQuiz();
+})();
+</script>
+</body>
+</html>

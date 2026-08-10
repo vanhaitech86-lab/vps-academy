@@ -1,0 +1,10 @@
+# VPS Academy – Files/folders to ignore in git
+node_modules/
+.env
+.env.local
+*.log
+.DS_Store
+Thumbs.db
+desktop.ini
+*.tmp
+*.bak

@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <title>Xem bài học – VPS Academy</title>
+  <meta name="theme-color" content="#1a3a6b">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/mobile.css">
+  <style>
+    /* ─── Layout ─────────────────────────────────────────────── */
+    body { user-select: none; -webkit-user-select: none; }
+    .lesson-page { display: grid; grid-template-columns: 1fr 300px; gap: 0; min-height: calc(100vh - 68px); }
+    .lesson-main { padding: 20px 24px; overflow-y: auto; }
+    .lesson-sidebar-panel { background: var(--white); border-left: 1px solid var(--gray-200); overflow-y: auto; height: calc(100vh - 68px); position: sticky; top: 68px; }
+    .lesson-sidebar-head { padding: 14px 18px; background: var(--primary-dark); color: white; font-weight: 700; font-size: 13px; position: sticky; top: 0; z-index: 10; }
+    @media (max-width: 900px) { .lesson-page { grid-template-columns: 1fr; } .lesson-sidebar-panel { display: none; } }
+
+    /* ─── Video Container ─────────────────────────────────────── */
+    .video-wrapper {
+      position: relative;
+      background: #000;
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      box-shadow: var(--shadow-lg);
+    }
+    #videoWrap {
+      position: relative;
+      width: 100%;
+      padding-top: 56.25%; /* 16:9 */
+      background: #0d1f3c;
+    }
+    #videoWrap > * {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+    }
+    #ytPlayerDiv { position: absolute; top:0;left:0;width:100%;height:100%; }
+
+    /* Lớp bảo vệ trong suốt – chặn right-click trực tiếp trên video */
+    .video-protect-layer {
+      position: absolute;
+      inset: 0;
+      z-index: 5;
+      background: transparent;
+    }
+
+    /* ─── Video Progress Bar ─────────────────────────────────── */
+    .vp-info-bar {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 16px;
+      background: var(--primary-dark);
+      border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+    }
+    .vp-info-bar .vp-label {
+      font-size: 12px;
+      color: rgba(255,255,255,.6);
+      white-space: nowrap;
+    }
+    .vp-track {
+      flex: 1;
+      height: 6px;
+      background: rgba(255,255,255,.15);
+      border-radius: 99px;
+      overflow: hidden;
+    }
+    #vpProgressFill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--secondary), #f97316);
+      border-radius: 99px;
+      width: 0%;
+      transition: width .5s;
+    }
+    #vpProgressLabel {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--secondary);
+      min-width: 36px;
+      text-align: right;
+    }
+    #vpTime {
+      font-size: 11px;
+      color: rgba(255,255,255,.5);
+      min-width: 90px;
+      text-align: right;
+    }
+    .vp-notice {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      background: rgba(225,29,72,.08);
+      border: 1px solid rgba(225,29,72,.2);
+      border-radius: var(--radius-sm);
+      font-size: 12px;
+      color: #e11d48;
+      margin-top: 10px;
+      font-weight: 500;
+    }
+
+    /* ─── Overlay (violation / complete) ─────────────────────── */
+    #vpOverlay {
+      display: none;
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,.85);
+      z-index: 100;
+      align-items: center;
+      justify-content: center;
+      border-radius: var(--radius-lg);
+    }
+    .vp-overlay-box {
+      background: white;
+      border-radius: var(--radius-lg);
+      padding: 32px 28px;
+      max-width: 400px;
+      width: 90%;
+      text-align: center;
+      box-shadow: var(--shadow-xl);
+    }
+    .vp-overlay-box.warning { border-top: 4px solid #e11d48; }
+    .vp-overlay-box.success { border-top: 4px solid var(--success); }
+    .vp-ov-icon { font-size: 48px; margin-bottom: 12px; }
+    .vp-ov-title { font-size: 18px; font-weight: 800; color: var(--gray-800); margin-bottom: 10px; }
+    .vp-ov-msg { font-size: 14px; color: var(--gray-600); line-height: 1.7; }
+    .vp-ov-countdown { margin-top: 16px; font-size: 13px; font-weight: 600; color: #e11d48; }
+
+    /* ─── Interactive Question Modal ─────────────────────────── */
+    #iqModal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.7);
+      z-index: 9999;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+    #iqModal.show { display: flex; }
+    .iq-box {
+      background: white;
+      border-radius: var(--radius-lg);
+      width: 100%;
+      max-width: 520px;
+      overflow: hidden;
+      box-shadow: var(--shadow-xl);
+      animation: slideUp .25s ease;
+    }
+    @keyframes slideUp { from { transform: translateY(30px); opacity:0; } to { transform: translateY(0); opacity:1; } }
+    .iq-header {
+      background: var(--primary-dark);
+      color: white;
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .iq-badge {
+      background: var(--secondary);
+      color: var(--primary-dark);
+      font-size: 11px;
+      font-weight: 800;
+      padding: 3px 10px;
+      border-radius: 99px;
+      letter-spacing: .5px;
+    }
+    .iq-title { font-size: 14px; font-weight: 700; }
+    .iq-body { padding: 22px 20px; }
+    #iqText {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--gray-800);
+      line-height: 1.6;
+      margin-bottom: 18px;
+    }
+    #iqOptions { display: flex; flex-direction: column; gap: 10px; }
+    .iq-opt {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 14px 16px;
+      border: 2px solid var(--gray-200);
+      border-radius: var(--radius);
+      background: var(--gray-50);
+      cursor: pointer;
+      text-align: left;
+      font-size: 14px;
+      color: var(--gray-700);
+      transition: all .2s;
+      font-family: var(--font);
+      font-weight: 500;
+    }
+    .iq-opt:hover:not(:disabled) { border-color: var(--primary); background: rgba(26,58,107,.05); }
+    .iq-opt:disabled { cursor: not-allowed; }
+    .iq-opt.correct { border-color: var(--success); background: rgba(40,167,69,.1); color: var(--success); }
+    .iq-opt.wrong   { border-color: var(--danger);  background: rgba(231,76,60,.1);  color: var(--danger); }
+    .iq-opt-letter {
+      width: 30px; height: 30px;
+      border-radius: 50%;
+      background: var(--primary-dark);
+      color: white;
+      font-size: 13px;
+      font-weight: 800;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .iq-opt.correct .iq-opt-letter { background: var(--success); }
+    .iq-opt.wrong   .iq-opt-letter { background: var(--danger); }
+    .iq-result {
+      display: none;
+      margin-top: 14px;
+      padding: 12px 16px;
+      border-radius: var(--radius-sm);
+      font-size: 14px;
+      font-weight: 600;
+    }
+    .iq-result.success { background: rgba(40,167,69,.1); color: var(--success); border: 1px solid rgba(40,167,69,.2); }
+    .iq-result.error   { background: rgba(231,76,60,.1);  color: var(--danger);  border: 1px solid rgba(231,76,60,.2); }
+
+    /* ─── Document Viewer (no-download) ─────────────────────── */
+    .doc-viewer-wrap {
+      margin-top: 20px;
+      border: 1px solid var(--gray-200);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+    }
+    .doc-viewer-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 18px;
+      background: var(--primary-dark);
+      color: white;
+    }
+    .doc-viewer-title {
+      display: flex; align-items: center; gap: 10px;
+      font-size: 14px; font-weight: 600;
+    }
+    .doc-protect-badge {
+      font-size: 11px;
+      background: rgba(255,255,255,.15);
+      padding: 3px 10px;
+      border-radius: 99px;
+      color: rgba(255,255,255,.8);
+    }
+    .doc-no-download-msg {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 12px; color: rgba(255,255,255,.6);
+    }
+    .doc-viewer-iframe-wrap {
+      position: relative;
+      height: 500px;
+      background: #f5f5f5;
+    }
+    .doc-viewer-iframe-wrap iframe {
+      width: 100%; height: 100%; border: none;
+    }
+    /* Lớp chặn tải tài liệu từ iframe */
+    .doc-protect-layer {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 40px;
+      background: white;
+      z-index: 10;
+    }
+
+    /* ─── Content box ─────────────────────────────────────────── */
+    .lesson-content-box {
+      background: var(--white); border-radius: var(--radius-lg);
+      padding: 24px; border: 1px solid var(--gray-200);
+      margin-top: 20px; box-shadow: var(--shadow-sm);
+    }
+    .lesson-nav-bar {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 12px; background: var(--white); border-radius: var(--radius-lg);
+      padding: 16px 20px; border: 1px solid var(--gray-200);
+      margin-top: 16px; box-shadow: var(--shadow-sm);
+    }
+    #completeLessonBtn.locked {
+      opacity: .5; cursor: not-allowed;
+    }
+  </style>
+</head>
+<body data-page="lesson" oncontextmenu="return false;">
+
+<!-- ─── Interactive Question Modal ──────────────────────── -->
+<div id="iqModal">
+  <div class="iq-box">
+    <div class="iq-header">
+      <span class="iq-badge">📝 CÂU HỎI TƯƠNG TÁC</span>
+      <span class="iq-title">Hãy trả lời để tiếp tục xem</span>
+    </div>
+    <div class="iq-body">
+      <div id="iqText"></div>
+      <div id="iqOptions"></div>
+      <div id="iqResult" class="iq-result"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── Header ────────────────────────────────────────────── -->
+<header class="site-header">
+  <div class="header-inner">
+    <a href="index.html" class="logo">
+      <div class="logo-icon">🎓</div>
+      <div class="logo-text"><strong>VPS Academy</strong><span>E-Learning Platform</span></div>
+    </a>
+    <div style="flex:1;padding:0 24px;overflow:hidden;">
+      <div style="font-size:12px;color:rgba(255,255,255,.5);">
+        <a href="courses.html" style="color:rgba(255,255,255,.6);" id="courseTitleBreadcrumb">← Khóa học</a>
+      </div>
+      <div style="font-size:14px;font-weight:600;color:white;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" id="lessonTitle">Đang tải...</div>
+    </div>
+    <nav class="header-nav">
+      <span id="lessonOrder" style="color:rgba(255,255,255,.6);font-size:13px;"></span>
+      <a href="auth.html" class="btn btn-login" id="loginBtn">Đăng nhập</a>
+      <div class="user-menu" id="userMenu">
+        <button class="user-avatar-btn" id="userAvatarBtn"><span id="userAvatar">U</span></button>
+        <div class="user-dropdown" id="userDropdown">
+          <div class="dropdown-header"><div class="name" id="userName"></div><div class="role" id="userRoleBadge"></div></div>
+          <div class="dropdown-divider"></div>
+          <a href="#" class="dropdown-item logout" data-action="logout"><span class="di-icon">🚪</span> Đăng xuất</a>
+        </div>
+      </div>
+    </nav>
+  </div>
+</header>
+
+<!-- ─── Lesson Layout ─────────────────────────────────────── -->
+<div class="lesson-page">
+
+  <!-- Main -->
+  <div class="lesson-main">
+    <!-- Breadcrumb -->
+    <div class="d-flex align-center gap-8 mb-16" style="font-size:13px;color:var(--gray-500);">
+      <a href="index.html" style="color:var(--primary);">🏠 Trang chủ</a>
+      <span>›</span>
+      <a href="courses.html" style="color:var(--primary);">Khóa học</a>
+      <span>›</span>
+      <a id="courseLink" href="#" style="color:var(--primary);">Chi tiết</a>
+      <span>›</span>
+      <span id="lessonTitleBc">Bài học</span>
+    </div>
+
+    <!-- ─── Video Wrapper ──────────────────────────────── -->
+    <div class="video-wrapper">
+      <div id="videoWrap">
+        <!-- Player được inject bởi lesson-player.js -->
+        <div style="display:flex;align-items:center;justify-content:center;height:100%;color:rgba(255,255,255,.4);flex-direction:column;gap:10px;">
+          <span style="font-size:36px;">⏳</span>
+          <span style="font-size:13px;">Đang tải video...</span>
+        </div>
+      </div>
+
+      <!-- Overlay (violation / complete) -->
+      <div id="vpOverlay"></div>
+
+      <!-- Lớp trong suốt chặn right-click -->
+      <div class="video-protect-layer" oncontextmenu="return false;"></div>
+    </div>
+
+    <!-- Progress bar -->
+    <div class="vp-info-bar">
+      <span class="vp-label">🔒 Tiến độ xem</span>
+      <div class="vp-track"><div id="vpProgressFill"></div></div>
+      <span id="vpProgressLabel">0%</span>
+      <span id="vpTime">0:00 / 0:00</span>
+    </div>
+
+    <!-- Cảnh báo chống tua -->
+    <div class="vp-notice">
+      ⚠️ <strong>Lưu ý:</strong> Video được bảo vệ. Tua nhanh sẽ bị phát hiện và video sẽ quay lại từ đầu. Vui lòng xem đầy đủ.
+    </div>
+
+    <!-- ─── Content ────────────────────────────────────── -->
+    <div class="lesson-content-box">
+      <div class="d-flex align-center gap-8 mb-16">
+        <h2 style="font-size:20px;font-weight:800;color:var(--gray-800);flex:1;" id="lessonTitleMain">Đang tải...</h2>
+        <span id="lessonDur" style="color:var(--gray-500);font-size:13px;"></span>
+      </div>
+      <p id="lessonDesc" style="color:var(--gray-600);font-size:15px;line-height:1.8;"></p>
+
+      <!-- Document Viewer (No Download) -->
+      <div id="lessonDocArea" style="display:none;">
+        <div class="doc-viewer-wrap">
+          <div class="doc-viewer-header">
+            <div class="doc-viewer-title">
+              <span>📄</span>
+              <span id="lessonDocName">Tài liệu bài học</span>
+              <span class="doc-protect-badge">🔒 Chỉ xem online</span>
+            </div>
+            <div class="doc-no-download-msg">
+              🚫 Không thể tải về
+            </div>
+          </div>
+          <div class="doc-viewer-iframe-wrap">
+            <iframe id="docViewerFrame"
+              src=""
+              sandbox="allow-scripts allow-same-origin"
+              oncontextmenu="return false;">
+            </iframe>
+            <!-- Che toolbar download của Google Docs viewer -->
+            <div class="doc-protect-layer"></div>
+          </div>
+        </div>
+        <div style="font-size:12px;color:var(--gray-400);margin-top:8px;display:flex;align-items:center;gap:6px;">
+          🛡️ Tài liệu được bảo vệ bởi VPS Academy. Bản quyền thuộc về Haitech AI – VPS.
+        </div>
+      </div>
+    </div>
+
+    <!-- Navigation -->
+    <div class="lesson-nav-bar">
+      <button class="btn btn-secondary" id="prevLessonBtn">‹ Bài trước</button>
+      <button class="btn btn-success locked" id="completeLessonBtn" style="min-width:180px;" disabled>
+        ⏳ Xem đủ video để hoàn thành
+      </button>
+      <button class="btn btn-primary" id="nextLessonBtn">Bài tiếp theo ›</button>
+    </div>
+  </div>
+
+  <!-- Sidebar -->
+  <div class="lesson-sidebar-panel">
+    <div class="lesson-sidebar-head">📋 Nội dung khóa học</div>
+    <div id="sidebarLessonList"></div>
+  </div>
+</div>
+
+<script src="js/data.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/app.js"></script>
+<script src="js/filestore.js"></script>
+<script src="js/lesson-player.js"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  // Chặn phím tắt download
+  document.addEventListener('keydown', e => {
+    if ((e.ctrlKey && ['s','u','p'].includes(e.key.toLowerCase())) ||
+        (e.key === 'F12') ||
+        (e.ctrlKey && e.shiftKey && e.key === 'I')) {
+      e.preventDefault();
+    }
+  });
+
+  // Lấy params
+  const params   = new URLSearchParams(window.location.search);
+  const courseId = params.get('course');
+  const lessonId = params.get('lesson');
+
+  // Đọc lesson từ localStorage (đã được admin cập nhật)
+  const lesson = lessonId ? LessonDB.getById(lessonId) : null;
+  const course = courseId ? CourseDB.getById(courseId) : null;
+  const user   = Auth.getCurrentUser();
+
+  // Redirect nếu không tìm thấy
+  if (!lesson || !course) {
+    window.location.href = 'courses.html';
+    return;
+  }
+
+  // Cập nhật tiêu đề trang
+  document.title = lesson.title + ' – VPS Academy';
+
+  // Breadcrumb + tiêu đề
+  const setTxt = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
+  setTxt('lessonTitle',     lesson.title);
+  setTxt('lessonTitleBc',   lesson.title);
+  setTxt('lessonTitleMain', lesson.title);
+  setTxt('lessonDur',       '🕐 ' + lesson.duration);
+  setTxt('lessonDesc',      lesson.description);
+  setTxt('lessonOrder',     course ? `Bài ${lesson.order}/${course.totalLessons}` : '');
+
+  const courseLink = document.getElementById('courseLink');
+  if (courseLink) {
+    courseLink.href        = `course-detail.html?id=${courseId}`;
+    courseLink.textContent = course.title;
+  }
+  const breadCrumb = document.getElementById('courseTitleBreadcrumb');
+  if (breadCrumb) breadCrumb.textContent = '← ' + course.title;
+
+  // ── Tài liệu – chỉ xem online, không tải ───────────────────────
+  if (lesson.docName) {
+    const area   = document.getElementById('lessonDocArea');
+    const frame  = document.getElementById('docViewerFrame');
+    const nameEl = document.getElementById('lessonDocName');
+    if (area) {
+      area.style.display = 'block';
+      if (nameEl) nameEl.textContent = lesson.docName;
+      if (frame) {
+        const docUrl = lesson.docUrl || '';
+        if (docUrl.startsWith('local:')) {
+          // Tài liệu đã upload từ máy tính – đọc từ IndexedDB
+          const fileId = docUrl.replace('local:', '');
+          FileStore.getFile(fileId).then(dataUrl => {
+            if (dataUrl) {
+              // Hiển thị thông qua blob URL trong iframe
+              const blob    = _localDataUrlToBlob(dataUrl);
+              const blobUrl = URL.createObjectURL(blob);
+              const mime    = blob.type;
+              if (mime === 'application/pdf') {
+                frame.src = blobUrl;
+              } else {
+                // Office docs – dùng Google Docs viewer với blob URL
+                // (một số trình duyệt không mở được Office blob qua iframe)
+                frame.src = blobUrl;
+              }
+            } else {
+              frame.parentElement.innerHTML = `
+                <div style="display:flex;align-items:center;justify-content:center;height:100%;flex-direction:column;gap:10px;color:var(--gray-500);">
+                  <span style="font-size:36px;">⚠️</span>
+                  <span style="font-size:14px;font-weight:600;">Không tìm thấy file</span>
+                  <span style="font-size:12px;color:var(--gray-400);">File có thể đã bị xóa khỏi trình duyệt</span>
+                </div>`;
+            }
+          }).catch(() => {
+            frame.parentElement.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--gray-500);">Lỗi tải tài liệu</div>';
+          });
+        } else if (docUrl) {
+          // URL bình thường (Google Drive / PDF link)
+          let embedUrl = docUrl;
+          if (docUrl.includes('drive.google.com/file')) {
+            const idMatch = docUrl.match(/\/d\/([a-zA-Z0-9_-]+)/);
+            if (idMatch) embedUrl = `https://drive.google.com/file/d/${idMatch[1]}/preview`;
+          } else if (!docUrl.includes('docs.google.com/viewer')) {
+            embedUrl = `https://docs.google.com/viewer?url=${encodeURIComponent(docUrl)}&embedded=true`;
+          }
+          frame.src = embedUrl;
+        } else {
+          frame.parentElement.innerHTML = `
+            <div style="display:flex;align-items:center;justify-content:center;height:100%;flex-direction:column;gap:10px;color:var(--gray-500);">
+              <span style="font-size:36px;">📄</span>
+              <span style="font-size:14px;font-weight:600;">${lesson.docName}</span>
+              <span style="font-size:12px;color:var(--gray-400);">Admin cần thêm link tài liệu trong trang quản trị</span>
+            </div>`;
+        }
+      }
+    }
+  }
+
+  // Helper: chuyển dataUrl → Blob (dùng cho local files)
+  function _localDataUrlToBlob(dataUrl) {
+    try {
+      const [header, b64] = dataUrl.split(',');
+      const mime = (header.match(/:(.*?);/) || [])[1] || 'application/octet-stream';
+      const raw  = atob(b64);
+      const arr  = new Uint8Array(raw.length);
+      for (let i = 0; i < raw.length; i++) arr[i] = raw.charCodeAt(i);
+      return new Blob([arr], { type: mime });
+    } catch { return new Blob([]); }
+  }
+
+
+  // ── Khởi động video player bảo vệ ──────────────────────────
+  window._currentLesson = lesson;
+  const interactiveQuestions = lesson.interactiveQs || [];
+  VPSPlayer.init(courseId, lessonId, lesson.videoUrl || '', interactiveQuestions);
+
+  // ── Nút hoàn thành ──────────────────────────────────────────
+  const completeBtn = document.getElementById('completeLessonBtn');
+  if (completeBtn && user && courseId && lessonId) {
+    const progress   = ProgressDB.get(user.id, courseId);
+    const alreadyDone = progress.completedLessons.includes(parseInt(lessonId));
+
+    if (alreadyDone) {
+      completeBtn.textContent = '✅ Đã hoàn thành';
+      completeBtn.style.background = 'var(--success)';
+      completeBtn.disabled  = false;
+      completeBtn.classList.remove('locked');
+    }
+
+    completeBtn.addEventListener('click', () => {
+      if (completeBtn.disabled) return;
+      if (!VPSPlayer.isWatchedEnough() && !alreadyDone) {
+        showToast('Vui lòng xem đủ video trước khi hoàn thành!', 'warning');
+        return;
+      }
+      ProgressDB.markComplete(user.id, courseId, parseInt(lessonId));
+      completeBtn.textContent = '✅ Đã hoàn thành';
+      completeBtn.style.background = 'var(--success)';
+      completeBtn.disabled = true;
+      showToast('Đã đánh dấu hoàn thành bài học!', 'success');
+
+      // Tự động chuyển bài tiếp theo
+      const lessons  = LessonDB.getByCourse(courseId);
+      const idx      = lessons.findIndex(l => l.id === parseInt(lessonId));
+      const next     = lessons[idx + 1];
+      if (next) {
+        setTimeout(() => window.location.href = `lesson.html?course=${courseId}&lesson=${next.id}`, 900);
+      }
+    });
+  }
+
+  // ── User menu badge ─────────────────────────────────────────
+  const badge = document.getElementById('userRoleBadge');
+  if (badge && user) badge.textContent = ROLE_LABELS[user.role] || user.role;
+});
+</script>
+</body>
+</html>

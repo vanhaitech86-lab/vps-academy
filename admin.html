@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#1a3a6b">
+  <title>Admin Panel – VPS Academy</title>
+  <meta name="description" content="Trang quản trị VPS Academy – Quản lý người dùng, khóa học, bài kiểm tra và kết quả học viên.">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/mobile.css">
+  <style>
+    body { overflow-x: hidden; }
+    .admin-topbar-user { display: flex; align-items: center; gap: 10px; }
+    .admin-topbar-user .ta-avatar { width: 36px; height: 36px; border-radius: 50%; background: var(--gradient-gold); display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 15px; }
+    .admin-topbar-user .ta-name { font-size: 14px; font-weight: 600; color: var(--gray-700); }
+    .admin-badge-count { background: var(--danger); color: white; padding: 2px 7px; border-radius: 99px; font-size: 11px; font-weight: 700; margin-left: 6px; }
+  </style>
+</head>
+<body>
+<div class="admin-layout">
+
+  <!-- ─── Sidebar ─────────────────────────────────────────── -->
+  <aside class="admin-sidebar">
+    <div class="admin-logo">
+      <div class="admin-logo-icon">🎓</div>
+      <div class="admin-logo-text">
+        <strong>VPS Academy</strong>
+        <span>Admin Panel</span>
+      </div>
+    </div>
+
+    <nav class="admin-nav">
+      <div class="admin-nav-section">
+        <div class="admin-nav-label">Tổng quan</div>
+        <div class="admin-nav-item active" data-tab="dashboard">
+          <span class="nav-icon">📊</span> Dashboard
+        </div>
+      </div>
+
+      <div class="admin-nav-section">
+        <div class="admin-nav-label">Quản lý người dùng</div>
+        <div class="admin-nav-item" data-tab="users">
+          <span class="nav-icon">👥</span> Người dùng
+        </div>
+      </div>
+
+      <div class="admin-nav-section">
+        <div class="admin-nav-label">Nội dung học tập</div>
+        <div class="admin-nav-item" data-tab="categories">
+          <span class="nav-icon">📂</span> Danh mục
+        </div>
+        <div class="admin-nav-item" data-tab="courses">
+          <span class="nav-icon">📚</span> Khóa học
+        </div>
+        <div class="admin-nav-item" data-tab="lessons">
+          <span class="nav-icon">🎥</span> Bài học & Video
+        </div>
+        <div class="admin-nav-item" data-tab="quizzes">
+          <span class="nav-icon">📝</span> Bài kiểm tra
+        </div>
+      </div>
+
+      <div class="admin-nav-section">
+        <div class="admin-nav-label">Báo cáo</div>
+        <div class="admin-nav-item" data-tab="results">
+          <span class="nav-icon">🏆</span> Kết quả học viên
+        </div>
+      </div>
+
+      <div class="admin-nav-section">
+        <div class="admin-nav-label">Hệ thống</div>
+        <div class="admin-nav-item" data-tab="settings">
+          <span class="nav-icon">🌐</span> Cài đặt website
+        </div>
+      </div>
+
+      <div class="admin-nav-section" style="margin-top:auto;">
+        <div class="admin-nav-label">Khác</div>
+        <div class="admin-nav-item" onclick="window.location='index.html'" style="cursor:pointer;">
+          <span class="nav-icon">🌐</span> Xem trang chủ
+        </div>
+        <div class="admin-nav-item" onclick="Auth.logout()" style="cursor:pointer;color:rgba(231,76,60,.8);">
+          <span class="nav-icon">🚪</span> Đăng xuất
+        </div>
+      </div>
+    </nav>
+  </aside>
+
+  <!-- ─── Main Content ─────────────────────────────────────── -->
+  <main class="admin-main">
+    <!-- Topbar -->
+    <div class="admin-topbar">
+      <button class="admin-mobile-toggle" onclick="document.getElementById('adminSidebar').classList.toggle('open');" style="display:none;">
+        ☰ Menu quản trị
+      </button>
+      <div class="admin-sidebar-overlay" id="adminSidebarOverlay" onclick="document.getElementById('adminSidebar').classList.remove('open');this.classList.remove('show');"></div>
+      <div class="admin-page-title" id="adminPageTitle">📊 Dashboard</div>
+      <div class="admin-topbar-right">
+        <div style="font-size:13px;color:var(--gray-500);" id="adminDateTime"></div>
+        <div class="admin-topbar-user">
+          <div class="ta-avatar" id="adminAvatar">A</div>
+          <div>
+            <div class="ta-name" id="adminName">Admin</div>
+            <div style="font-size:11px;color:var(--gray-500);">Quản trị viên</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Content Area -->
+    <div class="admin-content" id="adminContent">
+      <div style="display:flex;justify-content:center;padding:80px;"><div class="spinner"></div></div>
+    </div>
+  </main>
+</div>
+
+<script src="js/data.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/filestore.js"></script>
+<script src="js/admin.js"></script>
+
+<script>
+  // Update admin info in topbar
+  document.addEventListener('DOMContentLoaded', () => {
+    const user = Auth.getCurrentUser();
+    if (user) {
+      const av = document.getElementById('adminAvatar');
+      const nm = document.getElementById('adminName');
+      if (av) av.textContent = user.name.charAt(0);
+      if (nm) nm.textContent = user.name;
+    }
+    // Clock
+    function updateClock() {
+      const el = document.getElementById('adminDateTime');
+      if (el) {
+        const now = new Date();
+        el.textContent = now.toLocaleString('vi-VN', { weekday: 'short', day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+      }
+    }
+    updateClock();
+    setInterval(updateClock, 60000);
+  });
+</script>
+</body>
+</html>

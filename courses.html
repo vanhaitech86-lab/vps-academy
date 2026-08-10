@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#1a3a6b">
+  <title>Danh sách khóa học – VPS Academy</title>
+  <meta name="description" content="Khám phá tất cả khóa học đào tạo tại VPS Academy. Lọc theo danh mục, cấp độ và tìm kiếm theo nhu cầu.">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/mobile.css">
+</head>
+<body data-page="courses">
+
+<!-- Header -->
+<header class="site-header">
+  <div class="header-inner">
+    <a href="index.html" class="logo">
+      <div class="logo-icon">🎓</div>
+      <div class="logo-text"><strong>VPS Academy</strong><span>E-Learning Platform</span></div>
+    </a>
+    <form class="header-search" id="globalSearchForm">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="globalSearchInput" placeholder="Tìm kiếm khóa học...">
+    </form>
+    <nav class="header-nav">
+      <a href="index.html" class="nav-link"><span class="nav-icon">🏠</span> Trang chủ</a>
+      <a href="courses.html" class="nav-link active"><span class="nav-icon">📚</span> Khóa học</a>
+      <a href="auth.html?tab=register" class="nav-link" id="registerNavBtn"><span class="nav-icon">📝</span> Đăng ký</a>
+      <a href="admin.html" class="nav-link" id="adminNavLink" style="display:none;"><span class="nav-icon">⚙️</span> Quản trị</a>
+      <a href="auth.html" class="btn btn-login" id="loginBtn">Đăng nhập</a>
+      <div class="user-menu" id="userMenu">
+        <button class="user-avatar-btn" id="userAvatarBtn"><span id="userAvatar">U</span></button>
+        <div class="user-dropdown" id="userDropdown">
+          <div class="dropdown-header"><div class="name" id="userName"></div><div class="role" id="userRoleBadge"></div></div>
+          <a href="courses.html" class="dropdown-item"><span class="di-icon">📚</span> Khóa học của tôi</a>
+          <div class="dropdown-divider"></div>
+          <a href="#" class="dropdown-item logout" data-action="logout"><span class="di-icon">🚪</span> Đăng xuất</a>
+        </div>
+      </div>
+    </nav>
+    <!-- Hamburger Button (mobile only) -->
+    <button class="mobile-menu-btn" onclick="this.closest('body').querySelector('#mobileMenuFallback') && window.open('index.html','_self')" style="display:none;flex-direction:column;gap:5px;padding:8px;background:none;border:none;cursor:pointer;margin-left:auto;" aria-label="Menu" id="mobileMenuBtnPage">
+      <span style="display:block;width:24px;height:2px;background:white;border-radius:2px;"></span>
+      <span style="display:block;width:24px;height:2px;background:white;border-radius:2px;"></span>
+      <span style="display:block;width:24px;height:2px;background:white;border-radius:2px;"></span>
+    </button>
+  </div>
+</header>
+
+<!-- Page Header -->
+<div style="background:var(--primary-dark);padding:40px 0;">
+  <div class="container">
+    <h1 style="color:white;font-size:32px;font-weight:800;margin-bottom:8px;">📚 Tất cả khóa học</h1>
+    <p style="color:rgba(255,255,255,.7);font-size:15px;">Khám phá kho tri thức của VPS Academy</p>
+  </div>
+</div>
+
+<!-- Main Content -->
+<div class="section-sm">
+  <div class="container">
+    <!-- Filter Bar -->
+    <div class="filter-bar">
+      <div class="filter-group">
+        <span class="filter-label">🔍 Tìm kiếm:</span>
+        <div style="position:relative;">
+          <input type="text" class="search-input" id="courseSearch" placeholder="Tên khóa học, giảng viên...">
+        </div>
+        <button class="btn btn-primary btn-sm" id="searchBtn">Tìm</button>
+      </div>
+      <div class="filter-group">
+        <span class="filter-label">📂 Danh mục:</span>
+        <select class="filter-select" id="catFilter"></select>
+      </div>
+      <div class="filter-group">
+        <span class="filter-label">📊 Cấp độ:</span>
+        <select class="filter-select" id="levelFilter">
+          <option value="">Tất cả cấp độ</option>
+          <option value="Cơ bản">Cơ bản</option>
+          <option value="Trung cấp">Trung cấp</option>
+          <option value="Nâng cao">Nâng cao</option>
+        </select>
+      </div>
+      <span class="filter-count" id="filterCount"></span>
+    </div>
+
+    <!-- Grid -->
+    <div class="courses-grid" id="coursesGrid">
+      <!-- Rendered by JS -->
+    </div>
+  </div>
+</div>
+
+<!-- Footer -->
+<footer class="site-footer" style="margin-top:40px;">
+  <div class="container">
+    <div class="footer-bottom">
+      <p>© 2026 <span class="accent">VPS Academy</span>. Bản quyền thuộc về <strong>Haitech AI – VPS</strong>. | 📞 0988 739 896 | 📧 contact@vpsgroup.vn</p>
+    </div>
+  </div>
+</footer>
+
+<script src="js/data.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/app.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const user = Auth.getCurrentUser();
+    const badge = document.getElementById('userRoleBadge');
+    if (badge && user) badge.textContent = ROLE_LABELS[user.role] || user.role;
+  });
+</script>
+</body>
+</html>
