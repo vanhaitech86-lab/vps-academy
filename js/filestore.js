@@ -1,13 +1,13 @@
 // ============================================================
-// VPS Academy – File Store (IndexedDB + localStorage fallback)
-// Lưu trữ video/tài liệu upload từ máy tính của Admin
+// VPS Academy – File Store (IndexedDB + localStorage metadata)
+// Lưu trữ video/tài liệu upload từ máy tính (lưu dạng Blob trực tiếp)
 // ============================================================
 
 const FileStore = (() => {
   const DB_NAME    = 'vps_filestore';
   const DB_VERSION = 1;
   const STORE_NAME = 'files';
-  const META_KEY   = 'vps_file_meta'; // localStorage key cho metadata
+  const META_KEY   = 'vps_file_meta';
 
   let db = null;
 
@@ -27,51 +27,75 @@ const FileStore = (() => {
     });
   }
 
-  // ── Lưu file vào IndexedDB ────────────────────────────────
-  async function saveFile(fileId, file, onProgress) {
+  // ── Lưu file vào IndexedDB (Lưu dạng Blob/File trực tiếp - không cần FileReader) ──
+  async function saveFile(fileId, fileBlob) {
     const d = await openDB();
     return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onprogress = e => {
-        if (onProgress && e.lengthComputable) {
-          onProgress(Math.round((e.loaded / e.total) * 100));
-        }
+      const tx = d.transaction(STORE_NAME, 'readwrite');
+      const store = tx.objectStore(STORE_NAME);
+
+      const record = {
+        id: fileId,
+        data: fileBlob, // Lưu trực tiếp đối tượng File/Blob
+        name: fileBlob.name || 'file',
+        type: fileBlob.type || 'application/octet-stream',
+        size: fileBlob.size || 0,
+        savedAt: new Date().toISOString(),
       };
-      reader.onload = () => {
-        const dataUrl = reader.result;
-        const tx = d.transaction(STORE_NAME, 'readwrite');
-        const store = tx.objectStore(STORE_NAME);
-        store.put({
-          id: fileId,
-          data: dataUrl,
-          name: file.name,
-          type: file.type,
-          size: file.size,
-          savedAt: new Date().toISOString(),
-        });
-        tx.oncomplete = () => {
-          // Lưu metadata vào localStorage
-          const meta = getMeta();
-          meta[fileId] = { name: file.name, type: file.type, size: file.size, savedAt: new Date().toISOString() };
-          saveMeta(meta);
-          resolve(dataUrl);
+
+      store.put(record);
+
+      tx.oncomplete = () => {
+        const meta = getMeta();
+        meta[fileId] = {
+          name: record.name,
+          type: record.type,
+          size: record.size,
+          savedAt: record.savedAt
         };
-        tx.onerror = () => reject(tx.error);
+        saveMeta(meta);
+        resolve(record);
       };
-      reader.onerror = () => reject(reader.error);
-      reader.readAsDataURL(file);
+
+      tx.onerror = () => reject(tx.error);
     });
   }
 
-  // ── Đọc file từ IndexedDB ─────────────────────────────────
+  // ── Đọc file từ IndexedDB (Trả về Blob object) ────────────
   async function getFile(fileId) {
     const d = await openDB();
     return new Promise((resolve) => {
       const tx = d.transaction(STORE_NAME, 'readonly');
       const req = tx.objectStore(STORE_NAME).get(fileId);
-      req.onsuccess = () => resolve(req.result ? req.result.data : null);
-      req.onerror   = () => resolve(null);
+      req.onsuccess = () => {
+        if (!req.result || !req.result.data) {
+          resolve(null);
+          return;
+        }
+        const item = req.result.data;
+        if (item instanceof Blob) {
+          resolve(item);
+        } else if (typeof item === 'string' && item.startsWith('data:')) {
+          // Hỗ trợ ngược cho dữ liệu cũ lưu bằng DataURL base64
+          resolve(dataUrlToBlob(item));
+        } else {
+          resolve(null);
+        }
+      };
+      req.onerror = () => resolve(null);
     });
+  }
+
+  // Helper chuyển DataURL cũ sang Blob
+  function dataUrlToBlob(dataUrl) {
+    try {
+      const [header, b64] = dataUrl.split(',');
+      const mime = (header.match(/:(.*?);/) || [])[1] || 'application/octet-stream';
+      const raw  = atob(b64);
+      const arr  = new Uint8Array(raw.length);
+      for (let i = 0; i < raw.length; i++) arr[i] = raw.charCodeAt(i);
+      return new Blob([arr], { type: mime });
+    } catch { return null; }
   }
 
   // ── Xóa file ──────────────────────────────────────────────
@@ -86,6 +110,7 @@ const FileStore = (() => {
         saveMeta(meta);
         resolve();
       };
+      tx.onerror = () => resolve();
     });
   }
 
@@ -98,15 +123,11 @@ const FileStore = (() => {
 
   // ── Format file size ──────────────────────────────────────
   function formatSize(bytes) {
+    if (!bytes) return '0 B';
     if (bytes < 1024)       return bytes + ' B';
     if (bytes < 1024*1024)  return (bytes / 1024).toFixed(1) + ' KB';
     return (bytes / (1024*1024)).toFixed(1) + ' MB';
   }
 
-  // ── Tạo fileId từ bài học + loại ─────────────────────────
-  function makeId(lessonId, type) {
-    return `lesson_${lessonId}_${type}`;
-  }
-
-  return { saveFile, getFile, deleteFile, getFileMeta, getMeta, makeId, formatSize };
+  return { saveFile, getFile, deleteFile, getFileMeta, getMeta, formatSize };
 })();

@@ -759,36 +759,14 @@ function processVideoFile(file) {
       <div style="flex:1;">
         <div style="font-size:13px;font-weight:600;color:var(--gray-800);">${file.name}</div>
         <div style="font-size:12px;color:var(--gray-500);">${FileStore.formatSize(file.size)}</div>
-        <div style="margin-top:8px;">
-          <div style="height:6px;background:var(--gray-200);border-radius:99px;overflow:hidden;">
-            <div id="videoUploadBar" style="height:100%;background:var(--primary);border-radius:99px;width:0%;transition:width .3s;"></div>
-          </div>
-          <div id="videoUploadPct" style="font-size:11px;color:var(--gray-500);margin-top:4px;">Đang chuẩn bị...</div>
-        </div>
+        <div style="font-size:11px;color:var(--success);margin-top:4px;font-weight:600;">✅ File đã sẵn sàng. Nhấn "Lưu bài học" để hoàn tất.</div>
       </div>
     </div>`;
 
-  // Lưu file vào IndexedDB
-  const tempId = 'temp_video_' + Date.now();
-  window._pendingVideoFileId = tempId;
-  window._pendingVideoFile   = file;
+  window._pendingVideoFile = file;
 
-  FileStore.saveFile(tempId, file, pct => {
-    const bar = document.getElementById('videoUploadBar');
-    const pctEl = document.getElementById('videoUploadPct');
-    if (bar) bar.style.width = pct + '%';
-    if (pctEl) pctEl.textContent = pct < 100 ? `Đang lưu... ${pct}%` : '✅ Đã lưu thành công!';
-  }).then(() => {
-    const pctEl = document.getElementById('videoUploadPct');
-    if (pctEl) pctEl.innerHTML = '✅ <strong>Đã lưu thành công!</strong> Nhấn "Lưu bài học" để hoàn tất.';
-    const bar = document.getElementById('videoUploadBar');
-    if (bar) { bar.style.width = '100%'; bar.style.background = 'var(--success)'; }
-    // Tự điền tên tài liệu
-    const dur = document.getElementById('lmDuration');
-    if (dur && !dur.value) dur.value = '30 phút';
-  }).catch(err => {
-    showToast('Lỗi lưu file: ' + err.message, 'error');
-  });
+  const dur = document.getElementById('lmDuration');
+  if (dur && !dur.value) dur.value = '30 phút';
 }
 
 // ── Upload handlers – Document ────────────────────────────────
@@ -814,36 +792,14 @@ function processDocFile(file) {
       <div style="flex:1;">
         <div style="font-size:13px;font-weight:600;color:var(--gray-800);">${file.name}</div>
         <div style="font-size:12px;color:var(--gray-500);">${FileStore.formatSize(file.size)}</div>
-        <div style="margin-top:8px;">
-          <div style="height:6px;background:var(--gray-200);border-radius:99px;overflow:hidden;">
-            <div id="docUploadBar" style="height:100%;background:var(--primary);border-radius:99px;width:0%;transition:width .3s;"></div>
-          </div>
-          <div id="docUploadPct" style="font-size:11px;color:var(--gray-500);margin-top:4px;">Đang chuẩn bị...</div>
-        </div>
+        <div style="font-size:11px;color:var(--success);margin-top:4px;font-weight:600;">✅ File đã sẵn sàng. Nhấn "Lưu bài học" để hoàn tất.</div>
       </div>
     </div>`;
 
-  const tempId = 'temp_doc_' + Date.now();
-  window._pendingDocFileId = tempId;
-  window._pendingDocFile   = file;
+  window._pendingDocFile = file;
 
-  // Tự điền tên tài liệu nếu chưa có
   const docNameEl = document.getElementById('lmDocName');
   if (docNameEl && !docNameEl.value) docNameEl.value = file.name;
-
-  FileStore.saveFile(tempId, file, pct => {
-    const bar = document.getElementById('docUploadBar');
-    const pctEl = document.getElementById('docUploadPct');
-    if (bar) bar.style.width = pct + '%';
-    if (pctEl) pctEl.textContent = pct < 100 ? `Đang lưu... ${pct}%` : '✅ Đã lưu!';
-  }).then(() => {
-    const pctEl = document.getElementById('docUploadPct');
-    if (pctEl) pctEl.innerHTML = '✅ <strong>Đã lưu thành công!</strong> Nhấn "Lưu bài học" để hoàn tất.';
-    const bar = document.getElementById('docUploadBar');
-    if (bar) { bar.style.width = '100%'; bar.style.background = 'var(--success)'; }
-  }).catch(err => {
-    showToast('Lỗi lưu tài liệu: ' + err.message, 'error');
-  });
 }
 
 
@@ -902,7 +858,13 @@ window.openLessonModal = function(id) {
   const titleEl = document.getElementById('lessonModalTitle');
   const iqList  = document.getElementById('lmIQList');
   window._iqCounter = 0;
+  window._pendingVideoFile = null;
+  window._pendingDocFile   = null;
   if (iqList) iqList.innerHTML = '';
+
+  // Reset upload UI
+  ['videoUploadInfo','docUploadInfo'].forEach(elId => { const el = document.getElementById(elId); if(el) { el.style.display='none'; el.innerHTML=''; } });
+  ['videoFileInput','docFileInput'].forEach(elId => { const el = document.getElementById(elId); if(el) el.value=''; });
 
   if (id) {
     const l = LessonDB.getById(id);
@@ -914,11 +876,59 @@ window.openLessonModal = function(id) {
     document.getElementById('lmTitle').value    = l.title;
     document.getElementById('lmDesc').value     = l.description;
     document.getElementById('lmDuration').value = l.duration;
-    document.getElementById('lmVideoUrl').value = l.videoUrl || '';
     document.getElementById('lmDocName').value  = l.docName  || '';
     document.getElementById('lmType').value     = l.type     || 'video';
-    const docUrlEl = document.getElementById('lmDocUrl');
-    if (docUrlEl) docUrlEl.value = l.docUrl || '';
+
+    // Video: kiểm tra local file hay URL
+    const videoUrl  = l.videoUrl || '';
+    const videoFile = l.videoFileId ? FileStore.getFileMeta(l.videoFileId) : null;
+    if (l.videoFileId && videoFile) {
+      switchVideoTab('upload');
+      const info = document.getElementById('videoUploadInfo');
+      if (info) {
+        info.style.display = 'block';
+        info.innerHTML = `
+          <div style="display:flex;align-items:center;gap:10px;padding:12px 14px;background:rgba(40,167,69,.06);border-radius:var(--radius);border:1px solid rgba(40,167,69,.2);">
+            <span style="font-size:24px;">✅</span>
+            <div style="flex:1;">
+              <div style="font-size:13px;font-weight:600;color:var(--gray-800);">${videoFile.name}</div>
+              <div style="font-size:12px;color:var(--success);">Đã lưu trong CSDL · ${FileStore.formatSize(videoFile.size)}</div>
+              <button type="button" onclick="clearVideoUpload('${l.id}')" style="margin-top:6px;font-size:12px;color:#e11d48;background:none;border:none;cursor:pointer;padding:0;">🗑️ Xóa video này</button>
+            </div>
+          </div>`;
+        window._existingVideoFileId = l.videoFileId;
+      }
+    } else {
+      switchVideoTab('url');
+      const urlEl = document.getElementById('lmVideoUrl');
+      if (urlEl) urlEl.value = videoUrl;
+    }
+
+    // Document
+    const docUrl  = l.docUrl || '';
+    const docFile = l.docFileId ? FileStore.getFileMeta(l.docFileId) : null;
+    if (l.docFileId && docFile) {
+      switchDocTab('upload');
+      const info = document.getElementById('docUploadInfo');
+      if (info) {
+        info.style.display = 'block';
+        info.innerHTML = `
+          <div style="display:flex;align-items:center;gap:10px;padding:12px 14px;background:rgba(40,167,69,.06);border-radius:var(--radius);border:1px solid rgba(40,167,69,.2);">
+            <span style="font-size:24px;">✅</span>
+            <div style="flex:1;">
+              <div style="font-size:13px;font-weight:600;color:var(--gray-800);">${docFile.name}</div>
+              <div style="font-size:12px;color:var(--success);">Đã lưu trong CSDL · ${FileStore.formatSize(docFile.size)}</div>
+              <button type="button" onclick="clearDocUpload('${l.id}')" style="margin-top:6px;font-size:12px;color:#e11d48;background:none;border:none;cursor:pointer;padding:0;">🗑️ Xóa tài liệu này</button>
+            </div>
+          </div>`;
+        window._existingDocFileId = l.docFileId;
+      }
+    } else {
+      switchDocTab('url');
+      const urlEl = document.getElementById('lmDocUrl');
+      if (urlEl) urlEl.value = docUrl;
+    }
+
     // Load interactive questions
     (l.interactiveQs || []).forEach(q => window.addInteractiveQ(q));
   } else {
@@ -927,15 +937,19 @@ window.openLessonModal = function(id) {
     if (window._currentLessonCourseId) document.getElementById('lmCourse').value = window._currentLessonCourseId;
     const lessons = window._currentLessonCourseId ? LessonDB.getByCourse(window._currentLessonCourseId) : [];
     document.getElementById('lmOrder').value = lessons.length + 1;
-    ['lmTitle','lmDesc','lmDuration','lmVideoUrl','lmDocName'].forEach(i => document.getElementById(i).value = '');
-    const docUrlEl = document.getElementById('lmDocUrl');
-    if (docUrlEl) docUrlEl.value = '';
+    ['lmTitle','lmDesc','lmDuration','lmDocName'].forEach(i => document.getElementById(i).value = '');
+    const urlEl = document.getElementById('lmVideoUrl'); if(urlEl) urlEl.value = '';
+    const docUrlEl = document.getElementById('lmDocUrl'); if(docUrlEl) docUrlEl.value = '';
     document.getElementById('lmType').value = 'video';
+    switchVideoTab('upload');
+    switchDocTab('upload');
+    window._existingVideoFileId = null;
+    window._existingDocFileId   = null;
   }
   openModal('lessonModal');
 };
 
-window.saveLesson = function() {
+window.saveLesson = async function() {
   const id    = document.getElementById('lmId').value;
   const title = document.getElementById('lmTitle').value.trim();
   if (!title) { showToast('Vui lòng nhập tên bài học', 'error'); return; }
@@ -943,101 +957,93 @@ window.saveLesson = function() {
   const videoSource  = (document.getElementById('lmVideoSource') || {}).value || 'url';
   const docSource    = (document.getElementById('lmDocSource')   || {}).value || 'url';
 
-  // Xác định ID vĩnh viễn cho lesson
-  const lessonId = id ? parseInt(id) : Date.now();
+  const modalFooter = document.querySelector('#lessonModal .modal-footer');
+  const saveBtn     = modalFooter ? modalFooter.querySelector('.btn-primary') : null;
+  if (saveBtn) { saveBtn.disabled = true; saveBtn.textContent = '⏳ Đang lưu...'; }
 
-  // Video: commit pending upload
-  let videoUrl     = '';
-  let videoFileId  = window._existingVideoFileId || '';
-  if (videoSource === 'upload' && window._pendingVideoFileId) {
-    // Rename temp file ID sang permanent ID
-    const permVideoId = 'video_' + lessonId;
-    FileStore.getFile(window._pendingVideoFileId).then(data => {
-      if (data) FileStore.saveFile(permVideoId, new File([_dataUrlToBlob(data)], window._pendingVideoFile?.name || 'video', { type: window._pendingVideoFile?.type }));
-      FileStore.deleteFile(window._pendingVideoFileId);
-    });
-    videoFileId = permVideoId;
-    videoUrl    = 'local:' + permVideoId;
-  } else if (videoSource === 'upload' && videoFileId) {
-    videoUrl = 'local:' + videoFileId;
-  } else if (videoSource === 'url') {
-    const urlEl = document.getElementById('lmVideoUrl');
-    videoUrl    = urlEl ? urlEl.value.trim() : '';
-    videoFileId = '';
+  try {
+    const lessonId = id ? parseInt(id) : Date.now();
+
+    // Video: save pending upload directly
+    let videoUrl     = '';
+    let videoFileId  = window._existingVideoFileId || '';
+    if (videoSource === 'upload' && window._pendingVideoFile) {
+      const permVideoId = 'video_' + lessonId;
+      await FileStore.saveFile(permVideoId, window._pendingVideoFile);
+      videoFileId = permVideoId;
+      videoUrl    = 'local:' + permVideoId;
+    } else if (videoSource === 'upload' && videoFileId) {
+      videoUrl = 'local:' + videoFileId;
+    } else if (videoSource === 'url') {
+      const urlEl = document.getElementById('lmVideoUrl');
+      videoUrl    = urlEl ? urlEl.value.trim() : '';
+      videoFileId = '';
+    }
+
+    // Document: save pending upload directly
+    let docUrl    = '';
+    let docFileId = window._existingDocFileId || '';
+    if (docSource === 'upload' && window._pendingDocFile) {
+      const permDocId = 'doc_' + lessonId;
+      await FileStore.saveFile(permDocId, window._pendingDocFile);
+      docFileId = permDocId;
+      docUrl    = 'local:' + permDocId;
+    } else if (docSource === 'upload' && docFileId) {
+      docUrl = 'local:' + docFileId;
+    } else if (docSource === 'url') {
+      const urlEl = document.getElementById('lmDocUrl');
+      docUrl      = urlEl ? urlEl.value.trim() : '';
+      docFileId   = '';
+    }
+
+    const data = {
+      courseId,
+      title,
+      description:   document.getElementById('lmDesc').value.trim(),
+      duration:      document.getElementById('lmDuration').value.trim() || '30 phút',
+      order:         parseInt(document.getElementById('lmOrder').value) || 1,
+      videoUrl,
+      videoFileId,
+      docName:       document.getElementById('lmDocName').value.trim(),
+      docUrl,
+      docFileId,
+      type:          document.getElementById('lmType').value,
+      interactiveQs: collectInteractiveQs(),
+    };
+
+    if (id) {
+      LessonDB.update(id, data);
+      showToast('Cập nhật bài học thành công!', 'success');
+    } else {
+      const lessonData = { ...data, id: lessonId };
+      const allLessons = LessonDB.getAll();
+      allLessons.push(lessonData);
+      const { setDB, DB_KEYS } = _getDBHelpers();
+      setDB(DB_KEYS.lessons, allLessons);
+      const course = CourseDB.getById(courseId);
+      if (course) CourseDB.update(courseId, { totalLessons: LessonDB.getByCourse(courseId).length });
+      showToast('Thêm bài học thành công!', 'success');
+    }
+
+    // Reset pending
+    window._pendingVideoFile    = null;
+    window._pendingDocFile      = null;
+    window._existingVideoFileId = null;
+    window._existingDocFileId   = null;
+
+    closeModal('lessonModal');
+    filterLessonsByCourse(courseId);
+  } catch (err) {
+    showToast('Lỗi lưu bài học: ' + err.message, 'error');
+  } finally {
+    if (saveBtn) { saveBtn.disabled = false; saveBtn.textContent = '💾 Lưu bài học'; }
   }
-
-  // Document: commit pending upload
-  let docUrl    = '';
-  let docFileId = window._existingDocFileId || '';
-  if (docSource === 'upload' && window._pendingDocFileId) {
-    const permDocId = 'doc_' + lessonId;
-    FileStore.getFile(window._pendingDocFileId).then(data => {
-      if (data) FileStore.saveFile(permDocId, new File([_dataUrlToBlob(data)], window._pendingDocFile?.name || 'doc', { type: window._pendingDocFile?.type }));
-      FileStore.deleteFile(window._pendingDocFileId);
-    });
-    docFileId = permDocId;
-    docUrl    = 'local:' + permDocId;
-  } else if (docSource === 'upload' && docFileId) {
-    docUrl = 'local:' + docFileId;
-  } else if (docSource === 'url') {
-    const urlEl = document.getElementById('lmDocUrl');
-    docUrl      = urlEl ? urlEl.value.trim() : '';
-    docFileId   = '';
-  }
-
-  const data = {
-    courseId,
-    title,
-    description:   document.getElementById('lmDesc').value.trim(),
-    duration:      document.getElementById('lmDuration').value.trim() || '30 phút',
-    order:         parseInt(document.getElementById('lmOrder').value) || 1,
-    videoUrl,
-    videoFileId,
-    docName:       document.getElementById('lmDocName').value.trim(),
-    docUrl,
-    docFileId,
-    type:          document.getElementById('lmType').value,
-    interactiveQs: collectInteractiveQs(),
-  };
-
-  if (id) {
-    LessonDB.update(id, data);
-    showToast('Cập nhật bài học thành công!', 'success');
-  } else {
-    // Đảm bảo ID khớp với file ID đã commit
-    const lessonData = { ...data, id: lessonId };
-    const allLessons = LessonDB.getAll();
-    allLessons.push(lessonData);
-    const { setDB, DB_KEYS } = _getDBHelpers();
-    setDB(DB_KEYS.lessons, allLessons);
-    const course = CourseDB.getById(courseId);
-    if (course) CourseDB.update(courseId, { totalLessons: LessonDB.getByCourse(courseId).length });
-    showToast('Thêm bài học thành công!', 'success');
-  }
-
-  // Reset pending
-  window._pendingVideoFileId = null;
-  window._pendingDocFileId   = null;
-  window._existingVideoFileId = null;
-  window._existingDocFileId   = null;
-
-  closeModal('lessonModal');
-  filterLessonsByCourse(courseId);
 };
 
-// Helpers
-function _dataUrlToBlob(dataUrl) {
-  const [header, data] = dataUrl.split(',');
-  const mime = header.match(/:(.*?);/)[1];
-  const binary = atob(data);
-  const arr = new Uint8Array(binary.length);
-  for (let i = 0; i < binary.length; i++) arr[i] = binary.charCodeAt(i);
-  return new Blob([arr], { type: mime });
-}
 function _getDBHelpers() {
-  // Expose internal DB helpers – they are defined in data.js global scope
   return { setDB: window._setDB || ((k,v) => localStorage.setItem(k, JSON.stringify(v))), DB_KEYS: window.DB_KEYS };
 }
+
 
 
 window.deleteLesson = function(id) {

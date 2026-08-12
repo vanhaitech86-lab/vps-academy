@@ -493,27 +493,18 @@ document.addEventListener('DOMContentLoaded', () => {
       if (frame) {
         const docUrl = lesson.docUrl || '';
         if (docUrl.startsWith('local:')) {
-          // Tài liệu đã upload từ máy tính – đọc từ IndexedDB
+          // Tài liệu đã upload từ máy tính – đọc Blob từ IndexedDB
           const fileId = docUrl.replace('local:', '');
-          FileStore.getFile(fileId).then(dataUrl => {
-            if (dataUrl) {
-              // Hiển thị thông qua blob URL trong iframe
-              const blob    = _localDataUrlToBlob(dataUrl);
+          FileStore.getFile(fileId).then(blob => {
+            if (blob) {
               const blobUrl = URL.createObjectURL(blob);
-              const mime    = blob.type;
-              if (mime === 'application/pdf') {
-                frame.src = blobUrl;
-              } else {
-                // Office docs – dùng Google Docs viewer với blob URL
-                // (một số trình duyệt không mở được Office blob qua iframe)
-                frame.src = blobUrl;
-              }
+              frame.src = blobUrl;
             } else {
               frame.parentElement.innerHTML = `
                 <div style="display:flex;align-items:center;justify-content:center;height:100%;flex-direction:column;gap:10px;color:var(--gray-500);">
                   <span style="font-size:36px;">⚠️</span>
-                  <span style="font-size:14px;font-weight:600;">Không tìm thấy file</span>
-                  <span style="font-size:12px;color:var(--gray-400);">File có thể đã bị xóa khỏi trình duyệt</span>
+                  <span style="font-size:14px;font-weight:600;">Không tìm thấy tài liệu</span>
+                  <span style="font-size:12px;color:var(--gray-400);">Tài liệu này chưa có sẵn ở trình duyệt hiện tại</span>
                 </div>`;
             }
           }).catch(() => {
@@ -539,18 +530,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       }
     }
-  }
-
-  // Helper: chuyển dataUrl → Blob (dùng cho local files)
-  function _localDataUrlToBlob(dataUrl) {
-    try {
-      const [header, b64] = dataUrl.split(',');
-      const mime = (header.match(/:(.*?);/) || [])[1] || 'application/octet-stream';
-      const raw  = atob(b64);
-      const arr  = new Uint8Array(raw.length);
-      for (let i = 0; i < raw.length; i++) arr[i] = raw.charCodeAt(i);
-      return new Blob([arr], { type: mime });
-    } catch { return new Blob([]); }
   }
 
 

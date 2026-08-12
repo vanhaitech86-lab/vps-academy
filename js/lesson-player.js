@@ -35,32 +35,40 @@
       interactiveQs  = questions || [];
 
       if (!videoUrl) {
-        _showNoVideo();
+        _showNoVideo('Video chưa được thiết lập cho bài học này');
         return;
       }
 
-      // Xử lý local file (đã upload từ máy tính)
+      // 1. Xử lý local file (đã upload từ máy tính - lưu dạng Blob trong IndexedDB)
       if (videoUrl.startsWith('local:')) {
         const fileId = videoUrl.replace('local:', '');
-        FileStore.getFile(fileId).then(dataUrl => {
-          if (dataUrl) {
-            // Tạo blob URL từ base64 data URL
-            const blob    = _dataUrlToBlob(dataUrl);
+        FileStore.getFile(fileId).then(blob => {
+          if (blob) {
             const blobUrl = URL.createObjectURL(blob);
             _loadHTML5Player(blobUrl, true);
           } else {
-            _showNoVideo();
+            _showNoVideo('Video tải lên hiện chưa có sẵn ở trình duyệt này. Admin cần dùng link Google Drive/YouTube để phát trên mọi thiết bị.');
           }
-        }).catch(() => _showNoVideo());
+        }).catch(() => _showNoVideo('Không thể đọc video từ bộ nhớ trình duyệt'));
         return;
       }
 
+      // 2. Xử lý Google Drive video URL
+      const gdriveId = _extractGDriveId(videoUrl);
+      if (gdriveId) {
+        _loadGDrivePlayer(gdriveId);
+        return;
+      }
+
+      // 3. Xử lý YouTube URL
       const videoId = _extractYTId(videoUrl);
       if (videoId) {
         _loadYTPlayer(videoId);
-      } else {
-        _loadHTML5Player(videoUrl, false);
+        return;
       }
+
+      // 4. Video MP4/WebM URL thông thường
+      _loadHTML5Player(videoUrl, false);
     },
 
     // Gọi khi bấm nút "Đánh dấu hoàn thành" từ bên ngoài
@@ -335,13 +343,22 @@
     return m + ':' + String(sec).padStart(2, '0');
   }
 
-  function _showNoVideo() {
+  function _loadGDrivePlayer(gdriveId) {
+    const wrap = document.getElementById('videoWrap');
+    if (!wrap) return;
+    const embedUrl = `https://drive.google.com/file/d/${gdriveId}/preview`;
+    wrap.innerHTML = `<iframe src="${embedUrl}" style="width:100%;height:100%;border:none;background:#000;" allow="autoplay" allowfullscreen></iframe>`;
+    const btn = document.getElementById('completeLessonBtn');
+    if (btn) { btn.disabled = false; btn.classList.remove('locked'); }
+  }
+
+  function _showNoVideo(msg) {
     const wrap = document.getElementById('videoWrap');
     if (wrap) wrap.innerHTML = `
-      <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;background:#0d1f3c;color:rgba(255,255,255,.7);gap:12px;">
+      <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;background:#0d1f3c;color:rgba(255,255,255,.8);gap:12px;padding:24px;text-align:center;">
         <span style="font-size:48px;">📹</span>
-        <span>Video đang được cập nhật</span>
-        <span style="font-size:13px;color:rgba(255,255,255,.4);">Tài liệu học bên dưới</span>
+        <span style="font-size:15px;font-weight:600;max-width:480px;line-height:1.4;">${msg || 'Video đang được cập nhật'}</span>
+        <span style="font-size:12px;color:rgba(255,255,255,.5);">Vui lòng kiểm tra lại cấu hình bài học hoặc xem tài liệu bên dưới</span>
       </div>`;
   }
 
@@ -380,13 +397,21 @@
     }
   }
 
+  function _extractGDriveId(url) {
+    if (!url) return null;
+    const m = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
+    return m ? m[1] : null;
+  }
+
   function _extractYTId(url) {
     if (!url) return null;
+    url = url.trim();
+    if (/^[a-zA-Z0-9_-]{11}$/.test(url)) return url;
     const patterns = [
-      /youtube\.com\/embed\/([a-zA-Z0-9_-]+)/,
-      /[?&]v=([a-zA-Z0-9_-]+)/,
-      /youtu\.be\/([a-zA-Z0-9_-]+)/,
-      /youtube\.com\/watch\?v=([a-zA-Z0-9_-]+)/,
+      /youtube\.com\/embed\/([a-zA-Z0-9_-]{11})/,
+      /youtube\.com\/watch\?.*v=([a-zA-Z0-9_-]{11})/,
+      /youtu\.be\/([a-zA-Z0-9_-]{11})/,
+      /youtube\.com\/shorts\/([a-zA-Z0-9_-]{11})/,
     ];
     for (const p of patterns) {
       const m = url.match(p);
@@ -394,17 +419,4 @@
     }
     return null;
   }
-
-  // ─── DataURL → Blob helper ───────────────────────────────────
-  function _dataUrlToBlob(dataUrl) {
-    try {
-      const [header, b64] = dataUrl.split(',');
-      const mime = header.match(/:(.*?);/)[1];
-      const raw  = atob(b64);
-      const arr  = new Uint8Array(raw.length);
-      for (let i = 0; i < raw.length; i++) arr[i] = raw.charCodeAt(i);
-      return new Blob([arr], { type: mime });
-    } catch { return new Blob([]); }
-  }
-
 })();
