@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Tài Liệu Hướng Dẫn Vận Hành – VPS Academy</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap');
+
+    @page {
+      size: A4;
+      margin: 16mm 14mm 16mm 14mm;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Be Vietnam Pro', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      font-size: 13px;
+      line-height: 1.6;
+      color: #1e293b;
+      background: #ffffff;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+
+    /* Cover / Header */
+    .header-banner {
+      background: linear-gradient(135deg, #0d1f3c 0%, #1a3a6b 60%, #2563eb 100%);
+      color: #ffffff;
+      padding: 28px 24px;
+      border-radius: 12px;
+      margin-bottom: 24px;
+      position: relative;
+    }
+
+    .header-banner h1 {
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      margin-bottom: 6px;
+      color: #ffffff;
+    }
+
+    .header-banner .subtitle {
+      font-size: 13px;
+      color: #93c5fd;
+      font-weight: 500;
+      margin-bottom: 14px;
+    }
+
+    .meta-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      background: rgba(255, 255, 255, 0.1);
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-size: 11px;
+    }
+
+    .meta-item strong {
+      display: block;
+      color: #fbbf24;
+      font-size: 10px;
+      text-transform: uppercase;
+      margin-bottom: 2px;
+    }
+
+    /* Section Styling */
+    .section {
+      margin-bottom: 22px;
+      page-break-inside: avoid;
+    }
+
+    .section-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: #1a3a6b;
+      border-bottom: 2px solid #e2e8f0;
+      padding-bottom: 6px;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .section-title .badge-num {
+      background: #1a3a6b;
+      color: white;
+      font-size: 11px;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+    }
+
+    /* Cards & Boxes */
+    .card {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 12px 16px;
+      margin-bottom: 12px;
+    }
+
+    .card.highlight {
+      background: #eff6ff;
+      border-color: #bfdbfe;
+    }
+
+    .card.warning {
+      background: #fffbeb;
+      border-color: #fde68a;
+    }
+
+    .card.danger {
+      background: #fef2f2;
+      border-color: #fecaca;
+    }
+
+    /* Steps */
+    .step-list {
+      list-style: none;
+      counter-reset: step-counter;
+    }
+
+    .step-item {
+      position: relative;
+      padding-left: 32px;
+      margin-bottom: 14px;
+      page-break-inside: avoid;
+    }
+
+    .step-item::before {
+      counter-increment: step-counter;
+      content: counter(step-counter);
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 22px;
+      height: 22px;
+      background: #2563eb;
+      color: white;
+      border-radius: 50%;
+      text-align: center;
+      line-height: 22px;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .step-header {
+      font-weight: 700;
+      color: #0f172a;
+      font-size: 13.5px;
+      margin-bottom: 4px;
+    }
+
+    .step-content {
+      color: #334155;
+      font-size: 12.5px;
+    }
+
+    /* Tables */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 10px 0;
+      font-size: 12px;
+    }
+
+    table th, table td {
+      border: 1px solid #cbd5e1;
+      padding: 8px 10px;
+      text-align: left;
+    }
+
+    table th {
+      background: #1a3a6b;
+      color: #ffffff;
+      font-weight: 600;
+    }
+
+    table tr:nth-child(even) td {
+      background: #f8fafc;
+    }
+
+    .tag {
+      display: inline-block;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 10.5px;
+      font-weight: 600;
+    }
+
+    .tag-admin { background: #fee2e2; color: #991b1b; }
+    .tag-emp { background: #dbeafe; color: #1e40af; }
+    .tag-cust { background: #fef3c7; color: #92400e; }
+    .tag-success { background: #dcfce7; color: #166534; }
+
+    /* Code & Callouts */
+    code {
+      background: #e2e8f0;
+      padding: 2px 5px;
+      border-radius: 4px;
+      font-family: Consolas, 'Courier New', monospace;
+      font-size: 11.5px;
+      color: #0f172a;
+    }
+
+    .workflow-box {
+      display: flex;
+      justify-content: space-between;
+      gap: 6px;
+      margin: 12px 0;
+    }
+
+    .workflow-node {
+      flex: 1;
+      background: #f1f5f9;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      padding: 8px 10px;
+      text-align: center;
+      font-size: 11.5px;
+      font-weight: 600;
+    }
+
+    .workflow-node.active {
+      background: #1a3a6b;
+      color: white;
+      border-color: #1a3a6b;
+    }
+
+    .footer-note {
+      text-align: center;
+      font-size: 11px;
+      color: #64748b;
+      border-top: 1px solid #e2e8f0;
+      padding-top: 10px;
+      margin-top: 20px;
+    }
+
+    .page-break {
+      page-break-before: always;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <div class="header-banner">
+    <h1>📚 TÀI LIỆU HƯỚNG DẪN VẬN HÀNH HỆ THỐNG</h1>
+    <div class="subtitle">NỀN TẢNG ĐÀO TẠO NỘI BỘ DOANH NGHIỆP – VPS ACADEMY (v2.3)</div>
+    <div class="meta-grid">
+      <div class="meta-item">
+        <strong>Bản quyền</strong>
+        Haitech AI – VPS Group
+      </div>
+      <div class="meta-item">
+        <strong>Website</strong>
+        vpsgroup.vn / vps-academy
+      </div>
+      <div class="meta-item">
+        <strong>Hotline</strong>
+        0988 739 896
+      </div>
+      <div class="meta-item">
+        <strong>Email</strong>
+        contact@vpsgroup.vn
+      </div>
+    </div>
+  </div>
+
+  <!-- PHẦN 1: THÔNG TIN TÀI KHOẢN -->
+  <div class="section">
+    <div class="section-title">
+      <span class="badge-num">1</span>
+      THÔNG TIN TÀI KHOẢN QUẢN TRỊ & PHÂN QUYỀN TRUY CẬP
+    </div>
+
+    <div class="card highlight">
+      <div style="font-weight:700; font-size:13.5px; color:#1e40af; margin-bottom:6px;">🔐 Tài Khoản Quản Trị Cao Cấp (Super Admin):</div>
+      <table>
+        <tr>
+          <th style="width:25%;">Hạng mục</th>
+          <th style="width:40%;">Thông tin đăng nhập</th>
+          <th>Phạm vi quyền hạn</th>
+        </tr>
+        <tr>
+          <td><strong>Email Admin</strong></td>
+          <td><code>vanhaitech.86@gmail.com</code></td>
+          <td rowspan="2">Toàn quyền quản trị danh mục, khóa học, bài học, người dùng, bài kiểm tra, cấu hình website và sao lưu.</td>
+        </tr>
+        <tr>
+          <td><strong>Mật khẩu</strong></td>
+          <td><code>Admin6789a@</code></td>
+        </tr>
+      </table>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Mã vai trò (Role)</th>
+          <th>Tên hiển thị</th>
+          <th>Khóa học được phép tiếp cận</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>admin</code></td>
+          <td><span class="tag tag-admin">Quản trị viên</span></td>
+          <td>Toàn quyền truy cập, chỉnh sửa toàn bộ khóa học và bảng điều khiển.</td>
+        </tr>
+        <tr>
+          <td><code>employee_new</code></td>
+          <td><span class="tag tag-emp">Nhân viên mới</span></td>
+          <td>Khóa học hội nhập, Văn hóa doanh nghiệp, Quy trình nội bộ công ty.</td>
+        </tr>
+        <tr>
+          <td><code>employee_old</code></td>
+          <td><span class="tag tag-emp">Nhân viên chính thức</span></td>
+          <td>Toàn bộ khóa học kỹ thuật, giải pháp in ấn, AI doanh nghiệp, kỹ năng bán hàng.</td>
+        </tr>
+        <tr>
+          <td><code>customer</code></td>
+          <td><span class="tag tag-cust">Khách hàng / Đối tác</span></td>
+          <td>Khóa học hướng dẫn sử dụng thiết bị, bảo dưỡng máy in & photocopy cơ bản.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- PHẦN 2: LUỒNG QUẢN TRỊ VIÊN -->
+  <div class="section">
+    <div class="section-title">
+      <span class="badge-num">2</span>
+      QUY TRÌNH 6 BƯỚC VẬN HÀNH DÀNH CHO QUẢN TRỊ VIÊN (ADMIN)
+    </div>
+
+    <div class="workflow-box">
+      <div class="workflow-node active">1. Đăng nhập Admin</div>
+      <div class="workflow-node">2. Tạo Khóa học</div>
+      <div class="workflow-node">3. Upload Bài học</div>
+      <div class="workflow-node">4. Cài Quiz</div>
+      <div class="workflow-node">5. Cấp tài khoản</div>
+      <div class="workflow-node">6. Theo dõi tiến độ</div>
+    </div>
+
+    <ul class="step-list">
+      <li class="step-item">
+        <div class="step-header">Bước 1: Đăng nhập vào trang Quản trị</div>
+        <div class="step-content">
+          Truy cập <code>https://vps-academy.vercel.app/admin.html</code>. Nhập email <code>vanhaitech.86@gmail.com</code> và mật khẩu <code>Admin6789a@</code> để truy cập Dashboard điều hành.
+        </div>
+      </li>
+
+      <li class="step-item">
+        <div class="step-header">Bước 2: Thiết lập Danh mục & Tạo Khóa học</div>
+        <div class="step-content">
+          - Vào menu <strong>Danh mục</strong> để quản lý 8 danh mục cốt lõi (Văn hóa doanh nghiệp, AI, Máy in/Photocopy, v.v.).<br>
+          - Vào menu <strong>Khóa học</strong> → Bấm <strong>"+ Thêm khóa học"</strong>: Nhập tiêu đề, thời lượng, cấp độ và tích chọn quyền truy cập phù hợp.
+        </div>
+      </li>
+
+      <li class="step-item">
+        <div class="step-header">Bước 3: Thêm Bài học, Video & Câu hỏi tương tác 2 chiều (Quan trọng)</div>
+        <div class="step-content">
+          - Vào menu <strong>Bài học</strong> → Chọn khóa học → Bấm <strong>"+ Thêm bài học"</strong>.<br>
+          - <strong>Nguồn Video:</strong> Dán link YouTube, link Google Drive (chia sẻ công khai) hoặc bấm <strong>"📁 Tải lên từ máy"</strong> để lưu trực tiếp.<br>
+          - <strong>Nguồn Tài liệu:</strong> Dán link Google Drive PDF hoặc chọn file tài liệu máy tính (chế độ bảo mật chống download).<br>
+          - <strong>Câu hỏi tương tác:</strong> Bấm <strong>"+ Thêm câu hỏi"</strong> → Điền số giây xuất hiện (VD: 60s), nội dung câu hỏi trắc nghiệm ABCD và đáp án đúng.
+        </div>
+      </li>
+
+      <li class="step-item">
+        <div class="step-header">Bước 4: Tạo Bài kiểm tra đánh giá (Quiz)</div>
+        <div class="step-content">
+          Vào menu <strong>Bài kiểm tra</strong> → Chọn khóa học → Thiết lập thời gian làm bài (VD: 15 phút), điểm đạt tối thiểu (VD: 80%) và ngân hàng câu hỏi trắc nghiệm.
+        </div>
+      </li>
+
+      <li class="step-item">
+        <div class="step-header">Bước 5: Cấp tài khoản nhân viên & Khách hàng</div>
+        <div class="step-content">
+          Vào menu <strong>Người dùng</strong> → Bấm <strong>"+ Thêm người dùng"</strong> → Nhập họ tên, email, mật khẩu khởi tạo, phòng ban và gán đúng vai trò.
+        </div>
+      </li>
+
+      <li class="step-item">
+        <div class="step-header">Bước 6: Giám sát tiến độ học tập & Kết quả thi</div>
+        <div class="step-content">
+          Theo dõi tỷ lệ hoàn thành (%) và điểm số bài kiểm tra của từng nhân viên trên trang Admin để phục vụ đánh giá nhân sự.
+        </div>
+      </li>
+    </ul>
+  </div>
+
+  <div class="page-break"></div>
+
+  <!-- PHẦN 3: LUỒNG HỌC VIÊN -->
+  <div class="section">
+    <div class="section-title">
+      <span class="badge-num">3</span>
+      QUY TRÌNH HỌC TẬP DÀNH CHO HỌC VIÊN / NHÂN VIÊN
+    </div>
+
+    <div class="card highlight">
+      <div style="font-weight:700; color:#1e40af; margin-bottom:4px;">Các bước học tập chuẩn hóa:</div>
+      <ol style="padding-left:20px; font-size:12.5px;">
+        <li>Truy cập <code>https://vps-academy.vercel.app</code> → Đăng nhập bằng Email/Mật khẩu hoặc quét mã QR.</li>
+        <li>Chọn khóa học được phân quyền → Nhấn <strong>"Bắt đầu học"</strong>.</li>
+        <li>Xem video tuần tự, chú ý không tua nhanh → Trả lời câu hỏi tương tác khi xuất hiện.</li>
+        <li>Đọc tài liệu đính kèm trực tuyến trên hệ thống (không tải file về máy).</li>
+        <li>Khi xem đủ <strong>≥ 85% thời lượng</strong>, bấm <strong>"✅ Đánh dấu hoàn thành"</strong>.</li>
+        <li>Làm bài kiểm tra (Quiz) tổng kết khi học hết các bài.</li>
+      </ol>
+    </div>
+  </div>
+
+  <!-- PHẦN 4: CƠ CHẾ BẢO VỆ NỘI DUNG -->
+  <div class="section">
+    <div class="section-title">
+      <span class="badge-num">4</span>
+      CƠ CHẾ BẢO MẬT & CHỐNG GIAN LẬN HỌC TẬP (ANTI-SCRUBBING)
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th style="width:25%;">Tính năng bảo vệ</th>
+          <th style="width:35%;">Cơ chế hoạt động</th>
+          <th>Hiệu quả nghiệp vụ</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>🚫 Chống tua video (Anti-scrub)</strong></td>
+          <td>Phát hiện học viên kéo tua mốc thời gian vượt quá 3 giây.</td>
+          <td><span class="tag tag-admin">Cực nghiêm ngặt</span> Tự động reset video về 0:00 và bắt buộc học lại từ đầu.</td>
+        </tr>
+        <tr>
+          <td><strong>🎯 Tương tác 2 chiều</strong></td>
+          <td>Tự động dừng video tại timestamp chỉ định và bật hộp thoại trắc nghiệm.</td>
+          <td>Bắt buộc học viên phải hiểu bài mới được xem tiếp (Sai: lùi 15 giây).</td>
+        </tr>
+        <tr>
+          <td><strong>🔒 Khóa tải tài liệu</strong></td>
+          <td>Chặn chuột phải, chặn phím tắt <code>Ctrl+S</code>, <code>Ctrl+P</code>, <code>F12</code>, <code>Ctrl+U</code>.</td>
+          <td>Tài liệu độc quyền nội bộ chỉ được xem trên trình duyệt, không rò rỉ ra ngoài.</td>
+        </tr>
+        <tr>
+          <td><strong>⏱ Tiêu chuẩn hoàn thành</strong></td>
+          <td>Chỉ mở khóa nút "Đánh dấu hoàn thành" khi xem đạt <strong>≥ 85%</strong>.</td>
+          <td>Tránh tình trạng nhân viên chỉ click mở rồi tắt để lấy chứng nhận.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- PHẦN 5: HƯỚNG DẪN DEPLOY & BẢO TRÌ -->
+  <div class="section">
+    <div class="section-title">
+      <span class="badge-num">5</span>
+      QUY TRÌNH DEPLOY & CẬP NHẬT HỆ THỐNG (CI/CD TỰ ĐỘNG)
+    </div>
+
+    <div class="card">
+      <div style="font-weight:700; color:#0f172a; margin-bottom:6px;">⚡ Cập nhật Website 1-Click (Dành cho Kỹ thuật):</div>
+      <p style="font-size:12px; margin-bottom:8px;">Mỗi khi chỉnh sửa code hoặc thêm bài học, chỉ cần thực hiện 1 trong 2 cách sau để hệ thống tự động đưa lên Internet:</p>
+      <div style="background:#1e293b; color:#f8fafc; padding:10px 12px; border-radius:6px; font-family:Consolas,monospace; font-size:11.5px;">
+        # Cách 1: Chuột phải vào file deploy.ps1 -> Chọn "Run with PowerShell"<br>
+        # Cách 2: Mở PowerShell tại thư mục dự án và chạy:<br>
+        pwsh deploy.ps1 -Message "cap nhat noi dung khoa hoc moi"
+      </div>
+      <p style="font-size:11.5px; color:#475569; margin-top:6px;">
+        → Hệ thống tự động đẩy lên GitHub (<code>vanhaitech86-lab/vps-academy</code>) và kích hoạt GitHub Actions build sang Vercel trong 30 giây.
+      </p>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer-note">
+    <strong>HỆ THỐNG ĐÀO TẠO VPS ACADEMY</strong> · Bản quyền thuộc về Haitech AI – VPS Group © 2026<br>
+    Địa chỉ truy cập chính thức: <strong>https://vps-academy.vercel.app</strong> | Hotline hỗ trợ: <strong>0988 739 896</strong>
+  </div>
+
+</body>
+</html>
