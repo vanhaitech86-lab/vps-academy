@@ -1,0 +1,659 @@
+/* ============================================================
+   VPS Academy – 3D Spatial Modern Theme Stylesheet
+   Ultra-Modern 3D WebGL, Holographic Glassmorphism, 3D Tilt
+   ============================================================ */
+
+/* ─── 3D Tokens & Variables ───────────────────────────────── */
+:root {
+  --space-dark: #060b17;
+  --space-surface: #0c1427;
+  --space-card: rgba(15, 23, 42, 0.75);
+  --space-card-border: rgba(56, 189, 248, 0.18);
+  --space-card-hover-border: rgba(56, 189, 248, 0.5);
+  --glow-cyan: rgba(0, 242, 254, 0.4);
+  --glow-purple: rgba(168, 85, 247, 0.4);
+  --glow-gold: rgba(245, 158, 11, 0.4);
+  
+  --shadow-3d-sm: 0 4px 14px rgba(0, 0, 0, 0.35), 0 1px 3px rgba(0, 0, 0, 0.2);
+  --shadow-3d-md: 0 14px 34px -6px rgba(0, 0, 0, 0.5), 0 0 20px rgba(0, 242, 254, 0.12);
+  --shadow-3d-lg: 0 24px 50px -10px rgba(0, 0, 0, 0.65), 0 0 35px rgba(0, 242, 254, 0.2);
+  --shadow-3d-float: 0 20px 40px rgba(0, 0, 0, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.25);
+}
+
+/* ─── Global 3D Perspective Context ────────────────────────── */
+body {
+  perspective: 1200px;
+  background-color: var(--gray-50);
+}
+
+/* ─── Header 3D Glass Elevation ────────────────────────────── */
+.site-header {
+  background: rgba(8, 17, 34, 0.88) !important;
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border-bottom: 1px solid rgba(56, 189, 248, 0.15) !important;
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37) !important;
+}
+
+.logo-icon {
+  position: relative;
+  transform: translateZ(10px);
+  box-shadow: 0 6px 18px rgba(245, 166, 35, 0.45), inset 0 1px 2px rgba(255, 255, 255, 0.4) !important;
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+}
+.logo:hover .logo-icon {
+  transform: scale(1.1) rotate(6deg) translateZ(15px);
+}
+
+.header-search input {
+  background: rgba(15, 23, 42, 0.6) !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+.header-search input:focus {
+  border-color: #38bdf8 !important;
+  box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.25), inset 0 2px 4px rgba(0, 0, 0, 0.2) !important;
+}
+
+/* ─── Hero 3D Spatial Canvas & Environment ─────────────────── */
+.hero {
+  position: relative;
+  min-height: 560px !important;
+  background: #060b17 !important;
+  overflow: hidden;
+}
+
+/* 3D WebGL Canvas Layer */
+#hero3DCanvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  pointer-events: auto;
+  cursor: grab;
+}
+#hero3DCanvas:active {
+  cursor: grabbing;
+}
+
+/* Background Spatial Grid & Cyber Aura */
+.hero-3d-backdrop {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background: 
+    radial-gradient(circle at 80% 30%, rgba(56, 189, 248, 0.15) 0%, transparent 60%),
+    radial-gradient(circle at 20% 70%, rgba(168, 85, 247, 0.12) 0%, transparent 55%),
+    radial-gradient(circle at 50% 50%, rgba(15, 23, 42, 0.95) 0%, #060b17 100%);
+  pointer-events: none;
+}
+
+.hero-3d-backdrop::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: 
+    linear-gradient(to right, rgba(56, 189, 248, 0.04) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(56, 189, 248, 0.04) 1px, transparent 1px);
+  background-size: 40px 40px;
+  mask-image: radial-gradient(ellipse at center, black 30%, transparent 80%);
+  -webkit-mask-image: radial-gradient(ellipse at center, black 30%, transparent 80%);
+}
+
+.hero-content {
+  position: relative;
+  z-index: 2;
+  pointer-events: none; /* Let canvas capture drag except for interactive buttons */
+}
+.hero-content a,
+.hero-content button,
+.hero-content .hero-card-float,
+.hero-content input {
+  pointer-events: auto;
+}
+
+/* 3D Holographic Hero Badge */
+.hero-badge-3d {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 18px;
+  border-radius: 99px;
+  background: rgba(15, 23, 42, 0.7);
+  border: 1px solid rgba(56, 189, 248, 0.4);
+  backdrop-filter: blur(12px);
+  color: #38bdf8;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  margin-bottom: 20px;
+  box-shadow: 0 0 20px rgba(56, 189, 248, 0.25), inset 0 1px 1px rgba(255, 255, 255, 0.3);
+  animation: floatBadge3D 3.5s ease-in-out infinite alternate;
+}
+.hero-badge-3d .badge-pulse-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #00f2fe;
+  box-shadow: 0 0 10px #00f2fe, 0 0 20px #00f2fe;
+  animation: pulseDot 1.5s infinite;
+}
+
+@keyframes pulseDot {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.4); opacity: 0.6; }
+}
+
+@keyframes floatBadge3D {
+  0% { transform: translateY(0px) translateZ(10px); }
+  100% { transform: translateY(-6px) translateZ(25px); }
+}
+
+/* 3D Hero Title */
+.hero-title-3d {
+  font-size: clamp(28px, 4.2vw, 48px);
+  font-weight: 900;
+  color: #ffffff;
+  line-height: 1.15;
+  margin-bottom: 18px;
+  text-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  letter-spacing: -0.5px;
+}
+.hero-title-3d .gradient-cyan {
+  background: linear-gradient(135deg, #00f2fe 0%, #4facfe 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  display: inline-block;
+  filter: drop-shadow(0 2px 8px rgba(0, 242, 254, 0.3));
+}
+.hero-title-3d .gradient-gold {
+  background: linear-gradient(135deg, #f59e0b 0%, #ffd200 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  display: inline-block;
+  filter: drop-shadow(0 2px 8px rgba(245, 158, 11, 0.3));
+}
+
+.hero-desc-3d {
+  color: rgba(226, 232, 240, 0.85);
+  font-size: 16px;
+  line-height: 1.7;
+  margin-bottom: 30px;
+  max-width: 540px;
+}
+
+/* ─── 3D Elevated Stats Counter ────────────────────────────── */
+.hero-stats-3d {
+  display: flex;
+  gap: 16px;
+  margin-top: 36px;
+}
+.stat-box-3d {
+  background: rgba(15, 23, 42, 0.65);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 16px;
+  padding: 14px 22px;
+  text-align: center;
+  backdrop-filter: blur(12px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3), inset 0 1px 1px rgba(255, 255, 255, 0.15);
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transform-style: preserve-3d;
+}
+.stat-box-3d:hover {
+  transform: translateY(-4px) translateZ(15px);
+  border-color: rgba(56, 189, 248, 0.5);
+  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.45), 0 0 20px rgba(56, 189, 248, 0.2);
+}
+.stat-box-3d .number {
+  font-size: 30px;
+  font-weight: 900;
+  line-height: 1;
+  background: linear-gradient(135deg, #00f2fe, #38bdf8);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.stat-box-3d .label {
+  font-size: 12px;
+  font-weight: 600;
+  color: rgba(203, 213, 225, 0.8);
+  margin-top: 4px;
+}
+
+/* ─── 3D Floating Interactive Showcase Widget in Hero ──────── */
+.hero-card-float {
+  background: rgba(12, 20, 39, 0.72) !important;
+  backdrop-filter: blur(24px) saturate(190%) !important;
+  -webkit-backdrop-filter: blur(24px) saturate(190%) !important;
+  border: 1px solid rgba(56, 189, 248, 0.25) !important;
+  border-radius: 24px !important;
+  box-shadow: var(--shadow-3d-lg), inset 0 1px 1px rgba(255, 255, 255, 0.3) !important;
+  padding: 24px !important;
+  max-width: 380px !important;
+  transform-style: preserve-3d;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Glowing Border Rim for Hero Floating Card */
+.hero-card-float::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: 25px;
+  padding: 1px;
+  background: linear-gradient(135deg, rgba(56, 189, 248, 0.6), rgba(168, 85, 247, 0.3), rgba(245, 158, 11, 0.5));
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+.hw-tabs {
+  display: flex;
+  gap: 6px;
+  background: rgba(6, 11, 23, 0.6);
+  padding: 4px;
+  border-radius: 12px;
+  margin-bottom: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+.hw-tab {
+  flex: 1;
+  padding: 8px 4px;
+  font-size: 11px;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.6);
+  text-align: center;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  white-space: nowrap;
+}
+.hw-tab.active {
+  background: linear-gradient(135deg, #1e3a8a, #0284c7);
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(2, 132, 199, 0.4);
+}
+
+.hw-card-inner {
+  background: rgba(15, 23, 42, 0.65);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  padding: 18px;
+  transform-style: preserve-3d;
+  transition: transform 0.25s ease, opacity 0.25s ease;
+}
+.hw-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+.hw-icon-box {
+  width: 46px;
+  height: 46px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, rgba(56, 189, 248, 0.2), rgba(168, 85, 247, 0.2));
+  border: 1px solid rgba(56, 189, 248, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+}
+.hw-badge {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 99px;
+  color: #fff;
+  letter-spacing: 0.4px;
+}
+
+.hw-title {
+  color: #fff;
+  font-size: 15px;
+  font-weight: 800;
+  margin-bottom: 6px;
+}
+.hw-desc {
+  color: rgba(203, 213, 225, 0.75);
+  font-size: 12px;
+  line-height: 1.5;
+  margin-bottom: 14px;
+}
+.hw-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  font-size: 12px;
+  color: #38bdf8;
+  font-weight: 600;
+}
+
+/* ─── 3D Tactile Buttons ───────────────────────────────────── */
+.btn-3d {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 13px 26px;
+  border-radius: 99px;
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+  border: none;
+  text-decoration: none;
+  transform-style: preserve-3d;
+  transition: transform 0.15s ease, box-shadow 0.25s ease, background 0.25s ease;
+  user-select: none;
+}
+.btn-3d-primary {
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%) !important;
+  color: #ffffff !important;
+  box-shadow: 0 8px 24px -4px rgba(245, 158, 11, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.4) !important;
+}
+.btn-3d-primary:hover {
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 14px 30px -4px rgba(245, 158, 11, 0.65), 0 0 20px rgba(245, 158, 11, 0.3) !important;
+}
+.btn-3d-primary:active {
+  transform: translateY(1px) scale(0.98);
+  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.4) !important;
+}
+
+.btn-3d-cyan {
+  background: linear-gradient(135deg, #00f2fe 0%, #0284c7 100%) !important;
+  color: #ffffff !important;
+  box-shadow: 0 8px 24px -4px rgba(2, 132, 199, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.4) !important;
+}
+.btn-3d-cyan:hover {
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 14px 30px -4px rgba(0, 242, 254, 0.6), 0 0 25px rgba(0, 242, 254, 0.35) !important;
+}
+.btn-3d-cyan:active {
+  transform: translateY(1px) scale(0.98);
+}
+
+.btn-3d-outline {
+  background: rgba(15, 23, 42, 0.6) !important;
+  color: #ffffff !important;
+  border: 1px solid rgba(255, 255, 255, 0.25) !important;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25) !important;
+}
+.btn-3d-outline:hover {
+  background: rgba(255, 255, 255, 0.12) !important;
+  border-color: #38bdf8 !important;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.35), 0 0 15px rgba(56, 189, 248, 0.25) !important;
+}
+
+/* ─── 3D Category Floating Bar ─────────────────────────────── */
+.category-bar {
+  background: #ffffff !important;
+  border-bottom: 1px solid rgba(226, 232, 240, 0.8) !important;
+  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.06) !important;
+  position: relative;
+  z-index: 10;
+}
+.cat-item {
+  border-radius: 12px 12px 0 0 !important;
+  transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+  position: relative;
+}
+.cat-item:hover {
+  transform: translateY(-3px) !important;
+  background: rgba(241, 245, 249, 0.8) !important;
+}
+.cat-item.active {
+  background: rgba(30, 58, 138, 0.06) !important;
+  border-bottom: 3px solid #1a3a6b !important;
+}
+.cat-item .cat-icon {
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.cat-item:hover .cat-icon {
+  transform: scale(1.2) translateY(-2px);
+}
+
+/* ─── 3D COURSE CARD TILT STYLING ──────────────────────────── */
+.course-card {
+  position: relative;
+  background: #ffffff !important;
+  border-radius: 20px !important;
+  border: 1px solid rgba(203, 213, 225, 0.6) !important;
+  box-shadow: 0 8px 24px -4px rgba(0, 0, 0, 0.08), 0 2px 6px rgba(0, 0, 0, 0.04) !important;
+  overflow: hidden;
+  transform-style: preserve-3d !important;
+  will-change: transform, box-shadow;
+  transition: transform 0.15s ease-out, box-shadow 0.25s ease, border-color 0.25s ease;
+}
+
+.course-card.has-3d-tilt:hover {
+  border-color: rgba(56, 189, 248, 0.6) !important;
+  box-shadow: 
+    0 20px 40px -10px rgba(15, 23, 42, 0.22),
+    0 0 25px rgba(56, 189, 248, 0.15),
+    inset 0 1px 1px rgba(255, 255, 255, 0.8) !important;
+}
+
+/* Dynamic Specular Glare Layer */
+.card-3d-glare {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border-radius: inherit;
+  z-index: 10;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  mix-blend-mode: overlay;
+}
+
+/* Pop-out 3D Layering for Course Card Components */
+.course-card .course-thumb {
+  transform: translateZ(26px);
+  transform-style: preserve-3d;
+  border-radius: 16px 16px 0 0;
+  transition: transform 0.25s ease;
+}
+.course-card:hover .course-thumb {
+  transform: translateZ(32px);
+}
+
+.course-card .course-play-btn {
+  transform: translate(-50%, -50%) translateZ(48px) !important;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.35) !important;
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.2s ease !important;
+}
+.course-card:hover .course-play-btn {
+  transform: translate(-50%, -50%) translateZ(60px) scale(1.15) !important;
+  background: #ffffff !important;
+}
+
+.course-card .course-level-badge {
+  transform: translateZ(38px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+}
+.course-card .course-category {
+  transform: translateZ(18px);
+}
+.course-card .course-title {
+  transform: translateZ(28px);
+  transition: color 0.2s ease;
+}
+.course-card:hover .course-title {
+  color: #1a3a6b;
+}
+.course-card .course-instructor {
+  transform: translateZ(20px);
+}
+.course-card .course-footer {
+  transform: translateZ(24px);
+}
+.course-card .course-cta {
+  transform: translateZ(34px);
+  box-shadow: 0 4px 12px rgba(26, 58, 107, 0.25);
+  transition: all 0.25s ease;
+}
+.course-card:hover .course-cta {
+  transform: translateZ(42px) scale(1.05);
+  box-shadow: 0 8px 20px rgba(26, 58, 107, 0.4);
+}
+
+/* ─── 3D HOLOGRAM FEATURE CARDS ────────────────────────────── */
+.features-section-3d {
+  background: linear-gradient(180deg, #ffffff 0%, #f1f5f9 100%);
+  padding: 70px 0;
+  position: relative;
+  overflow: hidden;
+}
+.features-section-3d::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 800px;
+  height: 400px;
+  background: radial-gradient(circle, rgba(56, 189, 248, 0.12) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.features-grid-3d {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 24px;
+  margin-top: 48px;
+}
+
+.feature-card-3d {
+  position: relative;
+  background: #ffffff;
+  border-radius: 24px;
+  padding: 36px 28px;
+  text-align: center;
+  border: 1px solid rgba(226, 232, 240, 0.8);
+  box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.05);
+  transform-style: preserve-3d;
+  transition: transform 0.2s ease-out, box-shadow 0.3s ease, border-color 0.3s ease;
+  overflow: hidden;
+}
+.feature-card-3d:hover {
+  border-color: rgba(56, 189, 248, 0.5);
+  box-shadow: 0 20px 45px -10px rgba(15, 23, 42, 0.15), 0 0 20px rgba(56, 189, 248, 0.12);
+}
+
+.feature-icon-3d {
+  width: 76px;
+  height: 76px;
+  margin: 0 auto 20px;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 36px;
+  transform: translateZ(36px);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.12), inset 0 1px 2px rgba(255, 255, 255, 0.6);
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.feature-card-3d:hover .feature-icon-3d {
+  transform: translateZ(50px) scale(1.12) rotate(4deg);
+}
+
+.feature-card-3d .f-title {
+  font-size: 18px;
+  font-weight: 800;
+  color: #1e293b;
+  margin-bottom: 10px;
+  transform: translateZ(24px);
+}
+.feature-card-3d .f-desc {
+  font-size: 14px;
+  color: #64748b;
+  line-height: 1.6;
+  transform: translateZ(16px);
+}
+
+/* ─── 3D CYBER QR SCANNER MODAL ────────────────────────────── */
+.qr-modal-box {
+  background: rgba(12, 20, 39, 0.95) !important;
+  backdrop-filter: blur(25px) !important;
+  border: 1px solid rgba(56, 189, 248, 0.3) !important;
+  border-radius: 24px !important;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.7), 0 0 35px rgba(56, 189, 248, 0.25) !important;
+  color: #ffffff;
+}
+.qr-title {
+  color: #ffffff !important;
+  font-size: 18px !important;
+  font-weight: 800 !important;
+}
+.qr-code-wrap {
+  border: 2px solid rgba(56, 189, 248, 0.4) !important;
+  box-shadow: 0 0 25px rgba(56, 189, 248, 0.2) !important;
+}
+.qr-scanning-line {
+  background: linear-gradient(to bottom, rgba(0, 242, 254, 0), #00f2fe, rgba(0, 242, 254, 0)) !important;
+  box-shadow: 0 0 15px #00f2fe !important;
+}
+.qr-demo-item {
+  background: rgba(255, 255, 255, 0.05) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border-radius: 12px !important;
+  transition: all 0.2s ease !important;
+}
+.qr-demo-item:hover {
+  background: rgba(56, 189, 248, 0.15) !important;
+  border-color: #38bdf8 !important;
+  transform: translateY(-2px);
+}
+.qr-demo-info .name {
+  color: #ffffff !important;
+}
+
+/* ─── Smooth Glowing Scrollbar ─────────────────────────────── */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #080f1e;
+}
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #1e3a8a, #0284c7);
+  border-radius: 99px;
+  border: 2px solid #080f1e;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #0284c7, #00f2fe);
+}
+
+/* ─── Responsive Adjustments ───────────────────────────────── */
+@media (max-width: 992px) {
+  .hero-content {
+    grid-template-columns: 1fr;
+    text-align: center;
+    padding: 40px 20px;
+  }
+  .hero-badge-3d {
+    margin: 0 auto 20px;
+  }
+  .hero-desc-3d {
+    margin: 0 auto 28px;
+  }
+  .hero-actions {
+    justify-content: center;
+  }
+  .hero-stats-3d {
+    justify-content: center;
+  }
+  .hero-card-float {
+    margin: 32px auto 0;
+  }
+}

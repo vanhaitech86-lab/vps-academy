@@ -47,7 +47,7 @@
             const blobUrl = URL.createObjectURL(blob);
             _loadHTML5Player(blobUrl, true);
           } else {
-            _showNoVideo('Video tải lên hiện chưa có sẵn ở trình duyệt này. Admin cần dùng link Google Drive/YouTube để phát trên mọi thiết bị.');
+            _showNoVideo('Video hiện chưa sẵn sàng. Vui lòng liên hệ Admin để được hỗ trợ.');
           }
         }).catch(() => _showNoVideo('Không thể đọc video từ bộ nhớ trình duyệt'));
         return;

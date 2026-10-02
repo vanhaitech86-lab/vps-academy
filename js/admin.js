@@ -618,6 +618,13 @@ function lessonModal(courses) {
 
         <!-- Upload zone -->
         <div id="videoPanelUpload">
+          <div style="display:flex;align-items:flex-start;gap:10px;padding:10px 14px;background:rgba(225,29,72,.06);border:1px solid rgba(225,29,72,.2);border-radius:var(--radius-sm);margin-bottom:12px;">
+            <span style="font-size:18px;flex-shrink:0;margin-top:1px;">⚠️</span>
+            <div>
+              <div style="font-size:13px;font-weight:700;color:#e11d48;margin-bottom:2px;">Lưu ý quan trọng!</div>
+              <div style="font-size:12px;color:#b91c1c;line-height:1.6;">Video upload từ máy tính <strong>chỉ xem được trên trình duyệt này</strong>. Người dùng khác hoặc thiết bị khác sẽ <strong>không xem được</strong>.<br>👉 Khuyến nghị: Dùng tab <strong>"Dán link URL"</strong> với YouTube hoặc Google Drive để mọi người đều xem được.</div>
+            </div>
+          </div>
           <div id="videoDropZone" onclick="document.getElementById('videoFileInput').click()"
             style="border:2px dashed var(--gray-300);border-radius:var(--radius);padding:28px;text-align:center;cursor:pointer;background:var(--gray-50);transition:all .2s;"
             ondragover="event.preventDefault();this.style.borderColor='var(--primary)';this.style.background='rgba(26,58,107,.04)';"
@@ -633,11 +640,15 @@ function lessonModal(courses) {
 
         <!-- URL input -->
         <div id="videoPanelUrl" style="display:none;">
+          <div style="display:flex;align-items:flex-start;gap:10px;padding:10px 14px;background:rgba(40,167,69,.06);border:1px solid rgba(40,167,69,.2);border-radius:var(--radius-sm);margin-bottom:12px;">
+            <span style="font-size:18px;flex-shrink:0;margin-top:1px;">✅</span>
+            <div style="font-size:12px;color:#166534;line-height:1.6;"><strong>Khuyến nghị:</strong> Dùng link YouTube hoặc Google Drive để video hoạt động trên <strong>mọi thiết bị</strong> và <strong>mọi người dùng</strong>.</div>
+          </div>
           <div class="form-group">
             <label class="form-label">URL Video (YouTube, Google Drive, hoặc link trực tiếp)</label>
-            <input type="url" class="form-control" id="lmVideoUrl" placeholder="https://www.youtube.com/embed/VIDEO_ID hoặc https://drive.google.com/...">
+            <input type="url" class="form-control" id="lmVideoUrl" placeholder="https://www.youtube.com/watch?v=VIDEO_ID hoặc https://drive.google.com/...">
             <div class="form-hint">
-              YouTube embed: https://www.youtube.com/embed/<strong>VIDEO_ID</strong><br>
+              YouTube: https://www.youtube.com/watch?v=<strong>VIDEO_ID</strong> hoặc https://youtu.be/<strong>VIDEO_ID</strong><br>
               Google Drive: Share → Bất kỳ ai có link → Copy link
             </div>
           </div>
@@ -668,6 +679,10 @@ function lessonModal(courses) {
 
         <!-- Doc upload zone -->
         <div id="docPanelUpload">
+          <div style="display:flex;align-items:flex-start;gap:10px;padding:10px 14px;background:rgba(225,29,72,.06);border:1px solid rgba(225,29,72,.2);border-radius:var(--radius-sm);margin-bottom:12px;">
+            <span style="font-size:18px;flex-shrink:0;margin-top:1px;">⚠️</span>
+            <div style="font-size:12px;color:#b91c1c;line-height:1.6;">Tài liệu upload <strong>chỉ xem được trên trình duyệt này</strong>. Dùng tab <strong>"Dán link URL"</strong> với Google Drive để mọi người đều xem được.</div>
+          </div>
           <div id="docDropZone" onclick="document.getElementById('docFileInput').click()"
             style="border:2px dashed var(--gray-300);border-radius:var(--radius);padding:24px;text-align:center;cursor:pointer;background:var(--gray-50);transition:all .2s;"
             ondragover="event.preventDefault();this.style.borderColor='var(--primary)';this.style.background='rgba(26,58,107,.04)';"
@@ -941,8 +956,8 @@ window.openLessonModal = function(id) {
     const urlEl = document.getElementById('lmVideoUrl'); if(urlEl) urlEl.value = '';
     const docUrlEl = document.getElementById('lmDocUrl'); if(docUrlEl) docUrlEl.value = '';
     document.getElementById('lmType').value = 'video';
-    switchVideoTab('upload');
-    switchDocTab('upload');
+    switchVideoTab('url');
+    switchDocTab('url');
     window._existingVideoFileId = null;
     window._existingDocFileId   = null;
   }

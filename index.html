@@ -12,6 +12,7 @@
   <meta name="description" content="VPS Academy – Nền tảng đào tạo trực tuyến chuyên nghiệp dành cho nhân viên và khách hàng VPS. Thiết bị văn phòng, AI, kỹ năng bán hàng.">
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/mobile.css">
+  <link rel="stylesheet" href="css/3d-theme.css">
 </head>
 <body data-page="home">
 
@@ -162,53 +163,48 @@
   </div>
 </header>
 
-<!-- ─── Hero Slider ────────────────────────────────────────── -->
+<!-- ─── Hero 3D Spatial Environment ────────────────────────── -->
 <section class="hero">
+  <!-- Interactive WebGL 3D Canvas -->
+  <canvas id="hero3DCanvas"></canvas>
+  <div class="hero-3d-backdrop"></div>
+
   <div class="hero-slider" id="heroSlider">
-    <!-- Slide 1 -->
+    <!-- Slide 1: 3D AI & Smart Office -->
     <div class="hero-slide active">
-      <div class="hero-bg"></div>
       <div class="hero-content">
         <div class="hero-left">
-          <div class="hero-badge">🚀 Nền tảng đào tạo thiết bị văn phòng & AI</div>
-          <h1 class="hero-title">Nâng tầm <span>kỹ năng</span><br>Bứt phá <span>sự nghiệp</span></h1>
-          <p class="hero-desc">VPS Academy cung cấp khóa học chuyên sâu về thiết bị văn phòng, giải pháp in ấn, AI cho doanh nghiệp và kỹ năng bán hàng – giúp bạn phát triển toàn diện.</p>
+          <div class="hero-badge-3d"><span class="badge-pulse-dot"></span> 🚀 Nền tảng Đào tạo 3D &amp; AI Thế hệ Mới</div>
+          <h1 class="hero-title-3d">Nâng tầm <span class="gradient-cyan">Kỹ năng 3D</span><br>Bứt phá <span class="gradient-gold">Sự nghiệp</span></h1>
+          <p class="hero-desc-3d">VPS Academy tiên phong mô phỏng thiết bị thực tế, tích hợp công nghệ AI đỉnh cao và các giải pháp in ấn thông minh giúp bạn làm chủ công nghệ văn phòng 4.0.</p>
           <div class="hero-actions">
-            <a href="courses.html" class="btn btn-primary btn-lg">📚 Khám phá khóa học</a>
-            <a href="auth.html" class="btn btn-outline btn-lg">🔐 Đăng nhập ngay</a>
+            <a href="courses.html" class="btn-3d btn-3d-primary btn-lg">📚 Khám phá khóa học</a>
+            <a href="auth.html" class="btn-3d btn-3d-outline btn-lg">🔐 Đăng nhập ngay</a>
           </div>
-          <div class="hero-stats">
-            <div class="hero-stat"><div class="number" id="statCourses">6</div><div class="label">Khóa học</div></div>
-            <div class="hero-stat"><div class="number" id="statUsers">5</div><div class="label">Học viên</div></div>
-            <div class="hero-stat"><div class="number" id="statResults">0</div><div class="label">Bài thi</div></div>
+          <div class="hero-stats-3d">
+            <div class="stat-box-3d"><div class="number" id="statCourses">6</div><div class="label">Khóa học 3D</div></div>
+            <div class="stat-box-3d"><div class="number" id="statUsers">5</div><div class="label">Học viên</div></div>
+            <div class="stat-box-3d"><div class="number" id="statResults">0</div><div class="label">Bài thi</div></div>
           </div>
         </div>
         <div class="hero-visual">
-          <div class="hero-card-float">
-            <div class="card-title">📈 Khóa học nổi bật</div>
-            <div class="course-mini">
-              <div class="course-mini-icon" style="background:rgba(124,58,237,.2)">🤖</div>
-              <div class="course-mini-info">
-                <div class="title">AI cho Doanh nghiệp</div>
-                <div class="meta">6 giờ · 4 bài học</div>
-              </div>
-              <span class="course-mini-badge" style="background:rgba(40,167,69,.2);color:#28a745;">Mới</span>
+          <div class="hero-card-float" id="heroInteractiveWidget">
+            <div class="hw-tabs">
+              <div class="hw-tab active" data-widget="ai">🤖 AI VPS</div>
+              <div class="hw-tab" data-widget="photocopy">🖨️ Photocopy 3D</div>
+              <div class="hw-tab" data-widget="papercut">⚙️ PaperCut</div>
             </div>
-            <div class="course-mini">
-              <div class="course-mini-icon" style="background:rgba(26,58,107,.2)">🖨️</div>
-              <div class="course-mini-info">
-                <div class="title">Máy photocopy & Máy in</div>
-                <div class="meta">5 giờ · 4 bài học</div>
+            <div class="hw-card-inner">
+              <div class="hw-card-top">
+                <div class="hw-icon-box" id="hwIcon">🤖</div>
+                <span class="hw-badge" id="hwBadge" style="background:linear-gradient(135deg,#00f2fe,#4facfe);">🚀 Đột phá 2026</span>
               </div>
-              <span class="course-mini-badge" style="background:rgba(245,166,35,.2);color:#f5a623;">Hot</span>
-            </div>
-            <div class="course-mini">
-              <div class="course-mini-icon" style="background:rgba(217,119,6,.2)">🔧</div>
-              <div class="course-mini-info">
-                <div class="title">PaperCut – Giải pháp in ấn</div>
-                <div class="meta">8 giờ · 4 bài học</div>
+              <div class="hw-title" id="hwTitle">Trí tuệ nhân tạo (AI) VPS</div>
+              <div class="hw-desc" id="hwDesc">Tự động hóa tác vụ văn phòng, chatbot tư vấn &amp; phân tích hợp đồng thông minh</div>
+              <div class="hw-footer">
+                <span>⚡ Trải nghiệm học tương tác 3D</span>
+                <span>▶ Xem ngay</span>
               </div>
-              <span class="course-mini-badge" style="background:rgba(23,162,184,.2);color:#17a2b8;">Top</span>
             </div>
           </div>
         </div>
@@ -220,46 +216,44 @@
       </div>
     </div>
 
-    <!-- Slide 2 -->
+    <!-- Slide 2: Onboarding 7 Days -->
     <div class="hero-slide">
-      <div class="hero-bg" style="background:linear-gradient(135deg,#0d3b2e,#1a6b50,#0d2b0d)"></div>
       <div class="hero-content">
         <div class="hero-left">
-          <div class="hero-badge">🎯 Đào tạo nhân viên mới</div>
-          <h1 class="hero-title">Onboarding <span>hiệu quả</span><br>trong <span>7 ngày đầu</span></h1>
-          <p class="hero-desc">Chương trình đào tạo toàn diện dành riêng cho nhân viên mới: quy trình bán hàng, vận hành thiết bị, kỹ năng tư vấn khách hàng và quy trình nội bộ.</p>
+          <div class="hero-badge-3d"><span class="badge-pulse-dot" style="background:#10b981;box-shadow:0 0 10px #10b981;"></span> 🎯 Đào tạo hội nhập nhân viên mới</div>
+          <h1 class="hero-title-3d">Onboarding <span style="background:linear-gradient(135deg,#10b981,#34d399);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">Thần tốc</span><br>vững vàng <span class="gradient-gold">7 ngày đầu</span></h1>
+          <p class="hero-desc-3d">Lộ trình bài bản giúp nhân sự mới nắm bắt nhanh quy trình kinh doanh, thông số kỹ thuật máy móc văn phòng và nghệ thuật tương tác với khách hàng.</p>
           <div class="hero-actions">
-            <a href="courses.html?cat=7" class="btn btn-primary btn-lg">📋 Xem chương trình</a>
+            <a href="courses.html?cat=7" class="btn-3d btn-3d-cyan btn-lg">📋 Xem lộ trình 3D</a>
           </div>
         </div>
         <div class="hero-visual">
           <div class="hero-card-float">
-            <div class="card-title">📋 Lộ trình nhân viên mới</div>
-            <div class="course-mini"><div class="course-mini-icon" style="background:rgba(40,167,69,.2)">📋</div><div class="course-mini-info"><div class="title">Quy trình tiếp nhận đơn hàng</div><div class="meta">4 giờ · Bắt buộc</div></div><span class="course-mini-badge" style="background:rgba(40,167,69,.2);color:#28a745;">✓</span></div>
-            <div class="course-mini"><div class="course-mini-icon" style="background:rgba(26,58,107,.2)">🖨️</div><div class="course-mini-info"><div class="title">Máy photocopy – Vận hành</div><div class="meta">5 giờ · Bắt buộc</div></div><span class="course-mini-badge" style="background:rgba(245,166,35,.2);color:#f5a623;">→</span></div>
-            <div class="course-mini"><div class="course-mini-icon" style="background:rgba(245,166,35,.2)">💡</div><div class="course-mini-info"><div class="title">Kỹ năng Tư vấn bán hàng</div><div class="meta">6 giờ · Khuyến nghị</div></div><span class="course-mini-badge" style="background:rgba(108,117,125,.2);color:#6c757d;">→</span></div>
+            <div style="font-size:12px;font-weight:700;color:#38bdf8;text-transform:uppercase;letter-spacing:1px;margin-bottom:16px;">📋 Lộ trình Onboarding 3D</div>
+            <div class="course-mini"><div class="course-mini-icon" style="background:rgba(16,185,129,.2)">📋</div><div class="course-mini-info"><div class="title">Quy trình tiếp nhận đơn hàng</div><div class="meta">4 giờ · Bắt buộc</div></div><span class="course-mini-badge" style="background:rgba(16,185,129,.2);color:#10b981;">✓ Xong</span></div>
+            <div class="course-mini"><div class="course-mini-icon" style="background:rgba(56,189,248,.2)">🖨️</div><div class="course-mini-info"><div class="title">Máy photocopy – Vận hành</div><div class="meta">5 giờ · Bắt buộc</div></div><span class="course-mini-badge" style="background:rgba(245,158,11,.2);color:#f59e0b;">Đang học</span></div>
+            <div class="course-mini"><div class="course-mini-icon" style="background:rgba(245,158,11,.2)">💡</div><div class="course-mini-info"><div class="title">Kỹ năng Tư vấn bán hàng</div><div class="meta">6 giờ · Khuyến nghị</div></div><span class="course-mini-badge" style="background:rgba(148,163,184,.2);color:#94a3b8;">Tiếp theo</span></div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Slide 3 -->
+    <!-- Slide 3: AI Mastery -->
     <div class="hero-slide">
-      <div class="hero-bg" style="background:linear-gradient(135deg,#1a0d3b,#3b2a6b,#1a0d5a)"></div>
       <div class="hero-content">
         <div class="hero-left">
-          <div class="hero-badge">🤖 Học ứng dụng AI cho doanh nghiệp</div>
-          <h1 class="hero-title">Ứng dụng <span>AI thực chiến</span><br>vào <span>văn phòng</span></h1>
-          <p class="hero-desc">Khóa học AI thực tế: ChatGPT, Copilot, tự động hóa workflow với Make.com và xây dựng chatbot AI hỗ trợ khách hàng cho doanh nghiệp của bạn.</p>
+          <div class="hero-badge-3d"><span class="badge-pulse-dot" style="background:#a855f7;box-shadow:0 0 10px #a855f7;"></span> 🤖 Chuyên sâu Trí tuệ nhân tạo</div>
+          <h1 class="hero-title-3d">Làm chủ <span style="background:linear-gradient(135deg,#c084fc,#e879f9);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">AI Thực chiến</span><br>Tối ưu <span class="gradient-cyan">Năng suất 10x</span></h1>
+          <p class="hero-desc-3d">Đón đầu kỷ nguyên AI: Tự động hóa thủ tục văn phòng, thiết kế ấn phẩm marketing, xử lý tài liệu lớn và ứng dụng GPT tùy biến cho phòng ban.</p>
           <div class="hero-actions">
-            <a href="courses.html?cat=1" class="btn btn-primary btn-lg">🤖 Học AI ngay</a>
+            <a href="courses.html?cat=1" class="btn-3d btn-3d-primary btn-lg">🤖 Học AI ngay</a>
           </div>
         </div>
         <div class="hero-visual">
           <div class="hero-card-float">
-            <div class="card-title">🤖 Khóa học AI nổi bật</div>
-            <div class="course-mini"><div class="course-mini-icon" style="background:rgba(124,58,237,.2)">🤖</div><div class="course-mini-info"><div class="title">AI cho Doanh nghiệp – Nhập môn</div><div class="meta">6 giờ · Cơ bản</div></div><span class="course-mini-badge" style="background:rgba(245,166,35,.2);color:#f5a623;">Hot</span></div>
-            <div class="course-mini"><div class="course-mini-icon" style="background:rgba(26,58,107,.2)">⚙️</div><div class="course-mini-info"><div class="title">AI tự động hóa văn phòng</div><div class="meta">10 giờ · Nâng cao</div></div><span class="course-mini-badge" style="background:rgba(231,76,60,.2);color:#e74c3c;">Pro</span></div>
+            <div style="font-size:12px;font-weight:700;color:#c084fc;text-transform:uppercase;letter-spacing:1px;margin-bottom:16px;">🤖 Khóa học AI Nổi bật</div>
+            <div class="course-mini"><div class="course-mini-icon" style="background:rgba(192,132,252,.2)">🤖</div><div class="course-mini-info"><div class="title">AI cho Doanh nghiệp – Nhập môn</div><div class="meta">6 giờ · Cơ bản</div></div><span class="course-mini-badge" style="background:rgba(245,158,11,.2);color:#f59e0b;">Hot</span></div>
+            <div class="course-mini"><div class="course-mini-icon" style="background:rgba(56,189,248,.2)">⚙️</div><div class="course-mini-info"><div class="title">AI tự động hóa văn phòng</div><div class="meta">10 giờ · Nâng cao</div></div><span class="course-mini-badge" style="background:rgba(239,68,68,.2);color:#ef4444;">Pro 3D</span></div>
           </div>
         </div>
       </div>
@@ -293,33 +287,34 @@
   </div>
 </section>
 
-<!-- ─── Features Section ───────────────────────────────────── -->
-<section class="section" style="background:white;border-top:1px solid var(--gray-200);">
+<!-- ─── 3D Holographic Features Section ───────────────────── -->
+<section class="features-section-3d">
   <div class="container">
     <div class="section-header text-center" style="justify-content:center;flex-direction:column;align-items:center;">
-      <h2 class="section-title">Tại sao chọn <span>VPS Academy?</span></h2>
-      <p class="section-desc">Nền tảng học tập được thiết kế riêng cho VPS – kinh doanh thiết bị máy móc văn phòng và giải pháp in ấn</p>
+      <div class="hero-badge-3d" style="margin-bottom:12px;"><span class="badge-pulse-dot"></span> ✨ CÔNG NGHỆ ĐÀO TẠO ĐỘT PHÁ</div>
+      <h2 class="section-title" style="font-size:32px;font-weight:900;text-align:center;">Tại sao chọn <span style="background:linear-gradient(135deg,#00f2fe,#2563eb);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">VPS Academy 3D?</span></h2>
+      <p class="section-desc" style="max-width:620px;text-align:center;">Hệ sinh thái đào tạo số thông minh dành cho thiết bị máy văn phòng, giải pháp in ấn và ứng dụng AI thực chiến</p>
     </div>
-    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:24px;margin-top:40px;">
-      <div style="background:var(--gray-50);border-radius:var(--radius-lg);padding:32px;text-align:center;" class="fade-in-up stagger-1">
-        <div style="font-size:44px;margin-bottom:16px;">🎯</div>
-        <h3 style="font-size:18px;font-weight:700;color:var(--gray-800);margin-bottom:8px;">Học theo lộ trình</h3>
-        <p style="color:var(--gray-500);font-size:14px;line-height:1.7;">Nội dung được thiết kế theo vai trò và lộ trình phát triển của từng nhân viên</p>
+    <div class="features-grid-3d">
+      <div class="feature-card-3d fade-in-up stagger-1">
+        <div class="feature-icon-3d" style="background:linear-gradient(135deg,rgba(0,242,254,.15),rgba(37,99,235,.25));color:#00f2fe;border:1px solid rgba(0,242,254,.3);">🎯</div>
+        <h3 class="f-title">Lộ trình cá nhân hóa 3D</h3>
+        <p class="f-desc">Chương trình học thiết kế thông minh theo vai trò: nhân viên mới, kỹ thuật viên, tư vấn viên và khách hàng doanh nghiệp.</p>
       </div>
-      <div style="background:var(--gray-50);border-radius:var(--radius-lg);padding:32px;text-align:center;" class="fade-in-up stagger-2">
-        <div style="font-size:44px;margin-bottom:16px;">📝</div>
-        <h3 style="font-size:18px;font-weight:700;color:var(--gray-800);margin-bottom:8px;">Kiểm tra & Đánh giá</h3>
-        <p style="color:var(--gray-500);font-size:14px;line-height:1.7;">Bài quiz sau mỗi khóa học giúp củng cố kiến thức và lưu kết quả về hệ thống</p>
+      <div class="feature-card-3d fade-in-up stagger-2">
+        <div class="feature-icon-3d" style="background:linear-gradient(135deg,rgba(245,158,11,.15),rgba(217,119,6,.25));color:#f59e0b;border:1px solid rgba(245,158,11,.3);">🤖</div>
+        <h3 class="f-title">Thực chiến AI & Thiết bị</h3>
+        <p class="f-desc">Mô phỏng máy photocopy, máy in đa năng và ứng dụng ChatGPT, Copilot giúp giải quyết bài toán kinh doanh thực tế.</p>
       </div>
-      <div style="background:var(--gray-50);border-radius:var(--radius-lg);padding:32px;text-align:center;" class="fade-in-up stagger-3">
-        <div style="font-size:44px;margin-bottom:16px;">📊</div>
-        <h3 style="font-size:18px;font-weight:700;color:var(--gray-800);margin-bottom:8px;">Theo dõi tiến độ</h3>
-        <p style="color:var(--gray-500);font-size:14px;line-height:1.7;">Dashboard cá nhân hiển thị tiến trình học tập và thành tích của từng học viên</p>
+      <div class="feature-card-3d fade-in-up stagger-3">
+        <div class="feature-icon-3d" style="background:linear-gradient(135deg,rgba(16,185,129,.15),rgba(5,150,105,.25));color:#10b981;border:1px solid rgba(16,185,129,.3);">📊</div>
+        <h3 class="f-title">Đo lường & Thi trắc nghiệm</h3>
+        <p class="f-desc">Hệ thống quiz đánh giá năng lực tự động, chấm điểm ngay lập tức và theo dõi biểu đồ tiến độ học viên chuyên sâu.</p>
       </div>
-      <div style="background:var(--gray-50);border-radius:var(--radius-lg);padding:32px;text-align:center;" class="fade-in-up stagger-4">
-        <div style="font-size:44px;margin-bottom:16px;">🔐</div>
-        <h3 style="font-size:18px;font-weight:700;color:var(--gray-800);margin-bottom:8px;">Phân quyền chặt chẽ</h3>
-        <p style="color:var(--gray-500);font-size:14px;line-height:1.7;">Nội dung được bảo vệ và phân quyền theo vai trò: nhân viên mới, nhân viên, khách hàng</p>
+      <div class="feature-card-3d fade-in-up stagger-4">
+        <div class="feature-icon-3d" style="background:linear-gradient(135deg,rgba(168,85,247,.15),rgba(124,58,237,.25));color:#a855f7;border:1px solid rgba(168,85,247,.3);">🛡️</div>
+        <h3 class="f-title">Bảo mật & Phân quyền đa cấp</h3>
+        <p class="f-desc">Mã hóa nội dung, bảo vệ bản quyền bài giảng số và phân quyền nghiêm ngặt theo tiêu chuẩn an ninh thông tin VPS.</p>
       </div>
     </div>
   </div>
@@ -414,6 +409,8 @@
 
 <script src="js/data.js"></script>
 <script src="js/auth.js"></script>
+<script src="js/three.min.js"></script>
+<script src="js/3d-scene.js"></script>
 <script src="js/app.js"></script>
 <script>
   document.addEventListener('DOMContentLoaded', () => {
