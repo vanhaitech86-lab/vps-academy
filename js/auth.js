@@ -526,7 +526,13 @@ function showToast(message, type = 'success', duration = 3000) {
 // ─── Modal Helper ─────────────────────────────────────────────
 function openModal(id) {
   const modal = document.getElementById(id);
-  if (modal) { modal.style.display = 'flex'; document.body.style.overflow = 'hidden'; }
+  if (modal) {
+    modal.style.display = 'flex';
+    modal.scrollTop = 0;
+    const inner = modal.querySelector('.modal');
+    if (inner) inner.scrollTop = 0;
+    document.body.style.overflow = 'hidden';
+  }
 }
 
 function closeModal(id) {
