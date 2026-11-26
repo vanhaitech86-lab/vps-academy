@@ -81,6 +81,28 @@
   <script src="js/auth.js"></script>
   <script src="js/3d-scene.js"></script>
   <script>
+    // ── Kiểm tra Link Kích hoạt tài khoản (Invite Token từ Admin gửi) ──
+    (function handleInviteToken() {
+      const params = new URLSearchParams(window.location.search);
+      const inviteToken = params.get('invite');
+      if (inviteToken && window.CloudDB) {
+        const invitedUser = window.CloudDB.decodeInviteToken(inviteToken);
+        if (invitedUser && invitedUser.email) {
+          UserDB.create(invitedUser);
+          if (window.VPSSecurity) window.VPSSecurity.clearRateLimit(invitedUser.email);
+          const emailInput = document.getElementById('loginEmail');
+          if (emailInput) emailInput.value = invitedUser.email;
+          setTimeout(() => {
+            showToast('✅ Đã đồng bộ tài khoản ' + invitedUser.email + '! Vui lòng nhập mật khẩu được cấp để đăng nhập.', 'success', 4500);
+          }, 300);
+        }
+      }
+      const prefillEmail = params.get('email');
+      if (prefillEmail && document.getElementById('loginEmail')) {
+        document.getElementById('loginEmail').value = prefillEmail.trim();
+      }
+    })();
+
     // Redirect if already logged in
     if (Auth.isLoggedIn()) {
       const u = Auth.getCurrentUser();
@@ -105,21 +127,21 @@
       const err = document.getElementById(field + 'Err'); if (err) { err.textContent = msg; err.classList.add('show'); }
     }
 
-    // ── Login ──
-    document.getElementById('loginForm').addEventListener('submit', function(e) {
+    // ── Login (Async với Cloud Sync đa thiết bị) ──
+    document.getElementById('loginForm').addEventListener('submit', async function(e) {
       e.preventDefault();
       clearLoginErrors();
       const email = document.getElementById('loginEmail').value.trim();
-      const pass = document.getElementById('loginPass').value;
+      const pass = document.getElementById('loginPass').value.trim();
       let valid = true;
       if (!email) { showFieldErr('loginEmail', 'Vui lòng nhập email được cấp'); valid = false; }
       else if (!/\S+@\S+\.\S+/.test(email)) { showFieldErr('loginEmail', 'Email không hợp lệ'); valid = false; }
       if (!pass) { showFieldErr('loginPass', 'Vui lòng nhập mật khẩu'); valid = false; }
       if (!valid) return;
       const btn = document.getElementById('loginSubmitBtn');
-      btn.disabled = true; btn.textContent = '⏳ Đang xác thực...';
-      setTimeout(() => {
-        const result = Auth.login(email, pass);
+      btn.disabled = true; btn.textContent = '⏳ Đang đồng bộ & xác thực...';
+      try {
+        const result = Auth.loginAsync ? await Auth.loginAsync(email, pass) : Auth.login(email, pass);
         btn.disabled = false; btn.textContent = '🔐 Đăng nhập vào hệ thống';
         if (result.success) {
           showToast('Chào mừng ' + result.user.name + ' (' + (result.user.unit || 'VPS') + ')! 👋', 'success');
@@ -129,12 +151,14 @@
             if (redirect) window.location.href = redirect;
             else if (Auth.canAccessAdmin(result.user)) window.location.href = 'admin.html';
             else window.location.href = 'index.html';
-          }, 700);
+          }, 600);
         } else {
           const errEl = document.getElementById('loginFormErr');
           errEl.innerHTML = '❌ ' + result.message; errEl.classList.add('show');
         }
-      }, 400);
+      } catch (err) {
+        btn.disabled = false; btn.textContent = '🔐 Đăng nhập vào hệ thống';
+      }
     });
   </script>
 </body>

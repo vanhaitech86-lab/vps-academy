@@ -53,6 +53,21 @@ function initAdmin() {
       loadTab(item.dataset.tab);
     });
   });
+
+  // Khi CloudDB đồng bộ xong dữ liệu mới từ Cloud, tự động cập nhật giao diện Admin
+  window.addEventListener('vps-cloud-synced', () => {
+    const openModalEl = document.querySelector('.modal-overlay[style*="flex"]');
+    if (!openModalEl) {
+      loadTab(currentAdminTab);
+    }
+  });
+
+  // Đẩy toàn bộ danh sách tài khoản hiện có trên máy Admin lên Cloud để mọi thiết bị khác đăng nhập được ngay
+  if (window.CloudDB) {
+    setTimeout(() => {
+      window.CloudDB.push({ users: UserDB.getAll() });
+    }, 1200);
+  }
 }
 
 function loadTab(tab) {
@@ -300,12 +315,36 @@ function renderUsersRows(users) {
       <td style="font-size:13px;">${u.department || '–'}</td>
       <td><span class="badge badge-${u.status}">${u.status === 'active' ? '✅ Hoạt động' : '❌ Vô hiệu'}</span></td>
       <td><div class="action-btns">
+        <button type="button" class="action-btn view" onclick="copyUserLoginInvite(${u.id})" title="Sao chép Link & Thông tin đăng nhập gửi cho nhân sự">🔗 Gửi TK</button>
         ${canEdit ? `<button type="button" class="action-btn edit" onclick="openUserModal(${u.id})">✏️ Sửa</button>` : ''}
         ${canDelete ? `<button type="button" class="action-btn del" onclick="deleteUser(${u.id})">🗑️ Xóa</button>` : ''}
       </div></td>
     </tr>`;
   }).join('');
 }
+
+window.copyUserLoginInvite = function(id) {
+  const u = UserDB.getById(id);
+  if (!u) return;
+  const baseUrl = window.location.origin + window.location.pathname.replace(/admin\.html.*$/i, 'auth.html');
+  const token = window.CloudDB ? window.CloudDB.encodeInviteToken(u) : '';
+  const loginLink = token ? `${baseUrl}?invite=${encodeURIComponent(token)}` : `${baseUrl}?email=${encodeURIComponent(u.email)}`;
+  const msg = `🔐 THÔNG TIN ĐĂNG NHẬP HỆ THỐNG ĐÀO TẠO TẬP ĐOÀN VPS (VPS Academy)\n` +
+    `👤 Họ tên: ${u.name}\n` +
+    `🏢 Đơn vị: ${u.unit || 'Văn phòng VPS'}\n` +
+    `📧 Email: ${u.email}\n` +
+    `🔑 Mật khẩu: ${u.password}\n` +
+    `🌐 Link đăng nhập: ${loginLink}`;
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(msg).then(() => {
+      showToast('📋 Đã sao chép Thông tin & Link đăng nhập của ' + u.name + ' (Gửi qua Zalo/Email cho nhân sự)!', 'success', 4000);
+    }).catch(() => {
+      prompt('Sao chép thông tin đăng nhập bên dưới để gửi cho nhân sự:', msg);
+    });
+  } else {
+    prompt('Sao chép thông tin đăng nhập bên dưới để gửi cho nhân sự:', msg);
+  }
+};
 
 window.filterUsers = function() {
   const sEl = document.getElementById('userSearch');
@@ -457,14 +496,16 @@ window.saveUser = function() {
   }
 
   const data = { name, email, role, unit, phone, department: dept, status };
-  if (pass) data.password = pass;
+  if (pass) data.password = pass.trim();
+
+  if (window.VPSSecurity) window.VPSSecurity.clearRateLimit(email);
 
   if (id) {
     UserDB.update(id, data);
-    showToast('✅ Đã cập nhật tài khoản: ' + name, 'success');
+    showToast('✅ Đã cập nhật & đồng bộ Cloud tài khoản: ' + name, 'success');
   } else {
-    UserDB.create({ ...data, password: pass });
-    showToast('✅ Đã cấp tài khoản mới thành công cho: ' + name + ' (' + unit + ')', 'success');
+    UserDB.create({ ...data, password: pass.trim() });
+    showToast('✅ Đã cấp & đồng bộ Cloud tài khoản mới cho: ' + name + ' (' + unit + ')', 'success');
   }
   closeModal('userModal');
   renderUsers(document.getElementById('adminContent'));

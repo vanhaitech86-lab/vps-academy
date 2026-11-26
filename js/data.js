@@ -35,6 +35,7 @@ const DEFAULT_USERS = [
   { id: 3,  name: 'Trần Thị Bình',            email: 'nhanvien.cu@vps.vn',        password: '123456',      role: 'employee_old',     unit: 'Công ty Tân Hồng Hà', phone: '0923456789', department: 'Kỹ thuật',           avatar: '', status: 'active', createdAt: '2025-01-15' },
   { id: 4,  name: 'Lê Minh Cường',            email: 'khachhang@gmail.com',       password: '123456',      role: 'customer',         unit: 'Công ty Việt',        phone: '0934567890', department: 'Khách hàng',         avatar: '', status: 'active', createdAt: '2026-03-10' },
   { id: 5,  name: 'Phạm Thu Hà',              email: 'phamtuha@vps.vn',           password: '123456',      role: 'employee_new',     unit: 'Công ty ITSS',        phone: '0945678901', department: 'Hỗ trợ kỹ thuật',    avatar: '', status: 'active', createdAt: '2026-07-01' },
+  { id: 18, name: 'Phan DN',                  email: 'phandn@vpsgroup.vn',        password: 'vcopy123a@',  role: 'employee_new',     unit: 'Văn phòng VPS',       phone: '',           department: 'Nhân sự Tập đoàn',   avatar: '', status: 'active', createdAt: '2026-11-26' },
 ];
 
 const DEFAULT_CATEGORIES = [
@@ -412,28 +413,48 @@ window._setDB  = setDB;
 // ─── User CRUD ────────────────────────────────────────────────
 const UserDB = {
   getAll: () => getDB(DB_KEYS.users),
-  getById: (id) => getDB(DB_KEYS.users).find(u => u.id === parseInt(id)),
+  getById: (id) => getDB(DB_KEYS.users).find(u => String(u.id) === String(id)),
   getByEmail: (email) => {
     const clean = (email || '').trim().toLowerCase();
     return getDB(DB_KEYS.users).find(u => (u.email || '').trim().toLowerCase() === clean);
   },
   create: (data) => {
     const users = getDB(DB_KEYS.users);
-    const u = { ...data, email: (data.email || '').trim().toLowerCase(), id: Date.now(), createdAt: new Date().toISOString().split('T')[0] };
-    users.push(u);
+    const cleanEmail = (data.email || '').trim().toLowerCase();
+    const cleanPass = (data.password || '').trim();
+    const existingIdx = users.findIndex(x => (x.email || '').trim().toLowerCase() === cleanEmail);
+    const u = {
+      ...data,
+      email: cleanEmail,
+      password: cleanPass,
+      id: existingIdx >= 0 ? users[existingIdx].id : Date.now(),
+      status: data.status || 'active',
+      createdAt: new Date().toISOString().split('T')[0]
+    };
+    if (existingIdx >= 0) users[existingIdx] = u;
+    else users.push(u);
     setDB(DB_KEYS.users, users);
+    if (window.CloudDB) window.CloudDB.push({ upsertUser: u, users });
     return u;
   },
   update: (id, data) => {
     const users = getDB(DB_KEYS.users);
-    const i = users.findIndex(u => u.id === parseInt(id));
+    const i = users.findIndex(u => String(u.id) === String(id));
     if (i < 0) return null;
     if (data.email) data.email = data.email.trim().toLowerCase();
+    if (data.password) data.password = data.password.trim();
     users[i] = { ...users[i], ...data };
     setDB(DB_KEYS.users, users);
+    if (window.CloudDB) window.CloudDB.push({ upsertUser: users[i], users });
     return users[i];
   },
-  delete: (id) => { setDB(DB_KEYS.users, getDB(DB_KEYS.users).filter(u => u.id !== parseInt(id))); },
+  delete: (id) => {
+    const users = getDB(DB_KEYS.users);
+    const target = users.find(u => String(u.id) === String(id));
+    const filtered = users.filter(u => String(u.id) !== String(id));
+    setDB(DB_KEYS.users, filtered);
+    if (window.CloudDB) window.CloudDB.push({ deleteUserId: id, deleteUserEmail: target ? target.email : '', users: filtered, replaceUsers: true });
+  },
 };
 
 // ─── Course CRUD ──────────────────────────────────────────────
@@ -447,9 +468,9 @@ const CourseDB = {
     const unitAllowed = !c.allowedUnits || !c.allowedUnits.length || c.allowedUnits.includes('ALL') || !unit || c.allowedUnits.includes(unit);
     return roleAllowed && unitAllowed;
   }),
-  create: (data) => { const courses = getDB(DB_KEYS.courses); const c = { ...data, id: Date.now(), enrollCount: 0, createdAt: new Date().toISOString().split('T')[0] }; courses.push(c); setDB(DB_KEYS.courses, courses); return c; },
-  update: (id, data) => { const courses = getDB(DB_KEYS.courses); const i = courses.findIndex(c => c.id === parseInt(id)); if (i < 0) return null; courses[i] = { ...courses[i], ...data }; setDB(DB_KEYS.courses, courses); return courses[i]; },
-  delete: (id) => { setDB(DB_KEYS.courses, getDB(DB_KEYS.courses).filter(c => c.id !== parseInt(id))); },
+  create: (data) => { const courses = getDB(DB_KEYS.courses); const c = { ...data, id: Date.now(), enrollCount: 0, createdAt: new Date().toISOString().split('T')[0] }; courses.push(c); setDB(DB_KEYS.courses, courses); if (window.CloudDB) window.CloudDB.push({ courses }); return c; },
+  update: (id, data) => { const courses = getDB(DB_KEYS.courses); const i = courses.findIndex(c => c.id === parseInt(id)); if (i < 0) return null; courses[i] = { ...courses[i], ...data }; setDB(DB_KEYS.courses, courses); if (window.CloudDB) window.CloudDB.push({ courses }); return courses[i]; },
+  delete: (id) => { const courses = getDB(DB_KEYS.courses).filter(c => c.id !== parseInt(id)); setDB(DB_KEYS.courses, courses); if (window.CloudDB) window.CloudDB.push({ courses }); },
 };
 
 // ─── Lesson CRUD ──────────────────────────────────────────────
@@ -457,9 +478,9 @@ const LessonDB = {
   getAll: () => getDB(DB_KEYS.lessons),
   getById: (id) => getDB(DB_KEYS.lessons).find(l => l.id === parseInt(id)),
   getByCourse: (courseId) => getDB(DB_KEYS.lessons).filter(l => l.courseId === parseInt(courseId)).sort((a,b) => a.order - b.order),
-  create: (data) => { const l = getDB(DB_KEYS.lessons); const n = { ...data, id: Date.now() }; l.push(n); setDB(DB_KEYS.lessons, l); return n; },
-  update: (id, data) => { const l = getDB(DB_KEYS.lessons); const i = l.findIndex(x => x.id === parseInt(id)); if (i < 0) return null; l[i] = { ...l[i], ...data }; setDB(DB_KEYS.lessons, l); return l[i]; },
-  delete: (id) => { setDB(DB_KEYS.lessons, getDB(DB_KEYS.lessons).filter(l => l.id !== parseInt(id))); },
+  create: (data) => { const l = getDB(DB_KEYS.lessons); const n = { ...data, id: Date.now() }; l.push(n); setDB(DB_KEYS.lessons, l); if (window.CloudDB) window.CloudDB.push({ lessons: l }); return n; },
+  update: (id, data) => { const l = getDB(DB_KEYS.lessons); const i = l.findIndex(x => x.id === parseInt(id)); if (i < 0) return null; l[i] = { ...l[i], ...data }; setDB(DB_KEYS.lessons, l); if (window.CloudDB) window.CloudDB.push({ lessons: l }); return l[i]; },
+  delete: (id) => { const l = getDB(DB_KEYS.lessons).filter(l => l.id !== parseInt(id)); setDB(DB_KEYS.lessons, l); if (window.CloudDB) window.CloudDB.push({ lessons: l }); },
 };
 
 // ─── Quiz CRUD ────────────────────────────────────────────────
@@ -467,62 +488,192 @@ const QuizDB = {
   getAll: () => getDB(DB_KEYS.quizzes),
   getByCourse: (courseId) => getDB(DB_KEYS.quizzes).find(q => q.courseId === parseInt(courseId)),
   getById: (id) => getDB(DB_KEYS.quizzes).find(q => q.id === parseInt(id)),
-  create: (data) => { const q = getDB(DB_KEYS.quizzes); const n = { ...data, id: Date.now() }; q.push(n); setDB(DB_KEYS.quizzes, q); return n; },
-  update: (id, data) => { const q = getDB(DB_KEYS.quizzes); const i = q.findIndex(x => x.id === parseInt(id)); if (i < 0) return null; q[i] = { ...q[i], ...data }; setDB(DB_KEYS.quizzes, q); return q[i]; },
-  delete: (id) => { setDB(DB_KEYS.quizzes, getDB(DB_KEYS.quizzes).filter(q => q.id !== parseInt(id))); },
+  create: (data) => { const q = getDB(DB_KEYS.quizzes); const n = { ...data, id: Date.now() }; q.push(n); setDB(DB_KEYS.quizzes, q); if (window.CloudDB) window.CloudDB.push({ quizzes: q }); return n; },
+  update: (id, data) => { const q = getDB(DB_KEYS.quizzes); const i = q.findIndex(x => x.id === parseInt(id)); if (i < 0) return null; q[i] = { ...q[i], ...data }; setDB(DB_KEYS.quizzes, q); if (window.CloudDB) window.CloudDB.push({ quizzes: q }); return q[i]; },
+  delete: (id) => { const q = getDB(DB_KEYS.quizzes).filter(q => q.id !== parseInt(id)); setDB(DB_KEYS.quizzes, q); if (window.CloudDB) window.CloudDB.push({ quizzes: q }); },
 };
 
 // ─── Results ─────────────────────────────────────────────────
 const ResultDB = {
   getAll: () => getDB(DB_KEYS.results),
-  getByUser: (userId) => getDB(DB_KEYS.results).filter(r => r.userId === parseInt(userId)),
+  getByUser: (userId) => getDB(DB_KEYS.results).filter(r => String(r.userId) === String(userId)),
   getByCourse: (courseId) => getDB(DB_KEYS.results).filter(r => r.courseId === parseInt(courseId)),
-  getUserCourseResult: (userId, courseId) => getDB(DB_KEYS.results).find(r => r.userId === parseInt(userId) && r.courseId === parseInt(courseId)),
+  getUserCourseResult: (userId, courseId) => getDB(DB_KEYS.results).find(r => String(r.userId) === String(userId) && r.courseId === parseInt(courseId)),
   save: (data) => {
     const results = getDB(DB_KEYS.results);
-    const i = results.findIndex(r => r.userId === data.userId && r.courseId === data.courseId);
+    const i = results.findIndex(r => String(r.userId) === String(data.userId) && r.courseId === data.courseId);
     const n = { ...data, id: i >= 0 ? results[i].id : Date.now(), submittedAt: new Date().toISOString() };
     if (i >= 0) results[i] = n; else results.push(n);
-    setDB(DB_KEYS.results, results); return n;
+    setDB(DB_KEYS.results, results);
+    if (window.CloudDB) window.CloudDB.push({ results });
+    return n;
   },
 };
 
 // ─── Progress ─────────────────────────────────────────────────
 const ProgressDB = {
-  get: (userId, courseId) => getDB(DB_KEYS.progress).find(p => p.userId === parseInt(userId) && p.courseId === parseInt(courseId)) || { completedLessons: [] },
+  get: (userId, courseId) => getDB(DB_KEYS.progress).find(p => String(p.userId) === String(userId) && p.courseId === parseInt(courseId)) || { completedLessons: [] },
   markComplete: (userId, courseId, lessonId) => {
     const all = getDB(DB_KEYS.progress);
-    const i = all.findIndex(p => p.userId === parseInt(userId) && p.courseId === parseInt(courseId));
+    const i = all.findIndex(p => String(p.userId) === String(userId) && p.courseId === parseInt(courseId));
     if (i >= 0) { if (!all[i].completedLessons.includes(lessonId)) all[i].completedLessons.push(lessonId); all[i].lastActivity = new Date().toISOString(); }
     else all.push({ userId: parseInt(userId), courseId: parseInt(courseId), completedLessons: [lessonId], lastActivity: new Date().toISOString() });
     setDB(DB_KEYS.progress, all);
+    if (window.CloudDB) window.CloudDB.push({ progress: all });
   },
 };
 
 // ─── Enrollment ───────────────────────────────────────────────
 const EnrollmentDB = {
   getAll: () => getDB(DB_KEYS.enrollments),
-  isEnrolled: (userId, courseId) => getDB(DB_KEYS.enrollments).some(e => e.userId === parseInt(userId) && e.courseId === parseInt(courseId)),
+  isEnrolled: (userId, courseId) => getDB(DB_KEYS.enrollments).some(e => String(e.userId) === String(userId) && e.courseId === parseInt(courseId)),
   enroll: (userId, courseId) => {
     const e = getDB(DB_KEYS.enrollments);
-    if (!e.some(x => x.userId === parseInt(userId) && x.courseId === parseInt(courseId))) {
+    if (!e.some(x => String(x.userId) === String(userId) && x.courseId === parseInt(courseId))) {
       e.push({ userId: parseInt(userId), courseId: parseInt(courseId), enrolledAt: new Date().toISOString() });
       setDB(DB_KEYS.enrollments, e);
       const courses = getDB(DB_KEYS.courses); const i = courses.findIndex(c => c.id === parseInt(courseId));
       if (i >= 0) { courses[i].enrollCount = (courses[i].enrollCount || 0) + 1; setDB(DB_KEYS.courses, courses); }
+      if (window.CloudDB) window.CloudDB.push({ enrollments: e, courses });
     }
   },
-  getByUser: (userId) => getDB(DB_KEYS.enrollments).filter(e => e.userId === parseInt(userId)),
+  getByUser: (userId) => getDB(DB_KEYS.enrollments).filter(e => String(e.userId) === String(userId)),
 };
 
 // ─── Category CRUD ────────────────────────────────────────────
 const CategoryDB = {
   getAll: () => getDB(DB_KEYS.categories),
   getById: (id) => getDB(DB_KEYS.categories).find(c => c.id === parseInt(id)),
-  create: (data) => { const c = getDB(DB_KEYS.categories); const n = { ...data, id: Date.now() }; c.push(n); setDB(DB_KEYS.categories, c); return n; },
-  update: (id, data) => { const c = getDB(DB_KEYS.categories); const i = c.findIndex(x => x.id === parseInt(id)); if (i < 0) return null; c[i] = { ...c[i], ...data }; setDB(DB_KEYS.categories, c); return c[i]; },
-  delete: (id) => { setDB(DB_KEYS.categories, getDB(DB_KEYS.categories).filter(c => c.id !== parseInt(id))); },
+  create: (data) => { const c = getDB(DB_KEYS.categories); const n = { ...data, id: Date.now() }; c.push(n); setDB(DB_KEYS.categories, c); if (window.CloudDB) window.CloudDB.push({ categories: c }); return n; },
+  update: (id, data) => { const c = getDB(DB_KEYS.categories); const i = c.findIndex(x => x.id === parseInt(id)); if (i < 0) return null; c[i] = { ...c[i], ...data }; setDB(DB_KEYS.categories, c); if (window.CloudDB) window.CloudDB.push({ categories: c }); return c[i]; },
+  delete: (id) => { const c = getDB(DB_KEYS.categories).filter(c => c.id !== parseInt(id)); setDB(DB_KEYS.categories, c); if (window.CloudDB) window.CloudDB.push({ categories: c }); },
 };
+
+// ─── Cloud Database Sync Engine (Đồng bộ đa thiết bị) ─────────
+const CloudDB = {
+  _syncing: false,
+
+  // Tạo token đăng nhập/kích hoạt tài khoản qua Link (dự phòng offline/cross-device)
+  encodeInviteToken(user) {
+    try {
+      const payload = {
+        id: user.id,
+        name: user.name,
+        email: (user.email || '').trim().toLowerCase(),
+        password: user.password,
+        role: user.role || 'employee_new',
+        unit: user.unit || 'Văn phòng VPS',
+        phone: user.phone || '',
+        department: user.department || '',
+        status: user.status || 'active',
+        createdAt: user.createdAt || new Date().toISOString().split('T')[0]
+      };
+      return btoa(unescape(encodeURIComponent(JSON.stringify(payload))));
+    } catch (e) {
+      return '';
+    }
+  },
+
+  decodeInviteToken(tokenStr) {
+    try {
+      const jsonStr = decodeURIComponent(escape(atob(tokenStr.trim())));
+      const u = JSON.parse(jsonStr);
+      if (u && u.email && u.password) return u;
+      return null;
+    } catch (e) {
+      return null;
+    }
+  },
+
+  // Kéo dữ liệu mới nhất từ Cloud về trình duyệt hiện tại
+  async pull() {
+    try {
+      const res = await fetch('/api/db?t=' + Date.now(), { cache: 'no-store' });
+      if (!res.ok) return false;
+      const json = await res.json();
+      if (!json || !json.ok || !json.data) return false;
+      const cloud = json.data;
+
+      // 1. Merge Users (ưu tiên tài khoản trên Cloud + tài khoản mặc định)
+      if (Array.isArray(cloud.users) && cloud.users.length > 0) {
+        const localUsers = getDB(DB_KEYS.users);
+        const map = new Map();
+        DEFAULT_USERS.forEach(u => map.set(u.email.trim().toLowerCase(), { ...u }));
+        localUsers.forEach(u => {
+          if (u && u.email) map.set(u.email.trim().toLowerCase(), { ...u });
+        });
+        cloud.users.forEach(u => {
+          if (u && u.email) {
+            const k = u.email.trim().toLowerCase();
+            map.set(k, { ...(map.get(k) || {}), ...u, email: k });
+          }
+        });
+        setDB(DB_KEYS.users, Array.from(map.values()));
+      } else {
+        // Nếu Cloud chưa có danh sách user, đẩy danh sách hiện tại lên Cloud
+        this.push({ users: getDB(DB_KEYS.users) });
+      }
+
+      // 2. Sync Courses, Lessons, Quizzes, Categories nếu trên Cloud đã có cập nhật
+      if (Array.isArray(cloud.courses) && cloud.courses.length) setDB(DB_KEYS.courses, cloud.courses);
+      if (Array.isArray(cloud.lessons) && cloud.lessons.length) setDB(DB_KEYS.lessons, cloud.lessons);
+      if (Array.isArray(cloud.quizzes) && cloud.quizzes.length) setDB(DB_KEYS.quizzes, cloud.quizzes);
+      if (Array.isArray(cloud.categories) && cloud.categories.length) setDB(DB_KEYS.categories, cloud.categories);
+      if (cloud.settings && typeof cloud.settings === 'object') {
+        localStorage.setItem('vps_site_settings', JSON.stringify(cloud.settings));
+      }
+
+      // 3. Merge Results, Enrollments, Progress
+      if (Array.isArray(cloud.results) && cloud.results.length) {
+        const rMap = new Map();
+        getDB(DB_KEYS.results).forEach(r => rMap.set(`${r.userId}_${r.courseId}`, r));
+        cloud.results.forEach(r => rMap.set(`${r.userId}_${r.courseId}`, r));
+        setDB(DB_KEYS.results, Array.from(rMap.values()));
+      }
+      if (Array.isArray(cloud.enrollments) && cloud.enrollments.length) {
+        const eMap = new Map();
+        getDB(DB_KEYS.enrollments).forEach(e => eMap.set(`${e.userId}_${e.courseId}`, e));
+        cloud.enrollments.forEach(e => eMap.set(`${e.userId}_${e.courseId}`, e));
+        setDB(DB_KEYS.enrollments, Array.from(eMap.values()));
+      }
+      if (Array.isArray(cloud.progress) && cloud.progress.length) {
+        const pMap = new Map();
+        getDB(DB_KEYS.progress).forEach(p => pMap.set(`${p.userId}_${p.courseId}`, p));
+        cloud.progress.forEach(p => pMap.set(`${p.userId}_${p.courseId}`, p));
+        setDB(DB_KEYS.progress, Array.from(pMap.values()));
+      }
+
+      window.dispatchEvent(new CustomEvent('vps-cloud-synced'));
+      return true;
+    } catch (e) {
+      return false;
+    }
+  },
+
+  // Đẩy thay đổi từ máy hiện tại lên Cloud
+  async push(payload) {
+    try {
+      const res = await fetch('/api/db', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload || {
+          users: getDB(DB_KEYS.users),
+          courses: getDB(DB_KEYS.courses),
+          lessons: getDB(DB_KEYS.lessons),
+          quizzes: getDB(DB_KEYS.quizzes),
+          categories: getDB(DB_KEYS.categories),
+          results: getDB(DB_KEYS.results),
+          enrollments: getDB(DB_KEYS.enrollments),
+          progress: getDB(DB_KEYS.progress),
+        })
+      });
+      return res.ok;
+    } catch (e) {
+      return false;
+    }
+  }
+};
+window.CloudDB = CloudDB;
 
 // ─── Constants ────────────────────────────────────────────────
 const ROLE_LABELS = {
@@ -550,3 +701,7 @@ function generateStars(r) { let s = ''; for (let i = 0; i < Math.floor(r); i++) 
 
 // Init
 initDB();
+// Tự động đồng bộ dữ liệu từ Cloud về trình duyệt khi tải trang
+if (typeof window !== 'undefined' && window.CloudDB) {
+  window.CloudDB.pull();
+}

@@ -393,6 +393,7 @@ const Auth = {
   // Login with Rate Limit & Signed Session
   login(email, password) {
     const cleanEmail = (email || '').trim().toLowerCase();
+    const cleanPass = (password || '').trim();
 
     // 1. Check Brute-Force Lockout
     const guard = VPSSecurity.checkRateLimit(cleanEmail);
@@ -405,7 +406,8 @@ const Auth = {
       VPSSecurity.recordFailedLogin(cleanEmail);
       return { success: false, message: 'Email không tồn tại trong hệ thống' };
     }
-    if (user.password !== password) {
+    const storedPass = (user.password || '').trim();
+    if (storedPass !== cleanPass && user.password !== password) {
       const rec = VPSSecurity.recordFailedLogin(cleanEmail);
       const remain = Math.max(0, 5 - rec.count);
       return {
@@ -425,6 +427,19 @@ const Auth = {
     localStorage.setItem(DB_KEYS.session, JSON.stringify(signedSession));
     VPSSecurity.logEvent('INFO', `Đăng nhập thành công: ${user.email} (${user.role})`);
     return { success: true, user };
+  },
+
+  // Async Login – tự động đồng bộ từ Cloud Database nếu tài khoản vừa được Admin cấp trên thiết bị khác
+  async loginAsync(email, password) {
+    const cleanEmail = (email || '').trim().toLowerCase();
+    const cleanPass = (password || '').trim();
+
+    // Nếu local chưa có user hoặc mật khẩu vừa đổi trên Cloud, kéo dữ liệu mới nhất từ Cloud về trước
+    const localUser = UserDB.getByEmail(cleanEmail);
+    if ((!localUser || (localUser.password || '').trim() !== cleanPass) && window.CloudDB) {
+      await window.CloudDB.pull();
+    }
+    return this.login(cleanEmail, cleanPass);
   },
 
   // Logout
