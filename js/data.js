@@ -413,9 +413,26 @@ window._setDB  = setDB;
 const UserDB = {
   getAll: () => getDB(DB_KEYS.users),
   getById: (id) => getDB(DB_KEYS.users).find(u => u.id === parseInt(id)),
-  getByEmail: (email) => getDB(DB_KEYS.users).find(u => u.email === email),
-  create: (data) => { const users = getDB(DB_KEYS.users); const u = { ...data, id: Date.now(), createdAt: new Date().toISOString().split('T')[0] }; users.push(u); setDB(DB_KEYS.users, users); return u; },
-  update: (id, data) => { const users = getDB(DB_KEYS.users); const i = users.findIndex(u => u.id === parseInt(id)); if (i < 0) return null; users[i] = { ...users[i], ...data }; setDB(DB_KEYS.users, users); return users[i]; },
+  getByEmail: (email) => {
+    const clean = (email || '').trim().toLowerCase();
+    return getDB(DB_KEYS.users).find(u => (u.email || '').trim().toLowerCase() === clean);
+  },
+  create: (data) => {
+    const users = getDB(DB_KEYS.users);
+    const u = { ...data, email: (data.email || '').trim().toLowerCase(), id: Date.now(), createdAt: new Date().toISOString().split('T')[0] };
+    users.push(u);
+    setDB(DB_KEYS.users, users);
+    return u;
+  },
+  update: (id, data) => {
+    const users = getDB(DB_KEYS.users);
+    const i = users.findIndex(u => u.id === parseInt(id));
+    if (i < 0) return null;
+    if (data.email) data.email = data.email.trim().toLowerCase();
+    users[i] = { ...users[i], ...data };
+    setDB(DB_KEYS.users, users);
+    return users[i];
+  },
   delete: (id) => { setDB(DB_KEYS.users, getDB(DB_KEYS.users).filter(u => u.id !== parseInt(id))); },
 };
 

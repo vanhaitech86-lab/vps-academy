@@ -249,16 +249,16 @@ function renderUsers(el) {
   el.innerHTML = `
     <div class="admin-table-card">
       <div class="table-header" style="flex-wrap:wrap;gap:10px;">
-        <span class="table-title">Danh sách nhân sự ${isFull ? 'Toàn Tập đoàn' : '– ' + unit} (${users.length})</span>
+        <span class="table-title" id="usersCountTitle">Danh sách nhân sự ${isFull ? 'Toàn Tập đoàn' : '– ' + unit} (${users.length})</span>
         <div class="table-actions" style="flex-wrap:wrap;gap:8px;">
           ${isFull ? `
             <select class="filter-select" id="userUnitFilter" onchange="filterUsers()">
-              <option value="">🏢 Tất cả Đơn vị</option>
+              <option value="">🏢 Tất cả Đơn vị (${users.length})</option>
               <option value="Toàn Tập đoàn">👑 Toàn Tập đoàn (Lãnh đạo)</option>
               ${unitList.map(uName => `<option value="${uName}">🏢 ${uName}</option>`).join('')}
             </select>
           ` : `<span class="badge" style="background:#e0f2fe;color:#0054a6;padding:6px 12px;font-weight:700;">🏢 Đơn vị: ${unit}</span>`}
-          <input type="text" class="search-input" id="userSearch" placeholder="Tìm tên, email..." oninput="filterUsers()">
+          <input type="search" name="vps_search_staff_noautofill" autocomplete="off" readonly onfocus="this.removeAttribute('readonly')" class="search-input" id="userSearch" placeholder="🔍 Tìm tên, email, đơn vị..." oninput="filterUsers()">
           <button class="btn btn-primary btn-sm" onclick="openUserModal()">+ Cấp tài khoản mới</button>
         </div>
       </div>
@@ -268,17 +268,31 @@ function renderUsers(el) {
       </table>
     </div>
     ${userModal()}`;
+
+  // Chống trình duyệt tự động điền (Autofill) email Admin vào ô tìm kiếm làm ẩn danh sách
+  [50, 200, 500].forEach(delay => {
+    setTimeout(() => {
+      const sInput = document.getElementById('userSearch');
+      if (sInput && document.activeElement !== sInput && sInput.value) {
+        sInput.value = '';
+        filterUsers();
+      }
+    }, delay);
+  });
 }
 
 function renderUsersRows(users) {
   const { isFull, user: currentUser } = _getAdminScope();
+  if (!users.length) {
+    return `<tr><td colspan="6" style="text-align:center;padding:32px;color:var(--gray-500);">Không tìm thấy nhân sự phù hợp.</td></tr>`;
+  }
   return users.map(u => {
     const canDelete = u.id !== 1 && u.id !== (currentUser && currentUser.id) && (isFull || !['admin','ceo','general_director','unit_director'].includes(u.role));
     const canEdit = isFull || !['admin','ceo','general_director'].includes(u.role);
     return `
     <tr id="user-row-${u.id}">
       <td><div class="user-cell">
-        <div class="avatar" style="background:${ROLE_COLORS[u.role] || '#0054a6'}">${u.name.charAt(0)}</div>
+        <div class="avatar" style="background:${ROLE_COLORS[u.role] || '#0054a6'}">${(u.name || 'U').charAt(0)}</div>
         <div><div class="u-name">${u.name}</div><div class="u-email">${u.email}</div></div>
       </div></td>
       <td><span class="badge" style="background:${(ROLE_COLORS[u.role]||'#0054a6')}18;color:${ROLE_COLORS[u.role]||'#0054a6'};font-weight:700;">${ROLE_LABELS[u.role] || u.role}</span></td>
@@ -286,20 +300,23 @@ function renderUsersRows(users) {
       <td style="font-size:13px;">${u.department || '–'}</td>
       <td><span class="badge badge-${u.status}">${u.status === 'active' ? '✅ Hoạt động' : '❌ Vô hiệu'}</span></td>
       <td><div class="action-btns">
-        ${canEdit ? `<button class="action-btn edit" onclick="openUserModal(${u.id})">✏️ Sửa</button>` : ''}
-        ${canDelete ? `<button class="action-btn del" onclick="deleteUser(${u.id})">🗑️ Xóa</button>` : ''}
+        ${canEdit ? `<button type="button" class="action-btn edit" onclick="openUserModal(${u.id})">✏️ Sửa</button>` : ''}
+        ${canDelete ? `<button type="button" class="action-btn del" onclick="deleteUser(${u.id})">🗑️ Xóa</button>` : ''}
       </div></td>
     </tr>`;
   }).join('');
 }
 
 window.filterUsers = function() {
-  const q = (document.getElementById('userSearch')?.value || '').toLowerCase();
+  const sEl = document.getElementById('userSearch');
+  const q = (sEl && !sEl.hasAttribute('readonly') ? sEl.value : '').trim().toLowerCase();
   const unitF = document.getElementById('userUnitFilter')?.value || '';
   const users = _getScopedUsers(unitF).filter(u =>
-    u.name.toLowerCase().includes(q) ||
-    u.email.toLowerCase().includes(q) ||
-    (u.unit || '').toLowerCase().includes(q)
+    !q ||
+    (u.name || '').toLowerCase().includes(q) ||
+    (u.email || '').toLowerCase().includes(q) ||
+    (u.unit || '').toLowerCase().includes(q) ||
+    (u.department || '').toLowerCase().includes(q)
   );
   const body = document.getElementById('usersBody');
   if (body) body.innerHTML = renderUsersRows(users);
@@ -314,52 +331,54 @@ function userModal() {
     <div class="modal">
       <div class="modal-header">
         <h2 class="modal-title" id="userModalTitle">Cấp tài khoản người dùng</h2>
-        <button class="modal-close" onclick="closeModal('userModal')">✕</button>
+        <button type="button" class="modal-close" onclick="closeModal('userModal')">✕</button>
       </div>
       <div class="modal-body">
-        <input type="hidden" id="umId">
-        <div class="form-row">
-          <div class="form-group"><label class="form-label">Họ và tên <span class="required">*</span></label><input type="text" class="form-control" id="umName" placeholder="Nguyễn Văn A"></div>
-          <div class="form-group"><label class="form-label">Email đăng nhập <span class="required">*</span></label><input type="email" class="form-control" id="umEmail" placeholder="email@vpsgroup.vn"></div>
-        </div>
-        <div class="form-row">
-          <div class="form-group"><label class="form-label">Mật khẩu <span class="required">*</span></label><input type="password" class="form-control" id="umPass" placeholder="Nhập mật khẩu cấp cho nhân sự"></div>
-          <div class="form-group"><label class="form-label">Số điện thoại</label><input type="tel" class="form-control" id="umPhone" placeholder="0901234567"></div>
-        </div>
-        <div class="form-row">
-          <div class="form-group"><label class="form-label">🏢 Đơn vị thành viên <span class="required">*</span></label>
-            <select class="form-control" id="umUnit" ${!isFull ? 'disabled' : ''}>
-              ${isFull ? `<option value="Toàn Tập đoàn">👑 Toàn Tập đoàn VPS (CEO / TGĐ / Admin)</option>` : ''}
-              ${unitList.map(uName => `<option value="${uName}" ${(!isFull && uName === unit) ? 'selected' : ''}>🏢 ${uName}</option>`).join('')}
-            </select>
+        <form id="adminUserForm" autocomplete="off" onsubmit="event.preventDefault();saveUser();">
+          <input type="hidden" id="umId">
+          <div class="form-row">
+            <div class="form-group"><label class="form-label">Họ và tên <span class="required">*</span></label><input type="text" class="form-control" id="umName" name="vps_new_fullname" autocomplete="off" placeholder="Nguyễn Văn A"></div>
+            <div class="form-group"><label class="form-label">Email đăng nhập <span class="required">*</span></label><input type="email" class="form-control" id="umEmail" name="vps_new_email" autocomplete="off" placeholder="email@vpsgroup.vn"></div>
           </div>
-          <div class="form-group"><label class="form-label">🎖️ Cấp bậc / Phân quyền <span class="required">*</span></label>
-            <select class="form-control" id="umRole">
-              <option value="employee_new">Nhân viên mới</option>
-              <option value="employee_old">Nhân viên chính thức</option>
-              <option value="customer">Khách hàng</option>
-              <option value="unit_director">Giám đốc Đơn vị (Quản lý đơn vị)</option>
-              ${isFull ? `
-                <option value="general_director">Tổng Giám Đốc (Toàn quyền)</option>
-                <option value="ceo">CEO Tập đoàn (Toàn quyền)</option>
-                <option value="admin">Admin Hệ thống (Toàn quyền)</option>
-              ` : ''}
-            </select>
+          <div class="form-row">
+            <div class="form-group"><label class="form-label" id="umPassLabel">Mật khẩu <span class="required">*</span></label><input type="password" class="form-control" id="umPass" name="vps_new_password" autocomplete="new-password" placeholder="Nhập mật khẩu cấp cho nhân sự"></div>
+            <div class="form-group"><label class="form-label">Số điện thoại</label><input type="tel" class="form-control" id="umPhone" name="vps_new_phone" autocomplete="off" placeholder="0901234567"></div>
           </div>
-        </div>
-        <div class="form-row">
-          <div class="form-group"><label class="form-label">Phòng ban / Bộ phận</label><input type="text" class="form-control" id="umDept" placeholder="Kinh doanh / Kỹ thuật..."></div>
-          <div class="form-group"><label class="form-label">Trạng thái</label>
-            <select class="form-control" id="umStatus">
-              <option value="active">✅ Hoạt động (Cho phép truy cập)</option>
-              <option value="inactive">🔒 Vô hiệu hóa (Khóa truy cập)</option>
-            </select>
+          <div class="form-row">
+            <div class="form-group"><label class="form-label">🏢 Đơn vị thành viên <span class="required">*</span></label>
+              <select class="form-control" id="umUnit" ${!isFull ? 'disabled' : ''}>
+                ${unitList.map(uName => `<option value="${uName}" ${(!isFull && uName === unit) ? 'selected' : ''}>🏢 ${uName}</option>`).join('')}
+                ${isFull ? `<option value="Toàn Tập đoàn">👑 Toàn Tập đoàn VPS (CEO / TGĐ / Admin)</option>` : ''}
+              </select>
+            </div>
+            <div class="form-group"><label class="form-label">🎖️ Cấp bậc / Phân quyền <span class="required">*</span></label>
+              <select class="form-control" id="umRole">
+                <option value="employee_new">Nhân viên mới</option>
+                <option value="employee_old">Nhân viên chính thức</option>
+                <option value="customer">Khách hàng</option>
+                <option value="unit_director">Giám đốc Đơn vị (Quản lý đơn vị)</option>
+                ${isFull ? `
+                  <option value="general_director">Tổng Giám Đốc (Toàn quyền)</option>
+                  <option value="ceo">CEO Tập đoàn (Toàn quyền)</option>
+                  <option value="admin">Admin Hệ thống (Toàn quyền)</option>
+                ` : ''}
+              </select>
+            </div>
           </div>
-        </div>
+          <div class="form-row">
+            <div class="form-group"><label class="form-label">Phòng ban / Bộ phận</label><input type="text" class="form-control" id="umDept" autocomplete="off" placeholder="Kinh doanh / Kỹ thuật..."></div>
+            <div class="form-group"><label class="form-label">Trạng thái</label>
+              <select class="form-control" id="umStatus">
+                <option value="active">✅ Hoạt động (Cho phép truy cập)</option>
+                <option value="inactive">🔒 Vô hiệu hóa (Khóa truy cập)</option>
+              </select>
+            </div>
+          </div>
+        </form>
       </div>
       <div class="modal-footer">
-        <button class="btn btn-secondary" onclick="closeModal('userModal')">Hủy</button>
-        <button class="btn btn-primary" onclick="saveUser()">💾 Lưu tài khoản</button>
+        <button type="button" class="btn btn-secondary" onclick="closeModal('userModal')">Hủy</button>
+        <button type="button" class="btn btn-primary" onclick="saveUser()">💾 Lưu tài khoản</button>
       </div>
     </div>
   </div>`;
@@ -370,6 +389,9 @@ window.openUserModal = function(id) {
   const titleEl = document.getElementById('userModalTitle');
   const idEl = document.getElementById('umId');
   const unitEl = document.getElementById('umUnit');
+  const passLabel = document.getElementById('umPassLabel');
+  const passInput = document.getElementById('umPass');
+
   if (id) {
     const u = UserDB.getById(id);
     if (!u) return;
@@ -377,20 +399,26 @@ window.openUserModal = function(id) {
       showToast('Bạn chỉ có quyền chỉnh sửa nhân sự thuộc đơn vị ' + unit, 'error');
       return;
     }
-    if (titleEl) titleEl.textContent = 'Chỉnh sửa tài khoản';
+    if (titleEl) titleEl.textContent = 'Chỉnh sửa tài khoản: ' + u.name;
     if (idEl) idEl.value = u.id;
-    document.getElementById('umName').value = u.name;
-    document.getElementById('umEmail').value = u.email;
-    document.getElementById('umPass').value = '';
+    document.getElementById('umName').value = u.name || '';
+    document.getElementById('umEmail').value = u.email || '';
+    if (passInput) { passInput.value = ''; passInput.placeholder = 'Để trống nếu giữ nguyên mật khẩu cũ'; }
+    if (passLabel) passLabel.innerHTML = 'Mật khẩu mới (để trống = giữ nguyên)';
     document.getElementById('umPhone').value = u.phone || '';
-    document.getElementById('umRole').value = u.role;
+    document.getElementById('umRole').value = u.role || 'employee_new';
     if (unitEl) unitEl.value = u.unit || unit || 'Văn phòng VPS';
     document.getElementById('umDept').value = u.department || '';
-    document.getElementById('umStatus').value = u.status;
+    document.getElementById('umStatus').value = u.status || 'active';
   } else {
     if (titleEl) titleEl.textContent = 'Cấp tài khoản mới';
     if (idEl) idEl.value = '';
-    ['umName','umEmail','umPass','umPhone','umDept'].forEach(i => document.getElementById(i).value = '');
+    ['umName','umEmail','umPass','umPhone','umDept'].forEach(i => {
+      const el = document.getElementById(i);
+      if (el) el.value = '';
+    });
+    if (passInput) passInput.placeholder = 'Nhập mật khẩu cấp cho nhân sự';
+    if (passLabel) passLabel.innerHTML = 'Mật khẩu <span class="required">*</span>';
     document.getElementById('umRole').value = 'employee_new';
     if (unitEl) unitEl.value = isFull ? 'Văn phòng VPS' : unit;
     document.getElementById('umStatus').value = 'active';
@@ -400,15 +428,15 @@ window.openUserModal = function(id) {
 
 window.saveUser = function() {
   const { isFull, unit: managerUnit } = _getAdminScope();
-  const id = document.getElementById('umId').value;
-  const name = document.getElementById('umName').value.trim();
-  const email = document.getElementById('umEmail').value.trim();
-  const pass = document.getElementById('umPass').value;
-  const phone = document.getElementById('umPhone').value.trim();
-  let role = document.getElementById('umRole').value;
+  const id = (document.getElementById('umId')?.value || '').trim();
+  const name = (document.getElementById('umName')?.value || '').trim();
+  const email = (document.getElementById('umEmail')?.value || '').trim().toLowerCase();
+  const pass = document.getElementById('umPass')?.value || '';
+  const phone = (document.getElementById('umPhone')?.value || '').trim();
+  let role = document.getElementById('umRole')?.value || 'employee_new';
   let unit = isFull ? (document.getElementById('umUnit')?.value || 'Văn phòng VPS') : managerUnit;
-  const dept = document.getElementById('umDept').value.trim();
-  const status = document.getElementById('umStatus').value;
+  const dept = (document.getElementById('umDept')?.value || '').trim();
+  const status = document.getElementById('umStatus')?.value || 'active';
 
   if (!isFull && ['admin', 'ceo', 'general_director'].includes(role)) {
     showToast('Giám đốc đơn vị không có quyền tạo tài khoản cấp Tập đoàn!', 'error');
@@ -420,16 +448,23 @@ window.saveUser = function() {
 
   if (!name || !email) { showToast('Vui lòng điền đầy đủ Họ tên và Email', 'error'); return; }
   if (!id && !pass) { showToast('Vui lòng nhập mật khẩu cấp cho tài khoản mới', 'error'); return; }
+
+  // Kiểm tra trùng email
+  const existing = UserDB.getByEmail(email);
+  if (existing && String(existing.id) !== String(id)) {
+    showToast('Email "' + email + '" đã tồn tại trong hệ thống!', 'error');
+    return;
+  }
+
   const data = { name, email, role, unit, phone, department: dept, status };
   if (pass) data.password = pass;
+
   if (id) {
     UserDB.update(id, data);
-    showToast('Cập nhật tài khoản thành công!', 'success');
+    showToast('✅ Đã cập nhật tài khoản: ' + name, 'success');
   } else {
-    const existing = UserDB.getByEmail(email);
-    if (existing) { showToast('Email đã tồn tại trong hệ thống!', 'error'); return; }
     UserDB.create({ ...data, password: pass });
-    showToast('Đã cấp tài khoản mới thành công!', 'success');
+    showToast('✅ Đã cấp tài khoản mới thành công cho: ' + name + ' (' + unit + ')', 'success');
   }
   closeModal('userModal');
   renderUsers(document.getElementById('adminContent'));
@@ -458,7 +493,7 @@ function renderCourses(el) {
       <div class="table-header">
         <span class="table-title">Danh sách khóa học (${courses.length})</span>
         <div class="table-actions">
-          <input type="text" class="search-input" id="courseSearch" placeholder="Tìm kiếm..." oninput="filterCoursesAdmin(this.value)">
+          <input type="search" autocomplete="off" readonly onfocus="this.removeAttribute('readonly')" class="search-input" id="courseSearch" placeholder="Tìm kiếm..." oninput="filterCoursesAdmin(this.value)">
           <button class="btn btn-primary btn-sm" onclick="openCourseModal()">+ Thêm khóa học</button>
         </div>
       </div>
