@@ -401,7 +401,7 @@
       photocopy: {
         icon: '🖨️',
         title: 'Thiết bị Photocopy & In ấn',
-        desc: 'Mô phỏng 3D phần cứng Ricoh, FujiFilm, Konica Minolta và khắc phục sự cố',
+        desc: 'Mô phỏng trực quan phần cứng Ricoh, FujiFilm, Konica Minolta và khắc phục sự cố',
         badge: '⚡ Chuyên sâu',
         badgeColor: 'linear-gradient(135deg, #0054a6, #0284c7)'
       },
