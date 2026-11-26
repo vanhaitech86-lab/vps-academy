@@ -287,15 +287,15 @@ const VPSSecurity = (() => {
     modal.id = 'vpsSecurityModal';
     modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,25,55,0.75);backdrop-filter:blur(8px);z-index:10000;display:flex;align-items:center;justify-content:center;padding:16px;';
     modal.innerHTML = `
-      <div style="background:#ffffff;border:3px solid #0054a6;border-bottom:8px solid #e61e25;border-radius:24px;max-width:580px;width:100%;overflow:hidden;box-shadow:0 25px 60px rgba(0,0,0,0.45);animation:fadeInUp .25s ease;">
-        <div style="background:linear-gradient(135deg,#002d5a 0%,#0054a6 60%,#e61e25 100%);padding:18px 24px;color:white;display:flex;align-items:center;justify-content:space-between;">
+      <div style="background:#ffffff;border:3px solid #0284c7;border-bottom:8px solid #0054a6;border-radius:24px;max-width:580px;width:100%;overflow:hidden;box-shadow:0 25px 60px rgba(0,0,0,0.45);animation:fadeInUp .25s ease;">
+        <div style="background:linear-gradient(135deg,#002b59 0%,#0054a6 55%,#0ea5e9 100%);padding:18px 24px;color:white;display:flex;align-items:center;justify-content:space-between;">
           <div style="display:flex;align-items:center;gap:12px;">
-            <div style="width:42px;height:42px;background:#fff;border-radius:12px;padding:3px;display:flex;align-items:center;justify-content:center;border:2px solid #ffd700;">
+            <div style="width:42px;height:42px;background:#fff;border-radius:12px;padding:3px;display:flex;align-items:center;justify-content:center;border:2px solid #38bdf8;">
               <img src="images/logo-vps.png" alt="VPS" style="width:100%;height:100%;object-fit:contain;">
             </div>
             <div>
               <div style="font-size:17px;font-weight:900;letter-spacing:0.3px;">🛡️ Trung Tâm Bảo Mật VPS-Shield™</div>
-              <div style="font-size:11.5px;color:#ffd700;font-weight:700;">CẤP ĐỘ BẢO VỆ: ENTERPRISE LEVEL 5 (CAO NHẤT)</div>
+              <div style="font-size:11.5px;color:#7dd3fc;font-weight:700;">CẤP ĐỘ BẢO VỆ: ENTERPRISE LEVEL 5 (CAO NHẤT)</div>
             </div>
           </div>
           <button onclick="document.getElementById('vpsSecurityModal').remove()" style="background:rgba(255,255,255,0.2);color:white;border:none;width:32px;height:32px;border-radius:50%;font-size:16px;cursor:pointer;font-weight:700;">✕</button>
@@ -306,9 +306,9 @@ const VPSSecurity = (() => {
               <div style="font-size:11px;color:#526f8e;font-weight:700;">TRẠNG THÁI PHIÊN</div>
               <div style="font-size:13px;font-weight:800;color:#0054a6;margin-top:2px;">${session ? '🔒 Đã ký số (' + session.sessionId + ')' : '🌐 Phiên công khai bảo vệ'}</div>
             </div>
-            <div style="background:#fff5f5;border:1.5px solid #fecaca;border-radius:12px;padding:10px 12px;">
-              <div style="font-size:11px;color:#9e0e13;font-weight:700;">CHỐNG GIAN LẬN HỌC TẬP</div>
-              <div style="font-size:13px;font-weight:800;color:#e61e25;margin-top:2px;">✅ Chống tua &amp; Chống tải file</div>
+            <div style="background:#ecfdf5;border:1.5px solid #a7f3d0;border-radius:12px;padding:10px 12px;">
+              <div style="font-size:11px;color:#047857;font-weight:700;">CHỐNG GIAN LẬN HỌC TẬP</div>
+              <div style="font-size:13px;font-weight:800;color:#059669;margin-top:2px;">✅ Chống tua &amp; Chống tải file</div>
             </div>
           </div>
 
@@ -317,13 +317,13 @@ const VPSSecurity = (() => {
             <div style="display:flex;align-items:center;gap:8px;padding:8px 12px;background:#f8fbff;border-radius:10px;border-left:4px solid #0054a6;">
               <span>🔐</span><div><strong>Chữ ký số Session (Anti-Tamper):</strong> Ngăn chặn chỉnh sửa quyền hạn từ trình duyệt.</div>
             </div>
-            <div style="display:flex;align-items:center;gap:8px;padding:8px 12px;background:#f8fbff;border-radius:10px;border-left:4px solid #e61e25;">
+            <div style="display:flex;align-items:center;gap:8px;padding:8px 12px;background:#f8fbff;border-radius:10px;border-left:4px solid #0ea5e9;">
               <span>🛑</span><div><strong>Chống Brute-Force:</strong> Tự động khóa 5 phút nếu đăng nhập sai 5 lần liên tiếp.</div>
             </div>
             <div style="display:flex;align-items:center;gap:8px;padding:8px 12px;background:#f8fbff;border-radius:10px;border-left:4px solid #0054a6;">
               <span>⏪</span><div><strong>Chống tua Video &amp; Rời màn hình:</strong> Tua video bị học lại từ đầu; chuyển tab tự động dừng video.</div>
             </div>
-            <div style="display:flex;align-items:center;gap:8px;padding:8px 12px;background:#f8fbff;border-radius:10px;border-left:4px solid #e61e25;">
+            <div style="display:flex;align-items:center;gap:8px;padding:8px 12px;background:#f8fbff;border-radius:10px;border-left:4px solid #0ea5e9;">
               <span>🏷️</span><div><strong>Watermark Định danh Động:</strong> Hiển thị tên, email &amp; mã phiên di chuyển trên video và tài liệu.</div>
             </div>
             <div style="display:flex;align-items:center;gap:8px;padding:8px 12px;background:#f8fbff;border-radius:10px;border-left:4px solid #0054a6;">

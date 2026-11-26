@@ -1,40 +1,38 @@
 /* ============================================================
-   VPS Academy – Friendly 3D Ocean Blue & Crimson Red Theme
-   Tone màu chủ đạo: Xanh Nước Biển (#0054a6) & Đỏ Ngôi Sao (#e61e25)
-   Theo bộ nhận diện thương hiệu TẬP ĐOÀN VPS (VPS GROUP)
+   VPS Academy – Friendly 3D Ocean Blue & Sky Aqua Theme
+   Tone màu chủ đạo: Xanh Nước Biển (#0054a6), Xanh Bầu Trời (#0ea5e9) & Vàng Sao (#f59e0b)
+   Thân thiện, dịu mắt, hiện đại và chuyên nghiệp cho môi trường đào tạo
    ============================================================ */
 
 /* ─── 3D Brand Tokens & Variables ──────────────────────────── */
 :root {
   --vps-blue:         #0054a6;
-  --vps-blue-bright:  #0077e6;
+  --vps-blue-bright:  #0284c7;
   --vps-blue-deep:    #002d5a;
   --vps-blue-soft:    #e6f2ff;
-  --vps-red:          #e61e25;
-  --vps-red-bright:   #ff3b42;
-  --vps-red-deep:     #9e0e13;
-  --vps-red-soft:     #ffeef0;
-  --vps-star-gold:    #ffd700;
+  --vps-cyan:         #0ea5e9;
+  --vps-cyan-light:   #38bdf8;
+  --vps-star-gold:    #f59e0b;
 
   --shadow-3d-card:
-    0 7px 0 #c5d9ed,
-    0 16px 34px -6px rgba(0, 84, 166, 0.16),
-    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+    0 6px 0 #c5d9ed,
+    0 14px 32px -6px rgba(0, 84, 166, 0.14),
+    inset 0 1px 0 rgba(255, 255, 255, 0.95);
 
   --shadow-3d-card-hover:
-    0 9px 0 #0054a6,
-    0 24px 48px -8px rgba(0, 84, 166, 0.28),
-    0 0 24px rgba(230, 30, 37, 0.15),
+    0 8px 0 #0284c7,
+    0 22px 44px -8px rgba(0, 84, 166, 0.25),
+    0 0 22px rgba(14, 165, 233, 0.18),
     inset 0 1px 0 rgba(255, 255, 255, 1);
 
-  --shadow-3d-btn-red:
-    0 5px 0 #9e0e13,
-    0 10px 22px rgba(230, 30, 37, 0.38),
+  --shadow-3d-btn-blue:
+    0 5px 0 #003060,
+    0 10px 22px rgba(0, 84, 166, 0.32),
     inset 0 1px 1px rgba(255, 255, 255, 0.45);
 
-  --shadow-3d-btn-blue:
-    0 5px 0 #002d5a,
-    0 10px 22px rgba(0, 84, 166, 0.35),
+  --shadow-3d-btn-gold:
+    0 5px 0 #b45309,
+    0 10px 22px rgba(245, 158, 11, 0.35),
     inset 0 1px 1px rgba(255, 255, 255, 0.45);
 }
 
@@ -57,20 +55,20 @@ body {
     text-align: center;
     font-size: 24px;
     font-weight: 800;
-    color: #e61e25;
+    color: #0054a6;
   }
 }
 
-/* ─── Header 3D Ocean Blue & Red Accent Ribbon ─────────────── */
+/* ─── Header 3D Ocean Blue & Sky Cyan Ribbon ───────────────── */
 .site-header {
-  background: linear-gradient(135deg, #002d5a 0%, #0054a6 55%, #006ad1 100%) !important;
+  background: linear-gradient(135deg, #002b59 0%, #0054a6 55%, #0277bd 100%) !important;
   backdrop-filter: blur(20px) saturate(180%);
   -webkit-backdrop-filter: blur(20px) saturate(180%);
-  border-bottom: 4px solid #e61e25 !important;
-  box-shadow: 0 10px 28px rgba(0, 45, 90, 0.32), inset 0 1px 0 rgba(255, 255, 255, 0.25) !important;
+  border-bottom: 3px solid #38bdf8 !important;
+  box-shadow: 0 10px 28px rgba(0, 45, 90, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.25) !important;
 }
 
-/* 3D Brand Logo Container with VPS Group Logo */
+/* 3D Brand Logo Container */
 .logo {
   display: flex;
   align-items: center;
@@ -91,10 +89,10 @@ body {
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
-  border: 2px solid #e61e25 !important;
+  border: 2px solid #38bdf8 !important;
   box-shadow:
-    0 4px 0 #9e0e13,
-    0 8px 18px rgba(0, 0, 0, 0.28),
+    0 4px 0 #0284c7,
+    0 8px 18px rgba(0, 40, 85, 0.25),
     inset 0 1px 2px rgba(255, 255, 255, 0.9) !important;
   transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease !important;
   overflow: hidden;
@@ -113,20 +111,20 @@ body {
 .logo:hover .logo-icon {
   transform: translateY(-2px) scale(1.07) rotate(-3deg);
   box-shadow:
-    0 6px 0 #9e0e13,
-    0 12px 24px rgba(230, 30, 37, 0.45) !important;
+    0 6px 0 #0284c7,
+    0 12px 24px rgba(56, 189, 248, 0.45) !important;
 }
 
 .logo-text strong {
   color: #ffffff !important;
   font-size: 17px !important;
   font-weight: 900 !important;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.25);
   letter-spacing: 0.4px;
 }
 
 .logo-text span {
-  color: #ffd700 !important;
+  color: #7dd3fc !important;
   font-size: 10px !important;
   font-weight: 700 !important;
   letter-spacing: 1.5px !important;
@@ -135,8 +133,8 @@ body {
 /* Search Bar in Header */
 .header-search input {
   background: rgba(255, 255, 255, 0.16) !important;
-  border: 1.5px solid rgba(255, 255, 255, 0.3) !important;
-  box-shadow: inset 0 2px 5px rgba(0, 25, 55, 0.25);
+  border: 1.5px solid rgba(255, 255, 255, 0.28) !important;
+  box-shadow: inset 0 2px 5px rgba(0, 25, 55, 0.2);
   color: #ffffff !important;
 }
 .header-search input::placeholder {
@@ -144,8 +142,8 @@ body {
 }
 .header-search input:focus {
   background: rgba(255, 255, 255, 0.24) !important;
-  border-color: #ffd700 !important;
-  box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.3), inset 0 2px 4px rgba(0, 0, 0, 0.15) !important;
+  border-color: #38bdf8 !important;
+  box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.3), inset 0 2px 4px rgba(0, 0, 0, 0.12) !important;
 }
 
 /* Nav Links 3D Pill */
@@ -155,41 +153,41 @@ body {
   transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
 }
 .nav-link:hover {
-  background: rgba(255, 255, 255, 0.15) !important;
+  background: rgba(255, 255, 255, 0.14) !important;
   transform: translateY(-2px);
 }
 .nav-link.active {
-  background: linear-gradient(180deg, #ff3b42 0%, #e61e25 100%) !important;
+  background: linear-gradient(180deg, #0ea5e9 0%, #0284c7 100%) !important;
   color: #ffffff !important;
-  box-shadow: 0 3px 0 #9e0e13, 0 6px 14px rgba(230, 30, 37, 0.35) !important;
+  box-shadow: 0 3px 0 #0369a1, 0 6px 14px rgba(14, 165, 233, 0.35) !important;
 }
 
 /* 3D Login Button in Header */
 .btn-login {
-  background: linear-gradient(180deg, #ff3b42 0%, #e61e25 100%) !important;
-  color: #ffffff !important;
+  background: linear-gradient(180deg, #fbbf24 0%, #f59e0b 100%) !important;
+  color: #002d5a !important;
   border-radius: 99px !important;
-  font-weight: 700 !important;
-  box-shadow: 0 4px 0 #9e0e13, 0 8px 16px rgba(230, 30, 37, 0.35) !important;
+  font-weight: 800 !important;
+  box-shadow: 0 4px 0 #b45309, 0 8px 16px rgba(245, 158, 11, 0.35) !important;
   transition: all 0.15s ease !important;
 }
 .btn-login:hover {
   transform: translateY(-2px) !important;
-  box-shadow: 0 6px 0 #9e0e13, 0 12px 22px rgba(230, 30, 37, 0.5) !important;
+  box-shadow: 0 6px 0 #b45309, 0 12px 22px rgba(245, 158, 11, 0.45) !important;
 }
 .btn-login:active {
   transform: translateY(2px) !important;
-  box-shadow: 0 1px 0 #9e0e13 !important;
+  box-shadow: 0 1px 0 #b45309 !important;
 }
 
-/* ─── Hero 3D Ocean Blue & Crimson Red Spatial Environment ─── */
+/* ─── Hero 3D Ocean Blue & Sky Cyan Spatial Environment ────── */
 .hero {
   position: relative;
   min-height: 560px !important;
-  background: linear-gradient(135deg, #002855 0%, #004e98 48%, #0066cc 82%, #003b7a 100%) !important;
+  background: linear-gradient(135deg, #002248 0%, #00478f 48%, #0066cc 85%, #003b7a 100%) !important;
   overflow: hidden;
-  border-bottom: 5px solid #e61e25;
-  box-shadow: 0 14px 36px rgba(0, 84, 166, 0.22);
+  border-bottom: 4px solid #38bdf8;
+  box-shadow: 0 14px 36px rgba(0, 84, 166, 0.2);
 }
 
 #hero3DCanvas {
@@ -206,16 +204,16 @@ body {
   cursor: grabbing;
 }
 
-/* Friendly Ocean Blue & Crimson Red 3D Aura Backdrop */
+/* Friendly Ocean Blue & Aqua 3D Aura Backdrop */
 .hero-3d-backdrop {
   position: absolute;
   inset: 0;
   z-index: 0;
   background:
-    radial-gradient(circle at 80% 28%, rgba(230, 30, 37, 0.32) 0%, transparent 52%),
-    radial-gradient(circle at 22% 75%, rgba(0, 153, 255, 0.35) 0%, transparent 58%),
-    radial-gradient(circle at 55% 15%, rgba(255, 215, 0, 0.15) 0%, transparent 45%),
-    linear-gradient(135deg, rgba(0, 40, 85, 0.92) 0%, rgba(0, 84, 166, 0.88) 55%, rgba(0, 55, 115, 0.95) 100%);
+    radial-gradient(circle at 80% 30%, rgba(56, 189, 248, 0.32) 0%, transparent 55%),
+    radial-gradient(circle at 22% 75%, rgba(14, 165, 233, 0.28) 0%, transparent 58%),
+    radial-gradient(circle at 55% 15%, rgba(251, 191, 36, 0.14) 0%, transparent 45%),
+    linear-gradient(135deg, rgba(0, 35, 75, 0.92) 0%, rgba(0, 84, 166, 0.88) 55%, rgba(0, 55, 115, 0.95) 100%);
   pointer-events: none;
 }
 
@@ -243,15 +241,15 @@ body {
   pointer-events: auto;
 }
 
-/* 3D Hero Badge (Red & Ocean Blue Pill) */
+/* 3D Hero Badge (Ocean Blue & Aqua Pill) */
 .hero-badge-3d {
   display: inline-flex;
   align-items: center;
   gap: 8px;
   padding: 8px 18px;
   border-radius: 99px;
-  background: linear-gradient(135deg, rgba(230, 30, 37, 0.92), rgba(184, 18, 24, 0.92));
-  border: 1.5px solid rgba(255, 215, 0, 0.65);
+  background: linear-gradient(135deg, rgba(2, 132, 199, 0.9), rgba(0, 84, 166, 0.92));
+  border: 1.5px solid rgba(125, 211, 252, 0.7);
   color: #ffffff;
   font-size: 12.5px;
   font-weight: 800;
@@ -259,8 +257,8 @@ body {
   text-transform: uppercase;
   margin-bottom: 18px;
   box-shadow:
-    0 4px 0 #7a090d,
-    0 10px 24px rgba(230, 30, 37, 0.4),
+    0 4px 0 #002d5a,
+    0 10px 24px rgba(2, 132, 199, 0.35),
     inset 0 1px 1px rgba(255, 255, 255, 0.4);
   animation: floatBadge3D 3.2s ease-in-out infinite alternate;
 }
@@ -269,8 +267,8 @@ body {
   width: 9px;
   height: 9px;
   border-radius: 50%;
-  background: #ffd700;
-  box-shadow: 0 0 10px #ffd700, 0 0 18px #ffffff;
+  background: #38bdf8;
+  box-shadow: 0 0 10px #38bdf8, 0 0 18px #ffffff;
   animation: pulseDot 1.5s infinite;
 }
 
@@ -304,11 +302,11 @@ body {
 }
 
 .hero-title-3d .gradient-gold {
-  background: linear-gradient(135deg, #ff6b6b 0%, #ffd700 50%, #ff3b42 100%);
+  background: linear-gradient(135deg, #fde047 0%, #fbbf24 55%, #f59e0b 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   display: inline-block;
-  filter: drop-shadow(0 3px 6px rgba(158, 14, 19, 0.4));
+  filter: drop-shadow(0 3px 6px rgba(0, 40, 85, 0.4));
 }
 
 .hero-desc-3d {
@@ -318,7 +316,7 @@ body {
   margin-bottom: 28px;
   max-width: 540px;
   font-weight: 500;
-  text-shadow: 0 1px 3px rgba(0, 25, 55, 0.4);
+  text-shadow: 0 1px 3px rgba(0, 25, 55, 0.35);
 }
 
 /* ─── 3D Elevated Stats Counter ────────────────────────────── */
@@ -329,28 +327,28 @@ body {
 }
 
 .stat-box-3d {
-  background: rgba(255, 255, 255, 0.95);
+  background: rgba(255, 255, 255, 0.96);
   border: 2px solid #ffffff;
-  border-bottom: 5px solid #e61e25;
+  border-bottom: 5px solid #0284c7;
   border-radius: 18px;
   padding: 14px 22px;
   text-align: center;
-  box-shadow: 0 10px 25px rgba(0, 25, 55, 0.28);
+  box-shadow: 0 10px 25px rgba(0, 25, 55, 0.25);
   transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
   transform-style: preserve-3d;
 }
 
 .stat-box-3d:hover {
   transform: translateY(-5px) translateZ(15px);
-  border-bottom-color: #ffd700;
-  box-shadow: 0 16px 32px rgba(0, 25, 55, 0.38);
+  border-bottom-color: #38bdf8;
+  box-shadow: 0 16px 32px rgba(0, 25, 55, 0.35);
 }
 
 .stat-box-3d .number {
   font-size: 30px;
   font-weight: 900;
   line-height: 1;
-  background: linear-gradient(135deg, #0054a6 0%, #e61e25 100%);
+  background: linear-gradient(135deg, #0054a6 0%, #0ea5e9 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
@@ -364,14 +362,14 @@ body {
 
 /* ─── 3D Floating Interactive Showcase Widget in Hero ──────── */
 .hero-card-float {
-  background: rgba(255, 255, 255, 0.95) !important;
+  background: rgba(255, 255, 255, 0.96) !important;
   backdrop-filter: blur(20px) !important;
   border: 2px solid #ffffff !important;
-  border-bottom: 7px solid #e61e25 !important;
+  border-bottom: 7px solid #0284c7 !important;
   border-radius: 26px !important;
   box-shadow:
-    0 22px 50px rgba(0, 25, 55, 0.42),
-    0 0 0 4px rgba(255, 255, 255, 0.18) !important;
+    0 22px 50px rgba(0, 25, 55, 0.38),
+    0 0 0 4px rgba(56, 189, 248, 0.22) !important;
   padding: 22px !important;
   max-width: 390px !important;
   transform-style: preserve-3d;
@@ -404,9 +402,9 @@ body {
 }
 
 .hw-tab.active {
-  background: linear-gradient(180deg, #ff3b42 0%, #e61e25 100%);
+  background: linear-gradient(180deg, #0ea5e9 0%, #0054a6 100%);
   color: #ffffff;
-  box-shadow: 0 3px 0 #9e0e13, 0 5px 12px rgba(230, 30, 37, 0.3);
+  box-shadow: 0 3px 0 #002d5a, 0 5px 12px rgba(2, 132, 199, 0.3);
 }
 
 .hw-card-inner {
@@ -430,7 +428,7 @@ body {
   width: 48px;
   height: 48px;
   border-radius: 14px;
-  background: linear-gradient(135deg, #0054a6, #0077e6);
+  background: linear-gradient(135deg, #0054a6, #0ea5e9);
   color: #ffffff;
   display: flex;
   align-items: center;
@@ -445,8 +443,8 @@ body {
   padding: 5px 12px;
   border-radius: 99px;
   color: #fff;
-  background: linear-gradient(135deg, #e61e25, #ff3b42);
-  box-shadow: 0 2px 0 #9e0e13;
+  background: linear-gradient(135deg, #0284c7, #0ea5e9);
+  box-shadow: 0 2px 0 #0369a1;
 }
 
 .hw-title {
@@ -470,11 +468,10 @@ body {
   padding-top: 12px;
   border-top: 1px dashed #b0cbe9;
   font-size: 12px;
-  color: #e61e25 !important;
+  color: #0054a6 !important;
   font-weight: 800;
 }
 
-/* Course mini items inside hero card */
 .hero-card-float .course-mini {
   background: #f0f7ff !important;
   border: 1px solid #c5d9ed !important;
@@ -491,7 +488,7 @@ body {
   color: #526f8e !important;
 }
 
-/* ─── 3D Tactile Push Buttons (Red & Ocean Blue) ───────────── */
+/* ─── 3D Tactile Push Buttons (Ocean Blue & Gold) ──────────── */
 .btn-3d,
 .btn-primary {
   position: relative;
@@ -513,29 +510,29 @@ body {
 
 .btn-3d-primary,
 .btn-primary {
-  background: linear-gradient(180deg, #ff3b42 0%, #e61e25 100%) !important;
+  background: linear-gradient(180deg, #0ea5e9 0%, #0054a6 100%) !important;
   color: #ffffff !important;
-  box-shadow: var(--shadow-3d-btn-red) !important;
+  box-shadow: var(--shadow-3d-btn-blue) !important;
 }
 
 .btn-3d-primary:hover,
 .btn-primary:hover {
   transform: translateY(-3px);
   box-shadow:
-    0 8px 0 #9e0e13,
-    0 16px 28px rgba(230, 30, 37, 0.45),
-    inset 0 1px 1px rgba(255, 255, 255, 0.6) !important;
+    0 8px 0 #002d5a,
+    0 16px 28px rgba(2, 132, 199, 0.42),
+    inset 0 1px 1px rgba(255, 255, 255, 0.55) !important;
 }
 
 .btn-3d-primary:active,
 .btn-primary:active {
   transform: translateY(3px) !important;
-  box-shadow: 0 2px 0 #9e0e13, 0 4px 10px rgba(230, 30, 37, 0.3) !important;
+  box-shadow: 0 2px 0 #002d5a, 0 4px 10px rgba(0, 84, 166, 0.25) !important;
 }
 
 .btn-3d-cyan,
 .btn-3d-blue {
-  background: linear-gradient(180deg, #0077e6 0%, #0054a6 100%) !important;
+  background: linear-gradient(180deg, #38bdf8 0%, #0284c7 100%) !important;
   color: #ffffff !important;
   box-shadow: var(--shadow-3d-btn-blue) !important;
 }
@@ -545,35 +542,29 @@ body {
   transform: translateY(-3px);
   box-shadow:
     0 8px 0 #002d5a,
-    0 16px 28px rgba(0, 84, 166, 0.45),
+    0 16px 28px rgba(14, 165, 233, 0.42),
     inset 0 1px 1px rgba(255, 255, 255, 0.5) !important;
 }
 
-.btn-3d-cyan:active,
-.btn-3d-blue:active {
-  transform: translateY(3px) !important;
-  box-shadow: 0 2px 0 #002d5a !important;
-}
-
 .btn-3d-outline {
-  background: rgba(255, 255, 255, 0.92) !important;
+  background: rgba(255, 255, 255, 0.94) !important;
   color: #0054a6 !important;
   border: 2px solid #ffffff !important;
-  box-shadow: 0 5px 0 #b0cbe9, 0 10px 22px rgba(0, 25, 55, 0.22) !important;
+  box-shadow: 0 5px 0 #93c5fd, 0 10px 22px rgba(0, 25, 55, 0.2) !important;
 }
 
 .btn-3d-outline:hover {
   background: #ffffff !important;
-  color: #e61e25 !important;
+  color: #0284c7 !important;
   transform: translateY(-3px);
-  box-shadow: 0 8px 0 #b0cbe9, 0 14px 28px rgba(0, 25, 55, 0.3) !important;
+  box-shadow: 0 8px 0 #7dd3fc, 0 14px 28px rgba(0, 25, 55, 0.28) !important;
 }
 
 /* ─── 3D Category Floating Bar ─────────────────────────────── */
 .category-bar {
   background: #ffffff !important;
   border-bottom: 2px solid #d0e1f5 !important;
-  box-shadow: 0 6px 20px rgba(0, 84, 166, 0.08) !important;
+  box-shadow: 0 6px 20px rgba(0, 84, 166, 0.07) !important;
   position: relative;
   z-index: 10;
 }
@@ -592,9 +583,9 @@ body {
 }
 
 .cat-item.active {
-  background: linear-gradient(180deg, #e6f2ff 0%, #ffffff 100%) !important;
-  color: #e61e25 !important;
-  border-bottom: 4px solid #e61e25 !important;
+  background: linear-gradient(180deg, #e0f2fe 0%, #ffffff 100%) !important;
+  color: #0054a6 !important;
+  border-bottom: 4px solid #0284c7 !important;
 }
 
 .cat-item .cat-icon {
@@ -604,7 +595,7 @@ body {
   transform: scale(1.22) translateY(-2px);
 }
 
-/* ─── 3D Course Cards (Friendly Ocean Blue & Red 3D Depth) ──── */
+/* ─── 3D Course Cards (Friendly Ocean Blue & Sky Cyan Depth) ─ */
 .course-card {
   position: relative;
   background: #ffffff !important;
@@ -624,13 +615,13 @@ body {
   left: 0;
   right: 0;
   height: 5px;
-  background: linear-gradient(90deg, #0054a6 0%, #0077e6 50%, #e61e25 100%);
+  background: linear-gradient(90deg, #0054a6 0%, #0ea5e9 55%, #38bdf8 100%);
   z-index: 6;
 }
 
 .course-card.has-3d-tilt:hover,
 .course-card:hover {
-  border-color: #0054a6 !important;
+  border-color: #0284c7 !important;
   box-shadow: var(--shadow-3d-card-hover) !important;
 }
 
@@ -653,10 +644,10 @@ body {
 
 .course-card .course-play-btn {
   transform: translate(-50%, -50%) translateZ(44px) !important;
-  background: linear-gradient(135deg, #ff3b42, #e61e25) !important;
+  background: linear-gradient(135deg, #0ea5e9, #0054a6) !important;
   color: #ffffff !important;
   border: 3px solid #ffffff !important;
-  box-shadow: 0 8px 20px rgba(230, 30, 37, 0.45) !important;
+  box-shadow: 0 8px 20px rgba(0, 84, 166, 0.4) !important;
 }
 
 .course-card:hover .course-play-btn {
@@ -668,21 +659,21 @@ body {
   font-weight: 800 !important;
 }
 .course-card:hover .course-title {
-  color: #e61e25 !important;
+  color: #0284c7 !important;
 }
 
 .course-card .course-cta {
-  background: linear-gradient(180deg, #0077e6 0%, #0054a6 100%) !important;
+  background: linear-gradient(180deg, #0ea5e9 0%, #0054a6 100%) !important;
   color: #ffffff !important;
   border-radius: 12px !important;
   font-weight: 700 !important;
-  box-shadow: 0 3px 0 #002d5a, 0 6px 12px rgba(0, 84, 166, 0.25) !important;
+  box-shadow: 0 3px 0 #002d5a, 0 6px 12px rgba(0, 84, 166, 0.22) !important;
   transition: all 0.2s ease !important;
 }
 
 .course-card:hover .course-cta {
-  background: linear-gradient(180deg, #ff3b42 0%, #e61e25 100%) !important;
-  box-shadow: 0 3px 0 #9e0e13, 0 6px 14px rgba(230, 30, 37, 0.35) !important;
+  background: linear-gradient(180deg, #38bdf8 0%, #0284c7 100%) !important;
+  box-shadow: 0 3px 0 #0369a1, 0 6px 14px rgba(14, 165, 233, 0.35) !important;
   transform: translateZ(35px) scale(1.04);
 }
 
@@ -722,14 +713,14 @@ body {
   left: 0;
   right: 0;
   height: 5px;
-  background: linear-gradient(90deg, #e61e25, #0054a6);
+  background: linear-gradient(90deg, #0054a6, #38bdf8);
 }
 
 .feature-card-3d:hover {
-  border-color: #e61e25;
+  border-color: #0284c7;
   box-shadow:
-    0 9px 0 #e61e25,
-    0 22px 44px -8px rgba(230, 30, 37, 0.22);
+    0 9px 0 #0284c7,
+    0 22px 44px -8px rgba(2, 132, 199, 0.22);
 }
 
 .feature-icon-3d {
@@ -742,7 +733,7 @@ body {
   justify-content: center;
   font-size: 36px;
   transform: translateZ(32px);
-  box-shadow: 0 5px 0 rgba(0, 53, 107, 0.2), 0 12px 24px rgba(0, 84, 166, 0.15);
+  box-shadow: 0 5px 0 rgba(0, 53, 107, 0.18), 0 12px 24px rgba(0, 84, 166, 0.14);
   transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
@@ -767,7 +758,7 @@ body {
 
 /* ─── 3D Auth Page, Course Sidebar, Quiz Cards ─────────────── */
 .auth-page {
-  background: linear-gradient(135deg, #002d5a 0%, #0054a6 55%, #006ad1 100%) !important;
+  background: linear-gradient(135deg, #002b59 0%, #0054a6 55%, #0284c7 100%) !important;
   position: relative;
 }
 
@@ -776,25 +767,25 @@ body {
 .quiz-card {
   background: #ffffff !important;
   border: 2px solid #d0e1f5 !important;
-  border-bottom: 7px solid #0054a6 !important;
+  border-bottom: 7px solid #0284c7 !important;
   border-radius: 24px !important;
-  box-shadow: 0 20px 50px rgba(0, 35, 75, 0.25) !important;
+  box-shadow: 0 20px 50px rgba(0, 35, 75, 0.22) !important;
 }
 
-/* ─── 3D Footer in Ocean Blue & Red Trim ───────────────────── */
+/* ─── 3D Footer in Ocean Blue & Sky Cyan Trim ──────────────── */
 .site-footer {
-  background: linear-gradient(135deg, #002244 0%, #003b75 60%, #002855 100%) !important;
-  border-top: 5px solid #e61e25 !important;
+  background: linear-gradient(135deg, #001e3d 0%, #00356b 60%, #00264d 100%) !important;
+  border-top: 4px solid #38bdf8 !important;
   color: rgba(255, 255, 255, 0.9) !important;
 }
 
-/* ─── 3D QR Modal Friendly Ocean Blue & Red ────────────────── */
+/* ─── 3D QR Modal Friendly Ocean Blue ──────────────────────── */
 .qr-modal-box {
   background: #ffffff !important;
-  border: 3px solid #0054a6 !important;
-  border-bottom: 8px solid #e61e25 !important;
+  border: 3px solid #0284c7 !important;
+  border-bottom: 8px solid #0054a6 !important;
   border-radius: 26px !important;
-  box-shadow: 0 25px 60px rgba(0, 35, 75, 0.5) !important;
+  box-shadow: 0 25px 60px rgba(0, 35, 75, 0.45) !important;
   color: #0f2540 !important;
 }
 .qr-title {
@@ -806,12 +797,12 @@ body {
   color: #36506c !important;
 }
 .qr-code-wrap {
-  border: 2px solid #0054a6 !important;
-  box-shadow: 0 8px 24px rgba(0, 84, 166, 0.18) !important;
+  border: 2px solid #0284c7 !important;
+  box-shadow: 0 8px 24px rgba(0, 84, 166, 0.16) !important;
 }
 .qr-scanning-line {
-  background: linear-gradient(to bottom, rgba(230, 30, 37, 0), #e61e25, rgba(230, 30, 37, 0)) !important;
-  box-shadow: 0 0 14px #e61e25 !important;
+  background: linear-gradient(to bottom, rgba(14, 165, 233, 0), #0ea5e9, rgba(14, 165, 233, 0)) !important;
+  box-shadow: 0 0 14px #0ea5e9 !important;
 }
 .qr-demo-item {
   background: #f0f7ff !important;
@@ -821,9 +812,9 @@ body {
   transition: all 0.2s ease !important;
 }
 .qr-demo-item:hover {
-  background: #e6f2ff !important;
-  border-color: #e61e25 !important;
-  box-shadow: 0 4px 0 #e61e25 !important;
+  background: #e0f2fe !important;
+  border-color: #0284c7 !important;
+  box-shadow: 0 4px 0 #0284c7 !important;
   transform: translateY(-2px);
 }
 .qr-demo-info .name {
@@ -831,8 +822,8 @@ body {
   font-weight: 800 !important;
 }
 .qr-login-btn {
-  background: linear-gradient(180deg, #ff3b42 0%, #e61e25 100%) !important;
-  box-shadow: 0 4px 0 #9e0e13, 0 8px 18px rgba(230, 30, 37, 0.35) !important;
+  background: linear-gradient(180deg, #0ea5e9 0%, #0054a6 100%) !important;
+  box-shadow: 0 4px 0 #002d5a, 0 8px 18px rgba(0, 84, 166, 0.32) !important;
 }
 
 /* ─── VPS-Shield™ 3D Security Badge & Dynamic Watermark ────── */
@@ -842,8 +833,8 @@ body {
   gap: 6px;
   padding: 5px 12px;
   border-radius: 99px;
-  background: rgba(255, 255, 255, 0.14);
-  border: 1px solid rgba(255, 215, 0, 0.55);
+  background: rgba(56, 189, 248, 0.18);
+  border: 1px solid rgba(125, 211, 252, 0.6);
   color: #ffffff;
   font-size: 11.5px;
   font-weight: 700;
@@ -852,10 +843,10 @@ body {
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3);
 }
 .vps-shield-pill:hover {
-  background: #e61e25;
+  background: #0ea5e9;
   border-color: #ffffff;
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(230, 30, 37, 0.45);
+  box-shadow: 0 4px 12px rgba(14, 165, 233, 0.45);
 }
 
 .vps-dynamic-watermark {
@@ -875,7 +866,7 @@ body {
   transition: top 3.5s linear, left 3.5s linear;
 }
 
-/* ─── Smooth Ocean Blue & Red Scrollbar ────────────────────── */
+/* ─── Smooth Ocean Blue & Cyan Scrollbar ───────────────────── */
 ::-webkit-scrollbar {
   width: 9px;
 }
@@ -883,7 +874,7 @@ body {
   background: #e6f0fa;
 }
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, #0054a6, #e61e25);
+  background: linear-gradient(180deg, #0054a6, #0ea5e9);
   border-radius: 99px;
   border: 2px solid #e6f0fa;
 }

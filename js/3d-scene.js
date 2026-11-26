@@ -45,19 +45,19 @@
     renderer.setSize(width, height);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
-    // Friendly Bright 3D Lighting in Ocean Blue, Crimson Red & Gold
-    const ambientLight = new THREE.AmbientLight(0xdbeafe, 2.2);
+    // Friendly Bright 3D Lighting in Ocean Blue, Sky Cyan & Gold
+    const ambientLight = new THREE.AmbientLight(0xdbeafe, 2.3);
     scene.add(ambientLight);
 
     const oceanBlueLight = new THREE.PointLight(0x0088ff, 4.0, 35);
     oceanBlueLight.position.set(6, 4, 6);
     scene.add(oceanBlueLight);
 
-    const crimsonRedLight = new THREE.PointLight(0xe61e25, 3.8, 35);
-    crimsonRedLight.position.set(-6, -3, 6);
-    scene.add(crimsonRedLight);
+    const skyCyanLight = new THREE.PointLight(0x00e5ff, 3.6, 35);
+    skyCyanLight.position.set(-6, -3, 6);
+    scene.add(skyCyanLight);
 
-    const starGoldLight = new THREE.PointLight(0xffd700, 3.0, 30);
+    const starGoldLight = new THREE.PointLight(0xfbbf24, 2.8, 30);
     starGoldLight.position.set(0, 6, 4);
     scene.add(starGoldLight);
 
@@ -110,11 +110,11 @@
     const innerCrystal = new THREE.Mesh(innerGeo, innerMat);
     coreGroup.add(innerCrystal);
 
-    // ── Mesh 3 & 4: Crimson Red & Ocean Blue 3D Orbital Rings ──
-    const ringGeo1 = new THREE.TorusGeometry(3.55, 0.065, 20, 120);
+    // ── Mesh 3 & 4: Sky Cyan & Ocean Blue 3D Orbital Rings ──
+    const ringGeo1 = new THREE.TorusGeometry(3.55, 0.06, 20, 120);
     const ringMat1 = new THREE.MeshStandardMaterial({
-      color: 0xe61e25,
-      emissive: 0xe61e25,
+      color: 0x38bdf8,
+      emissive: 0x0ea5e9,
       emissiveIntensity: 0.75,
       roughness: 0.2,
       metalness: 0.7
@@ -126,8 +126,8 @@
 
     const ringGeo2 = new THREE.TorusGeometry(4.15, 0.05, 16, 120);
     const ringMat2 = new THREE.MeshStandardMaterial({
-      color: 0x38bdf8,
-      emissive: 0x0077e6,
+      color: 0x7dd3fc,
+      emissive: 0x0284c7,
       emissiveIntensity: 0.6,
       transparent: true,
       opacity: 0.85
@@ -137,17 +137,17 @@
     ring2.rotation.z = Math.PI / 4;
     coreGroup.add(ring2);
 
-    // ── Mesh 5: 11 Orbiting 3D Crimson Red Stars (11 Ngôi sao đỏ Tập đoàn VPS) ──
+    // ── Mesh 5: 11 Orbiting 3D Sky Cyan & Gold Stars ──
     const satellites = [];
-    const starGeo = new THREE.OctahedronGeometry(0.28, 0);
+    const starGeo = new THREE.OctahedronGeometry(0.27, 0);
+    const starPalette = [0x38bdf8, 0xfbbf24, 0x0ea5e9, 0x2dd4bf];
 
     for (let i = 0; i < 11; i++) {
-      const isGoldStar = i === 5; // Top middle star accent
-      const starColor = isGoldStar ? 0xffd700 : 0xe61e25;
+      const starColor = starPalette[i % starPalette.length];
       const satMat = new THREE.MeshStandardMaterial({
         color: starColor,
         emissive: starColor,
-        emissiveIntensity: 0.85,
+        emissiveIntensity: 0.8,
         roughness: 0.15,
         metalness: 0.85
       });
@@ -162,17 +162,17 @@
       });
     }
 
-    // ── Mesh 6: Friendly 3D Ocean & Red Starfield Particles ──
+    // ── Mesh 6: Friendly 3D Ocean & Sky Starfield Particles ──
     const particleCount = 520;
     const particleGeo = new THREE.BufferGeometry();
     const particlePos = new Float32Array(particleCount * 3);
     const particleColors = new Float32Array(particleCount * 3);
 
     const cOcean = new THREE.Color(0x7dd3fc);
-    const cRed = new THREE.Color(0xff4d54);
-    const cGold = new THREE.Color(0xffd700);
+    const cAqua = new THREE.Color(0x38bdf8);
+    const cGold = new THREE.Color(0xfde047);
     const cWhite = new THREE.Color(0xffffff);
-    const colorChoices = [cOcean, cRed, cGold, cWhite, cOcean];
+    const colorChoices = [cOcean, cAqua, cGold, cWhite, cOcean];
 
     for (let i = 0; i < particleCount; i++) {
       particlePos[i * 3] = (Math.random() - 0.5) * 36;
@@ -396,21 +396,21 @@
         title: 'Trí tuệ nhân tạo (AI) VPS',
         desc: 'Tự động hóa tác vụ văn phòng, chatbot tư vấn & phân tích hợp đồng thông minh',
         badge: '🚀 Đột phá 2026',
-        badgeColor: 'linear-gradient(135deg, #e61e25, #ff3b42)'
+        badgeColor: 'linear-gradient(135deg, #0284c7, #0ea5e9)'
       },
       photocopy: {
         icon: '🖨️',
         title: 'Thiết bị Photocopy & In ấn',
         desc: 'Mô phỏng 3D phần cứng Ricoh, FujiFilm, Konica Minolta và khắc phục sự cố',
         badge: '⚡ Chuyên sâu',
-        badgeColor: 'linear-gradient(135deg, #0054a6, #0077e6)'
+        badgeColor: 'linear-gradient(135deg, #0054a6, #0284c7)'
       },
       papercut: {
         icon: '⚙️',
         title: 'Giải pháp PaperCut MF / Hive',
         desc: 'Bảo mật tài liệu in ấn cấp doanh nghiệp, kiểm soát định lượng & mã hóa dữ liệu',
         badge: '🛡️ Bảo mật VPS',
-        badgeColor: 'linear-gradient(135deg, #b81218, #e61e25)'
+        badgeColor: 'linear-gradient(135deg, #0d9488, #10b981)'
       }
     };
 

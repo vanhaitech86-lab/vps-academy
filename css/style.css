@@ -4,30 +4,26 @@
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
 
-/* ─── CSS Variables (Tone Đỏ & Xanh Nước Biển Tập Đoàn VPS) ── */
+/* ─── CSS Variables (Tone Xanh Nước Biển & Cyan Hiện Đại) ── */
 :root {
   --primary:        #0054a6;
-  --primary-light:  #0068c9;
-  --primary-dark:   #00356b;
-  --vps-red:        #e61e25;
-  --vps-red-light:  #ff383f;
-  --vps-red-dark:   #b01016;
-  --vps-gold:       #ffd700;
-  --secondary:      #e61e25;
-  --secondary-dark: #b81218;
-  --accent:         #0077e6;
-  --accent-dark:    #0054a6;
-  --success:        #16a34a;
-  --danger:         #e61e25;
+  --primary-light:  #0277bd;
+  --primary-dark:   #002d5a;
+  --secondary:      #f59e0b;
+  --secondary-dark: #d97706;
+  --accent:         #0ea5e9;
+  --accent-dark:    #0284c7;
+  --success:        #10b981;
+  --danger:         #ef4444;
   --warning:        #f59e0b;
-  --info:           #0284c7;
-  --dark:           #00264d;
-  --dark-card:      #00356b;
-  --gray-50:        #f4f8fd;
-  --gray-100:       #e8f1fb;
-  --gray-200:       #d0e1f5;
-  --gray-300:       #b0cbe9;
-  --gray-400:       #7b9ab8;
+  --info:           #0ea5e9;
+  --dark:           #0a192f;
+  --dark-card:      #112240;
+  --gray-50:        #f4f8fc;
+  --gray-100:       #e9f1f9;
+  --gray-200:       #d3e2f2;
+  --gray-300:       #b3cce6;
+  --gray-400:       #7c9ab8;
   --gray-500:       #526f8e;
   --gray-600:       #36506c;
   --gray-700:       #1e3a5f;
@@ -37,17 +33,16 @@
   --radius:         14px;
   --radius-lg:      22px;
   --radius-xl:      30px;
-  --shadow-sm:      0 2px 6px rgba(0, 84, 166, .08), 0 1px 2px rgba(0, 84, 166, .05);
-  --shadow:         0 6px 20px rgba(0, 84, 166, .12);
-  --shadow-md:      0 10px 32px rgba(0, 84, 166, .16);
-  --shadow-lg:      0 18px 50px rgba(0, 84, 166, .20);
-  --shadow-xl:      0 26px 68px rgba(0, 53, 107, .26);
+  --shadow-sm:      0 2px 6px rgba(0, 84, 166, .07), 0 1px 2px rgba(0, 84, 166, .04);
+  --shadow:         0 6px 20px rgba(0, 84, 166, .10);
+  --shadow-md:      0 10px 32px rgba(0, 84, 166, .14);
+  --shadow-lg:      0 18px 50px rgba(0, 84, 166, .18);
+  --shadow-xl:      0 26px 68px rgba(0, 45, 90, .22);
   --transition:     all .3s cubic-bezier(.34,1.56,.64,1);
   --transition-fast:all .15s cubic-bezier(.4,0,.2,1);
-  --gradient-primary: linear-gradient(135deg, #00356b 0%, #0054a6 55%, #0077e6 100%);
-  --gradient-gold: linear-gradient(135deg, #ff383f 0%, #e61e25 100%);
-  --gradient-accent: linear-gradient(135deg, #0077e6 0%, #0054a6 100%);
-  --gradient-red-blue: linear-gradient(135deg, #0054a6 0%, #0068c9 50%, #e61e25 100%);
+  --gradient-primary: linear-gradient(135deg, #002d5a 0%, #0054a6 50%, #0284c7 100%);
+  --gradient-gold: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+  --gradient-accent: linear-gradient(135deg, #0ea5e9 0%, #0054a6 100%);
   --font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 }
 
