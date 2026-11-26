@@ -4,45 +4,50 @@
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
 
-/* ─── CSS Variables ────────────────────────────────────────── */
+/* ─── CSS Variables (Tone Đỏ & Xanh Nước Biển Tập Đoàn VPS) ── */
 :root {
-  --primary:        #1a3a6b;
-  --primary-light:  #2352a3;
-  --primary-dark:   #0d1f3c;
-  --secondary:      #f5a623;
-  --secondary-dark: #d4881a;
-  --accent:         #00c6ff;
-  --accent-dark:    #0099cc;
-  --success:        #28a745;
-  --danger:         #e74c3c;
-  --warning:        #f5a623;
-  --info:           #17a2b8;
-  --dark:           #0d1b2a;
-  --dark-card:      #142030;
-  --gray-50:        #f8fafc;
-  --gray-100:       #f1f5f9;
-  --gray-200:       #e2e8f0;
-  --gray-300:       #cbd5e1;
-  --gray-400:       #94a3b8;
-  --gray-500:       #64748b;
-  --gray-600:       #475569;
-  --gray-700:       #334155;
-  --gray-800:       #1e293b;
+  --primary:        #0054a6;
+  --primary-light:  #0068c9;
+  --primary-dark:   #00356b;
+  --vps-red:        #e61e25;
+  --vps-red-light:  #ff383f;
+  --vps-red-dark:   #b01016;
+  --vps-gold:       #ffd700;
+  --secondary:      #e61e25;
+  --secondary-dark: #b81218;
+  --accent:         #0077e6;
+  --accent-dark:    #0054a6;
+  --success:        #16a34a;
+  --danger:         #e61e25;
+  --warning:        #f59e0b;
+  --info:           #0284c7;
+  --dark:           #00264d;
+  --dark-card:      #00356b;
+  --gray-50:        #f4f8fd;
+  --gray-100:       #e8f1fb;
+  --gray-200:       #d0e1f5;
+  --gray-300:       #b0cbe9;
+  --gray-400:       #7b9ab8;
+  --gray-500:       #526f8e;
+  --gray-600:       #36506c;
+  --gray-700:       #1e3a5f;
+  --gray-800:       #0f2540;
   --white:          #ffffff;
-  --radius-sm:      8px;
-  --radius:         12px;
-  --radius-lg:      20px;
-  --radius-xl:      28px;
-  --shadow-sm:      0 1px 3px rgba(0,0,0,.08), 0 1px 2px rgba(0,0,0,.06);
-  --shadow:         0 4px 16px rgba(0,0,0,.10);
-  --shadow-md:      0 8px 30px rgba(0,0,0,.12);
-  --shadow-lg:      0 16px 48px rgba(0,0,0,.16);
-  --shadow-xl:      0 24px 64px rgba(0,0,0,.20);
-  --transition:     all .3s cubic-bezier(.4,0,.2,1);
+  --radius-sm:      10px;
+  --radius:         14px;
+  --radius-lg:      22px;
+  --radius-xl:      30px;
+  --shadow-sm:      0 2px 6px rgba(0, 84, 166, .08), 0 1px 2px rgba(0, 84, 166, .05);
+  --shadow:         0 6px 20px rgba(0, 84, 166, .12);
+  --shadow-md:      0 10px 32px rgba(0, 84, 166, .16);
+  --shadow-lg:      0 18px 50px rgba(0, 84, 166, .20);
+  --shadow-xl:      0 26px 68px rgba(0, 53, 107, .26);
+  --transition:     all .3s cubic-bezier(.34,1.56,.64,1);
   --transition-fast:all .15s cubic-bezier(.4,0,.2,1);
-  --gradient-primary: linear-gradient(135deg, #1a3a6b 0%, #2352a3 50%, #1a6b5a 100%);
-  --gradient-gold: linear-gradient(135deg, #f5a623, #e67e22);
-  --gradient-accent: linear-gradient(135deg, #00c6ff, #0072ff);
+  --gradient-primary: linear-gradient(135deg, #00356b 0%, #0054a6 55%, #0077e6 100%);
+  --gradient-gold: linear-gradient(135deg, #ff383f 0%, #e61e25 100%);
+  --gradient-accent: linear-gradient(135deg, #0077e6 0%, #0054a6 100%);
+  --gradient-red-blue: linear-gradient(135deg, #0054a6 0%, #0068c9 50%, #e61e25 100%);
   --font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 }
 

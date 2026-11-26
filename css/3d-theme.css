@@ -1,69 +1,197 @@
 /* ============================================================
-   VPS Academy – 3D Spatial Modern Theme Stylesheet
-   Ultra-Modern 3D WebGL, Holographic Glassmorphism, 3D Tilt
+   VPS Academy – Friendly 3D Ocean Blue & Crimson Red Theme
+   Tone màu chủ đạo: Xanh Nước Biển (#0054a6) & Đỏ Ngôi Sao (#e61e25)
+   Theo bộ nhận diện thương hiệu TẬP ĐOÀN VPS (VPS GROUP)
    ============================================================ */
 
-/* ─── 3D Tokens & Variables ───────────────────────────────── */
+/* ─── 3D Brand Tokens & Variables ──────────────────────────── */
 :root {
-  --space-dark: #060b17;
-  --space-surface: #0c1427;
-  --space-card: rgba(15, 23, 42, 0.75);
-  --space-card-border: rgba(56, 189, 248, 0.18);
-  --space-card-hover-border: rgba(56, 189, 248, 0.5);
-  --glow-cyan: rgba(0, 242, 254, 0.4);
-  --glow-purple: rgba(168, 85, 247, 0.4);
-  --glow-gold: rgba(245, 158, 11, 0.4);
-  
-  --shadow-3d-sm: 0 4px 14px rgba(0, 0, 0, 0.35), 0 1px 3px rgba(0, 0, 0, 0.2);
-  --shadow-3d-md: 0 14px 34px -6px rgba(0, 0, 0, 0.5), 0 0 20px rgba(0, 242, 254, 0.12);
-  --shadow-3d-lg: 0 24px 50px -10px rgba(0, 0, 0, 0.65), 0 0 35px rgba(0, 242, 254, 0.2);
-  --shadow-3d-float: 0 20px 40px rgba(0, 0, 0, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.25);
+  --vps-blue:         #0054a6;
+  --vps-blue-bright:  #0077e6;
+  --vps-blue-deep:    #002d5a;
+  --vps-blue-soft:    #e6f2ff;
+  --vps-red:          #e61e25;
+  --vps-red-bright:   #ff3b42;
+  --vps-red-deep:     #9e0e13;
+  --vps-red-soft:     #ffeef0;
+  --vps-star-gold:    #ffd700;
+
+  --shadow-3d-card:
+    0 7px 0 #c5d9ed,
+    0 16px 34px -6px rgba(0, 84, 166, 0.16),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+
+  --shadow-3d-card-hover:
+    0 9px 0 #0054a6,
+    0 24px 48px -8px rgba(0, 84, 166, 0.28),
+    0 0 24px rgba(230, 30, 37, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 1);
+
+  --shadow-3d-btn-red:
+    0 5px 0 #9e0e13,
+    0 10px 22px rgba(230, 30, 37, 0.38),
+    inset 0 1px 1px rgba(255, 255, 255, 0.45);
+
+  --shadow-3d-btn-blue:
+    0 5px 0 #002d5a,
+    0 10px 22px rgba(0, 84, 166, 0.35),
+    inset 0 1px 1px rgba(255, 255, 255, 0.45);
 }
 
-/* ─── Global 3D Perspective Context ────────────────────────── */
+/* ─── Global 3D Friendly Context ───────────────────────────── */
 body {
   perspective: 1200px;
-  background-color: var(--gray-50);
+  background: linear-gradient(180deg, #f0f7ff 0%, #f8fbff 50%, #eef5fc 100%) !important;
+  color: #0f2540;
 }
 
-/* ─── Header 3D Glass Elevation ────────────────────────────── */
+/* Chặn in ấn trái phép tài liệu & đề thi */
+@media print {
+  body * {
+    display: none !important;
+  }
+  body::after {
+    content: "🔒 TÀI LIỆU NỘI BỘ TẬP ĐOÀN VPS - NGHIÊM CẤM IN ẤN & SAO CHÉP!";
+    display: block !important;
+    padding: 60px 20px;
+    text-align: center;
+    font-size: 24px;
+    font-weight: 800;
+    color: #e61e25;
+  }
+}
+
+/* ─── Header 3D Ocean Blue & Red Accent Ribbon ─────────────── */
 .site-header {
-  background: rgba(8, 17, 34, 0.88) !important;
+  background: linear-gradient(135deg, #002d5a 0%, #0054a6 55%, #006ad1 100%) !important;
   backdrop-filter: blur(20px) saturate(180%);
   -webkit-backdrop-filter: blur(20px) saturate(180%);
-  border-bottom: 1px solid rgba(56, 189, 248, 0.15) !important;
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37) !important;
+  border-bottom: 4px solid #e61e25 !important;
+  box-shadow: 0 10px 28px rgba(0, 45, 90, 0.32), inset 0 1px 0 rgba(255, 255, 255, 0.25) !important;
 }
 
-.logo-icon {
-  position: relative;
-  transform: translateZ(10px);
-  box-shadow: 0 6px 18px rgba(245, 166, 35, 0.45), inset 0 1px 2px rgba(255, 255, 255, 0.4) !important;
-  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
-}
-.logo:hover .logo-icon {
-  transform: scale(1.1) rotate(6deg) translateZ(15px);
-}
-
-.header-search input {
-  background: rgba(15, 23, 42, 0.6) !important;
-  border: 1px solid rgba(255, 255, 255, 0.12) !important;
-  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
-}
-.header-search input:focus {
-  border-color: #38bdf8 !important;
-  box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.25), inset 0 2px 4px rgba(0, 0, 0, 0.2) !important;
+/* 3D Brand Logo Container with VPS Group Logo */
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+  transform-style: preserve-3d;
 }
 
-/* ─── Hero 3D Spatial Canvas & Environment ─────────────────── */
-.hero {
-  position: relative;
-  min-height: 560px !important;
-  background: #060b17 !important;
+.logo-icon,
+.auth-logo-icon,
+.admin-logo-icon,
+.f-logo-icon {
+  width: 48px !important;
+  height: 48px !important;
+  background: #ffffff !important;
+  border-radius: 14px !important;
+  padding: 3px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border: 2px solid #e61e25 !important;
+  box-shadow:
+    0 4px 0 #9e0e13,
+    0 8px 18px rgba(0, 0, 0, 0.28),
+    inset 0 1px 2px rgba(255, 255, 255, 0.9) !important;
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease !important;
   overflow: hidden;
 }
 
-/* 3D WebGL Canvas Layer */
+.logo-icon img,
+.auth-logo-icon img,
+.admin-logo-icon img,
+.f-logo-icon img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+.logo:hover .logo-icon {
+  transform: translateY(-2px) scale(1.07) rotate(-3deg);
+  box-shadow:
+    0 6px 0 #9e0e13,
+    0 12px 24px rgba(230, 30, 37, 0.45) !important;
+}
+
+.logo-text strong {
+  color: #ffffff !important;
+  font-size: 17px !important;
+  font-weight: 900 !important;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  letter-spacing: 0.4px;
+}
+
+.logo-text span {
+  color: #ffd700 !important;
+  font-size: 10px !important;
+  font-weight: 700 !important;
+  letter-spacing: 1.5px !important;
+}
+
+/* Search Bar in Header */
+.header-search input {
+  background: rgba(255, 255, 255, 0.16) !important;
+  border: 1.5px solid rgba(255, 255, 255, 0.3) !important;
+  box-shadow: inset 0 2px 5px rgba(0, 25, 55, 0.25);
+  color: #ffffff !important;
+}
+.header-search input::placeholder {
+  color: rgba(255, 255, 255, 0.75) !important;
+}
+.header-search input:focus {
+  background: rgba(255, 255, 255, 0.24) !important;
+  border-color: #ffd700 !important;
+  box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.3), inset 0 2px 4px rgba(0, 0, 0, 0.15) !important;
+}
+
+/* Nav Links 3D Pill */
+.nav-link {
+  border-radius: 12px !important;
+  font-weight: 600 !important;
+  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+}
+.nav-link:hover {
+  background: rgba(255, 255, 255, 0.15) !important;
+  transform: translateY(-2px);
+}
+.nav-link.active {
+  background: linear-gradient(180deg, #ff3b42 0%, #e61e25 100%) !important;
+  color: #ffffff !important;
+  box-shadow: 0 3px 0 #9e0e13, 0 6px 14px rgba(230, 30, 37, 0.35) !important;
+}
+
+/* 3D Login Button in Header */
+.btn-login {
+  background: linear-gradient(180deg, #ff3b42 0%, #e61e25 100%) !important;
+  color: #ffffff !important;
+  border-radius: 99px !important;
+  font-weight: 700 !important;
+  box-shadow: 0 4px 0 #9e0e13, 0 8px 16px rgba(230, 30, 37, 0.35) !important;
+  transition: all 0.15s ease !important;
+}
+.btn-login:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 6px 0 #9e0e13, 0 12px 22px rgba(230, 30, 37, 0.5) !important;
+}
+.btn-login:active {
+  transform: translateY(2px) !important;
+  box-shadow: 0 1px 0 #9e0e13 !important;
+}
+
+/* ─── Hero 3D Ocean Blue & Crimson Red Spatial Environment ─── */
+.hero {
+  position: relative;
+  min-height: 560px !important;
+  background: linear-gradient(135deg, #002855 0%, #004e98 48%, #0066cc 82%, #003b7a 100%) !important;
+  overflow: hidden;
+  border-bottom: 5px solid #e61e25;
+  box-shadow: 0 14px 36px rgba(0, 84, 166, 0.22);
+}
+
 #hero3DCanvas {
   position: absolute;
   top: 0;
@@ -78,15 +206,16 @@ body {
   cursor: grabbing;
 }
 
-/* Background Spatial Grid & Cyber Aura */
+/* Friendly Ocean Blue & Crimson Red 3D Aura Backdrop */
 .hero-3d-backdrop {
   position: absolute;
   inset: 0;
   z-index: 0;
-  background: 
-    radial-gradient(circle at 80% 30%, rgba(56, 189, 248, 0.15) 0%, transparent 60%),
-    radial-gradient(circle at 20% 70%, rgba(168, 85, 247, 0.12) 0%, transparent 55%),
-    radial-gradient(circle at 50% 50%, rgba(15, 23, 42, 0.95) 0%, #060b17 100%);
+  background:
+    radial-gradient(circle at 80% 28%, rgba(230, 30, 37, 0.32) 0%, transparent 52%),
+    radial-gradient(circle at 22% 75%, rgba(0, 153, 255, 0.35) 0%, transparent 58%),
+    radial-gradient(circle at 55% 15%, rgba(255, 215, 0, 0.15) 0%, transparent 45%),
+    linear-gradient(135deg, rgba(0, 40, 85, 0.92) 0%, rgba(0, 84, 166, 0.88) 55%, rgba(0, 55, 115, 0.95) 100%);
   pointer-events: none;
 }
 
@@ -94,18 +223,18 @@ body {
   content: '';
   position: absolute;
   inset: 0;
-  background-image: 
-    linear-gradient(to right, rgba(56, 189, 248, 0.04) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(56, 189, 248, 0.04) 1px, transparent 1px);
-  background-size: 40px 40px;
-  mask-image: radial-gradient(ellipse at center, black 30%, transparent 80%);
-  -webkit-mask-image: radial-gradient(ellipse at center, black 30%, transparent 80%);
+  background-image:
+    linear-gradient(to right, rgba(255, 255, 255, 0.06) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.06) 1px, transparent 1px);
+  background-size: 44px 44px;
+  mask-image: radial-gradient(ellipse at center, black 35%, transparent 82%);
+  -webkit-mask-image: radial-gradient(ellipse at center, black 35%, transparent 82%);
 }
 
 .hero-content {
   position: relative;
   z-index: 2;
-  pointer-events: none; /* Let canvas capture drag except for interactive buttons */
+  pointer-events: none;
 }
 .hero-content a,
 .hero-content button,
@@ -114,42 +243,45 @@ body {
   pointer-events: auto;
 }
 
-/* 3D Holographic Hero Badge */
+/* 3D Hero Badge (Red & Ocean Blue Pill) */
 .hero-badge-3d {
   display: inline-flex;
   align-items: center;
   gap: 8px;
   padding: 8px 18px;
   border-radius: 99px;
-  background: rgba(15, 23, 42, 0.7);
-  border: 1px solid rgba(56, 189, 248, 0.4);
-  backdrop-filter: blur(12px);
-  color: #38bdf8;
-  font-size: 13px;
-  font-weight: 700;
-  letter-spacing: 0.8px;
+  background: linear-gradient(135deg, rgba(230, 30, 37, 0.92), rgba(184, 18, 24, 0.92));
+  border: 1.5px solid rgba(255, 215, 0, 0.65);
+  color: #ffffff;
+  font-size: 12.5px;
+  font-weight: 800;
+  letter-spacing: 0.6px;
   text-transform: uppercase;
-  margin-bottom: 20px;
-  box-shadow: 0 0 20px rgba(56, 189, 248, 0.25), inset 0 1px 1px rgba(255, 255, 255, 0.3);
-  animation: floatBadge3D 3.5s ease-in-out infinite alternate;
+  margin-bottom: 18px;
+  box-shadow:
+    0 4px 0 #7a090d,
+    0 10px 24px rgba(230, 30, 37, 0.4),
+    inset 0 1px 1px rgba(255, 255, 255, 0.4);
+  animation: floatBadge3D 3.2s ease-in-out infinite alternate;
 }
+
 .hero-badge-3d .badge-pulse-dot {
-  width: 8px;
-  height: 8px;
+  width: 9px;
+  height: 9px;
   border-radius: 50%;
-  background: #00f2fe;
-  box-shadow: 0 0 10px #00f2fe, 0 0 20px #00f2fe;
+  background: #ffd700;
+  box-shadow: 0 0 10px #ffd700, 0 0 18px #ffffff;
   animation: pulseDot 1.5s infinite;
 }
 
 @keyframes pulseDot {
   0%, 100% { transform: scale(1); opacity: 1; }
-  50% { transform: scale(1.4); opacity: 0.6; }
+  50% { transform: scale(1.4); opacity: 0.7; }
 }
 
 @keyframes floatBadge3D {
   0% { transform: translateY(0px) translateZ(10px); }
-  100% { transform: translateY(-6px) translateZ(25px); }
+  100% { transform: translateY(-5px) translateZ(22px); }
 }
 
 /* 3D Hero Title */
@@ -157,187 +289,211 @@ body {
   font-size: clamp(28px, 4.2vw, 48px);
   font-weight: 900;
   color: #ffffff;
-  line-height: 1.15;
+  line-height: 1.18;
   margin-bottom: 18px;
-  text-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-  letter-spacing: -0.5px;
+  text-shadow: 0 4px 0 rgba(0, 28, 60, 0.6), 0 12px 28px rgba(0, 0, 0, 0.35);
+  letter-spacing: -0.4px;
 }
+
 .hero-title-3d .gradient-cyan {
-  background: linear-gradient(135deg, #00f2fe 0%, #4facfe 100%);
+  background: linear-gradient(135deg, #7dd3fc 0%, #ffffff 50%, #38bdf8 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   display: inline-block;
-  filter: drop-shadow(0 2px 8px rgba(0, 242, 254, 0.3));
+  filter: drop-shadow(0 3px 6px rgba(0, 40, 85, 0.45));
 }
+
 .hero-title-3d .gradient-gold {
-  background: linear-gradient(135deg, #f59e0b 0%, #ffd200 100%);
+  background: linear-gradient(135deg, #ff6b6b 0%, #ffd700 50%, #ff3b42 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   display: inline-block;
-  filter: drop-shadow(0 2px 8px rgba(245, 158, 11, 0.3));
+  filter: drop-shadow(0 3px 6px rgba(158, 14, 19, 0.4));
 }
 
 .hero-desc-3d {
-  color: rgba(226, 232, 240, 0.85);
+  color: rgba(240, 248, 255, 0.94);
   font-size: 16px;
   line-height: 1.7;
-  margin-bottom: 30px;
+  margin-bottom: 28px;
   max-width: 540px;
+  font-weight: 500;
+  text-shadow: 0 1px 3px rgba(0, 25, 55, 0.4);
 }
 
 /* ─── 3D Elevated Stats Counter ────────────────────────────── */
 .hero-stats-3d {
   display: flex;
   gap: 16px;
-  margin-top: 36px;
+  margin-top: 32px;
 }
+
 .stat-box-3d {
-  background: rgba(15, 23, 42, 0.65);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.95);
+  border: 2px solid #ffffff;
+  border-bottom: 5px solid #e61e25;
+  border-radius: 18px;
   padding: 14px 22px;
   text-align: center;
-  backdrop-filter: blur(12px);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3), inset 0 1px 1px rgba(255, 255, 255, 0.15);
-  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow: 0 10px 25px rgba(0, 25, 55, 0.28);
+  transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
   transform-style: preserve-3d;
 }
+
 .stat-box-3d:hover {
-  transform: translateY(-4px) translateZ(15px);
-  border-color: rgba(56, 189, 248, 0.5);
-  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.45), 0 0 20px rgba(56, 189, 248, 0.2);
+  transform: translateY(-5px) translateZ(15px);
+  border-bottom-color: #ffd700;
+  box-shadow: 0 16px 32px rgba(0, 25, 55, 0.38);
 }
+
 .stat-box-3d .number {
   font-size: 30px;
   font-weight: 900;
   line-height: 1;
-  background: linear-gradient(135deg, #00f2fe, #38bdf8);
+  background: linear-gradient(135deg, #0054a6 0%, #e61e25 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
+
 .stat-box-3d .label {
   font-size: 12px;
-  font-weight: 600;
-  color: rgba(203, 213, 225, 0.8);
+  font-weight: 700;
+  color: #00356b;
   margin-top: 4px;
 }
 
 /* ─── 3D Floating Interactive Showcase Widget in Hero ──────── */
 .hero-card-float {
-  background: rgba(12, 20, 39, 0.72) !important;
-  backdrop-filter: blur(24px) saturate(190%) !important;
-  -webkit-backdrop-filter: blur(24px) saturate(190%) !important;
-  border: 1px solid rgba(56, 189, 248, 0.25) !important;
-  border-radius: 24px !important;
-  box-shadow: var(--shadow-3d-lg), inset 0 1px 1px rgba(255, 255, 255, 0.3) !important;
-  padding: 24px !important;
-  max-width: 380px !important;
+  background: rgba(255, 255, 255, 0.95) !important;
+  backdrop-filter: blur(20px) !important;
+  border: 2px solid #ffffff !important;
+  border-bottom: 7px solid #e61e25 !important;
+  border-radius: 26px !important;
+  box-shadow:
+    0 22px 50px rgba(0, 25, 55, 0.42),
+    0 0 0 4px rgba(255, 255, 255, 0.18) !important;
+  padding: 22px !important;
+  max-width: 390px !important;
   transform-style: preserve-3d;
   position: relative;
   overflow: hidden;
-}
-
-/* Glowing Border Rim for Hero Floating Card */
-.hero-card-float::before {
-  content: '';
-  position: absolute;
-  inset: -1px;
-  border-radius: 25px;
-  padding: 1px;
-  background: linear-gradient(135deg, rgba(56, 189, 248, 0.6), rgba(168, 85, 247, 0.3), rgba(245, 158, 11, 0.5));
-  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  -webkit-mask-composite: xor;
-  mask-composite: exclude;
-  pointer-events: none;
+  color: #0f2540 !important;
 }
 
 .hw-tabs {
   display: flex;
   gap: 6px;
-  background: rgba(6, 11, 23, 0.6);
-  padding: 4px;
-  border-radius: 12px;
+  background: #e6f0fa;
+  padding: 5px;
+  border-radius: 14px;
   margin-bottom: 16px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid #c5d9ed;
 }
+
 .hw-tab {
   flex: 1;
-  padding: 8px 4px;
-  font-size: 11px;
+  padding: 8px 6px;
+  font-size: 11.5px;
   font-weight: 700;
-  color: rgba(255, 255, 255, 0.6);
+  color: #00356b;
   text-align: center;
-  border-radius: 8px;
+  border-radius: 10px;
   cursor: pointer;
-  transition: all 0.25s ease;
+  transition: all 0.2s ease;
   white-space: nowrap;
 }
+
 .hw-tab.active {
-  background: linear-gradient(135deg, #1e3a8a, #0284c7);
+  background: linear-gradient(180deg, #ff3b42 0%, #e61e25 100%);
   color: #ffffff;
-  box-shadow: 0 4px 12px rgba(2, 132, 199, 0.4);
+  box-shadow: 0 3px 0 #9e0e13, 0 5px 12px rgba(230, 30, 37, 0.3);
 }
 
 .hw-card-inner {
-  background: rgba(15, 23, 42, 0.65);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 16px;
+  background: linear-gradient(180deg, #f4f9ff 0%, #e8f2fc 100%);
+  border: 1.5px solid #c5d9ed;
+  border-radius: 18px;
   padding: 18px;
   transform-style: preserve-3d;
   transition: transform 0.25s ease, opacity 0.25s ease;
+  box-shadow: inset 0 1px 0 #ffffff, 0 4px 0 #c5d9ed;
 }
+
 .hw-card-top {
   display: flex;
   align-items: center;
   justify-content: space-between;
   margin-bottom: 12px;
 }
+
 .hw-icon-box {
-  width: 46px;
-  height: 46px;
-  border-radius: 12px;
-  background: linear-gradient(135deg, rgba(56, 189, 248, 0.2), rgba(168, 85, 247, 0.2));
-  border: 1px solid rgba(56, 189, 248, 0.3);
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #0054a6, #0077e6);
+  color: #ffffff;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 24px;
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 4px 0 #002d5a, 0 8px 16px rgba(0, 84, 166, 0.25);
 }
+
 .hw-badge {
   font-size: 11px;
-  font-weight: 700;
-  padding: 4px 10px;
+  font-weight: 800;
+  padding: 5px 12px;
   border-radius: 99px;
   color: #fff;
-  letter-spacing: 0.4px;
+  background: linear-gradient(135deg, #e61e25, #ff3b42);
+  box-shadow: 0 2px 0 #9e0e13;
 }
 
 .hw-title {
-  color: #fff;
-  font-size: 15px;
-  font-weight: 800;
+  color: #00356b !important;
+  font-size: 16px;
+  font-weight: 900;
   margin-bottom: 6px;
 }
+
 .hw-desc {
-  color: rgba(203, 213, 225, 0.75);
-  font-size: 12px;
-  line-height: 1.5;
+  color: #36506c !important;
+  font-size: 12.5px;
+  line-height: 1.55;
   margin-bottom: 14px;
 }
+
 .hw-footer {
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding-top: 12px;
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  border-top: 1px dashed #b0cbe9;
   font-size: 12px;
-  color: #38bdf8;
-  font-weight: 600;
+  color: #e61e25 !important;
+  font-weight: 800;
 }
 
-/* ─── 3D Tactile Buttons ───────────────────────────────────── */
-.btn-3d {
+/* Course mini items inside hero card */
+.hero-card-float .course-mini {
+  background: #f0f7ff !important;
+  border: 1px solid #c5d9ed !important;
+  border-radius: 14px !important;
+  padding: 10px 12px !important;
+  margin-bottom: 10px !important;
+  box-shadow: 0 3px 0 #d0e1f5;
+}
+.hero-card-float .course-mini-info .title {
+  color: #00356b !important;
+  font-weight: 800 !important;
+}
+.hero-card-float .course-mini-info .meta {
+  color: #526f8e !important;
+}
+
+/* ─── 3D Tactile Push Buttons (Red & Ocean Blue) ───────────── */
+.btn-3d,
+.btn-primary {
   position: relative;
   display: inline-flex;
   align-items: center;
@@ -345,106 +501,139 @@ body {
   gap: 8px;
   padding: 13px 26px;
   border-radius: 99px;
-  font-weight: 700;
+  font-weight: 800;
   font-size: 14px;
   cursor: pointer;
   border: none;
   text-decoration: none;
   transform-style: preserve-3d;
-  transition: transform 0.15s ease, box-shadow 0.25s ease, background 0.25s ease;
+  transition: transform 0.14s ease, box-shadow 0.2s ease, background 0.2s ease;
   user-select: none;
 }
-.btn-3d-primary {
-  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%) !important;
+
+.btn-3d-primary,
+.btn-primary {
+  background: linear-gradient(180deg, #ff3b42 0%, #e61e25 100%) !important;
   color: #ffffff !important;
-  box-shadow: 0 8px 24px -4px rgba(245, 158, 11, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.4) !important;
-}
-.btn-3d-primary:hover {
-  transform: translateY(-3px) scale(1.02);
-  box-shadow: 0 14px 30px -4px rgba(245, 158, 11, 0.65), 0 0 20px rgba(245, 158, 11, 0.3) !important;
-}
-.btn-3d-primary:active {
-  transform: translateY(1px) scale(0.98);
-  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.4) !important;
+  box-shadow: var(--shadow-3d-btn-red) !important;
 }
 
-.btn-3d-cyan {
-  background: linear-gradient(135deg, #00f2fe 0%, #0284c7 100%) !important;
+.btn-3d-primary:hover,
+.btn-primary:hover {
+  transform: translateY(-3px);
+  box-shadow:
+    0 8px 0 #9e0e13,
+    0 16px 28px rgba(230, 30, 37, 0.45),
+    inset 0 1px 1px rgba(255, 255, 255, 0.6) !important;
+}
+
+.btn-3d-primary:active,
+.btn-primary:active {
+  transform: translateY(3px) !important;
+  box-shadow: 0 2px 0 #9e0e13, 0 4px 10px rgba(230, 30, 37, 0.3) !important;
+}
+
+.btn-3d-cyan,
+.btn-3d-blue {
+  background: linear-gradient(180deg, #0077e6 0%, #0054a6 100%) !important;
   color: #ffffff !important;
-  box-shadow: 0 8px 24px -4px rgba(2, 132, 199, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.4) !important;
+  box-shadow: var(--shadow-3d-btn-blue) !important;
 }
-.btn-3d-cyan:hover {
-  transform: translateY(-3px) scale(1.02);
-  box-shadow: 0 14px 30px -4px rgba(0, 242, 254, 0.6), 0 0 25px rgba(0, 242, 254, 0.35) !important;
+
+.btn-3d-cyan:hover,
+.btn-3d-blue:hover {
+  transform: translateY(-3px);
+  box-shadow:
+    0 8px 0 #002d5a,
+    0 16px 28px rgba(0, 84, 166, 0.45),
+    inset 0 1px 1px rgba(255, 255, 255, 0.5) !important;
 }
-.btn-3d-cyan:active {
-  transform: translateY(1px) scale(0.98);
+
+.btn-3d-cyan:active,
+.btn-3d-blue:active {
+  transform: translateY(3px) !important;
+  box-shadow: 0 2px 0 #002d5a !important;
 }
 
 .btn-3d-outline {
-  background: rgba(15, 23, 42, 0.6) !important;
-  color: #ffffff !important;
-  border: 1px solid rgba(255, 255, 255, 0.25) !important;
-  backdrop-filter: blur(10px);
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25) !important;
+  background: rgba(255, 255, 255, 0.92) !important;
+  color: #0054a6 !important;
+  border: 2px solid #ffffff !important;
+  box-shadow: 0 5px 0 #b0cbe9, 0 10px 22px rgba(0, 25, 55, 0.22) !important;
 }
+
 .btn-3d-outline:hover {
-  background: rgba(255, 255, 255, 0.12) !important;
-  border-color: #38bdf8 !important;
-  transform: translateY(-2px);
-  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.35), 0 0 15px rgba(56, 189, 248, 0.25) !important;
+  background: #ffffff !important;
+  color: #e61e25 !important;
+  transform: translateY(-3px);
+  box-shadow: 0 8px 0 #b0cbe9, 0 14px 28px rgba(0, 25, 55, 0.3) !important;
 }
 
 /* ─── 3D Category Floating Bar ─────────────────────────────── */
 .category-bar {
   background: #ffffff !important;
-  border-bottom: 1px solid rgba(226, 232, 240, 0.8) !important;
-  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.06) !important;
+  border-bottom: 2px solid #d0e1f5 !important;
+  box-shadow: 0 6px 20px rgba(0, 84, 166, 0.08) !important;
   position: relative;
   z-index: 10;
 }
+
 .cat-item {
-  border-radius: 12px 12px 0 0 !important;
+  border-radius: 14px 14px 0 0 !important;
   transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
-  position: relative;
+  font-weight: 700 !important;
+  color: #1e3a5f !important;
 }
+
 .cat-item:hover {
   transform: translateY(-3px) !important;
-  background: rgba(241, 245, 249, 0.8) !important;
+  background: #f0f7ff !important;
+  color: #0054a6 !important;
 }
+
 .cat-item.active {
-  background: rgba(30, 58, 138, 0.06) !important;
-  border-bottom: 3px solid #1a3a6b !important;
+  background: linear-gradient(180deg, #e6f2ff 0%, #ffffff 100%) !important;
+  color: #e61e25 !important;
+  border-bottom: 4px solid #e61e25 !important;
 }
+
 .cat-item .cat-icon {
   transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 .cat-item:hover .cat-icon {
-  transform: scale(1.2) translateY(-2px);
+  transform: scale(1.22) translateY(-2px);
 }
 
-/* ─── 3D COURSE CARD TILT STYLING ──────────────────────────── */
+/* ─── 3D Course Cards (Friendly Ocean Blue & Red 3D Depth) ──── */
 .course-card {
   position: relative;
   background: #ffffff !important;
-  border-radius: 20px !important;
-  border: 1px solid rgba(203, 213, 225, 0.6) !important;
-  box-shadow: 0 8px 24px -4px rgba(0, 0, 0, 0.08), 0 2px 6px rgba(0, 0, 0, 0.04) !important;
+  border-radius: 22px !important;
+  border: 2px solid #d0e1f5 !important;
+  box-shadow: var(--shadow-3d-card) !important;
   overflow: hidden;
   transform-style: preserve-3d !important;
   will-change: transform, box-shadow;
-  transition: transform 0.15s ease-out, box-shadow 0.25s ease, border-color 0.25s ease;
+  transition: transform 0.18s ease-out, box-shadow 0.25s ease, border-color 0.25s ease;
 }
 
-.course-card.has-3d-tilt:hover {
-  border-color: rgba(56, 189, 248, 0.6) !important;
-  box-shadow: 
-    0 20px 40px -10px rgba(15, 23, 42, 0.22),
-    0 0 25px rgba(56, 189, 248, 0.15),
-    inset 0 1px 1px rgba(255, 255, 255, 0.8) !important;
+.course-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 5px;
+  background: linear-gradient(90deg, #0054a6 0%, #0077e6 50%, #e61e25 100%);
+  z-index: 6;
 }
 
-/* Dynamic Specular Glare Layer */
+.course-card.has-3d-tilt:hover,
+.course-card:hover {
+  border-color: #0054a6 !important;
+  box-shadow: var(--shadow-3d-card-hover) !important;
+}
+
 .card-3d-glare {
   position: absolute;
   inset: 0;
@@ -456,182 +645,247 @@ body {
   mix-blend-mode: overlay;
 }
 
-/* Pop-out 3D Layering for Course Card Components */
 .course-card .course-thumb {
-  transform: translateZ(26px);
+  transform: translateZ(22px);
   transform-style: preserve-3d;
-  border-radius: 16px 16px 0 0;
   transition: transform 0.25s ease;
-}
-.course-card:hover .course-thumb {
-  transform: translateZ(32px);
 }
 
 .course-card .course-play-btn {
-  transform: translate(-50%, -50%) translateZ(48px) !important;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.35) !important;
-  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.2s ease !important;
-}
-.course-card:hover .course-play-btn {
-  transform: translate(-50%, -50%) translateZ(60px) scale(1.15) !important;
-  background: #ffffff !important;
+  transform: translate(-50%, -50%) translateZ(44px) !important;
+  background: linear-gradient(135deg, #ff3b42, #e61e25) !important;
+  color: #ffffff !important;
+  border: 3px solid #ffffff !important;
+  box-shadow: 0 8px 20px rgba(230, 30, 37, 0.45) !important;
 }
 
-.course-card .course-level-badge {
-  transform: translateZ(38px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+.course-card:hover .course-play-btn {
+  transform: translate(-50%, -50%) translateZ(56px) scale(1.15) !important;
 }
-.course-card .course-category {
-  transform: translateZ(18px);
-}
+
 .course-card .course-title {
-  transform: translateZ(28px);
-  transition: color 0.2s ease;
+  color: #00356b !important;
+  font-weight: 800 !important;
 }
 .course-card:hover .course-title {
-  color: #1a3a6b;
-}
-.course-card .course-instructor {
-  transform: translateZ(20px);
-}
-.course-card .course-footer {
-  transform: translateZ(24px);
-}
-.course-card .course-cta {
-  transform: translateZ(34px);
-  box-shadow: 0 4px 12px rgba(26, 58, 107, 0.25);
-  transition: all 0.25s ease;
-}
-.course-card:hover .course-cta {
-  transform: translateZ(42px) scale(1.05);
-  box-shadow: 0 8px 20px rgba(26, 58, 107, 0.4);
+  color: #e61e25 !important;
 }
 
-/* ─── 3D HOLOGRAM FEATURE CARDS ────────────────────────────── */
+.course-card .course-cta {
+  background: linear-gradient(180deg, #0077e6 0%, #0054a6 100%) !important;
+  color: #ffffff !important;
+  border-radius: 12px !important;
+  font-weight: 700 !important;
+  box-shadow: 0 3px 0 #002d5a, 0 6px 12px rgba(0, 84, 166, 0.25) !important;
+  transition: all 0.2s ease !important;
+}
+
+.course-card:hover .course-cta {
+  background: linear-gradient(180deg, #ff3b42 0%, #e61e25 100%) !important;
+  box-shadow: 0 3px 0 #9e0e13, 0 6px 14px rgba(230, 30, 37, 0.35) !important;
+  transform: translateZ(35px) scale(1.04);
+}
+
+/* ─── 3D Feature Cards Section ─────────────────────────────── */
 .features-section-3d {
-  background: linear-gradient(180deg, #ffffff 0%, #f1f5f9 100%);
-  padding: 70px 0;
+  background: linear-gradient(180deg, #ffffff 0%, #e6f2ff 100%);
+  padding: 72px 0;
   position: relative;
   overflow: hidden;
-}
-.features-section-3d::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 800px;
-  height: 400px;
-  background: radial-gradient(circle, rgba(56, 189, 248, 0.12) 0%, transparent 70%);
-  pointer-events: none;
+  border-top: 2px solid #d0e1f5;
 }
 
 .features-grid-3d {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 24px;
-  margin-top: 48px;
+  grid-template-columns: repeat(auto-fit, minmax(255px, 1fr));
+  gap: 26px;
+  margin-top: 44px;
 }
 
 .feature-card-3d {
   position: relative;
   background: #ffffff;
   border-radius: 24px;
-  padding: 36px 28px;
+  padding: 34px 26px;
   text-align: center;
-  border: 1px solid rgba(226, 232, 240, 0.8);
-  box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.05);
+  border: 2px solid #d0e1f5;
+  box-shadow: var(--shadow-3d-card);
   transform-style: preserve-3d;
-  transition: transform 0.2s ease-out, box-shadow 0.3s ease, border-color 0.3s ease;
+  transition: transform 0.2s ease-out, box-shadow 0.25s ease, border-color 0.25s ease;
   overflow: hidden;
 }
+
+.feature-card-3d::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 5px;
+  background: linear-gradient(90deg, #e61e25, #0054a6);
+}
+
 .feature-card-3d:hover {
-  border-color: rgba(56, 189, 248, 0.5);
-  box-shadow: 0 20px 45px -10px rgba(15, 23, 42, 0.15), 0 0 20px rgba(56, 189, 248, 0.12);
+  border-color: #e61e25;
+  box-shadow:
+    0 9px 0 #e61e25,
+    0 22px 44px -8px rgba(230, 30, 37, 0.22);
 }
 
 .feature-icon-3d {
   width: 76px;
   height: 76px;
   margin: 0 auto 20px;
-  border-radius: 20px;
+  border-radius: 22px;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 36px;
-  transform: translateZ(36px);
-  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.12), inset 0 1px 2px rgba(255, 255, 255, 0.6);
+  transform: translateZ(32px);
+  box-shadow: 0 5px 0 rgba(0, 53, 107, 0.2), 0 12px 24px rgba(0, 84, 166, 0.15);
   transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
+
 .feature-card-3d:hover .feature-icon-3d {
-  transform: translateZ(50px) scale(1.12) rotate(4deg);
+  transform: translateZ(46px) scale(1.12) rotate(4deg);
 }
 
 .feature-card-3d .f-title {
   font-size: 18px;
-  font-weight: 800;
-  color: #1e293b;
+  font-weight: 900;
+  color: #00356b;
   margin-bottom: 10px;
-  transform: translateZ(24px);
-}
-.feature-card-3d .f-desc {
-  font-size: 14px;
-  color: #64748b;
-  line-height: 1.6;
-  transform: translateZ(16px);
+  transform: translateZ(20px);
 }
 
-/* ─── 3D CYBER QR SCANNER MODAL ────────────────────────────── */
-.qr-modal-box {
-  background: rgba(12, 20, 39, 0.95) !important;
-  backdrop-filter: blur(25px) !important;
-  border: 1px solid rgba(56, 189, 248, 0.3) !important;
+.feature-card-3d .f-desc {
+  font-size: 14px;
+  color: #36506c;
+  line-height: 1.65;
+  transform: translateZ(14px);
+}
+
+/* ─── 3D Auth Page, Course Sidebar, Quiz Cards ─────────────── */
+.auth-page {
+  background: linear-gradient(135deg, #002d5a 0%, #0054a6 55%, #006ad1 100%) !important;
+  position: relative;
+}
+
+.auth-card,
+.course-sidebar-card,
+.quiz-card {
+  background: #ffffff !important;
+  border: 2px solid #d0e1f5 !important;
+  border-bottom: 7px solid #0054a6 !important;
   border-radius: 24px !important;
-  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.7), 0 0 35px rgba(56, 189, 248, 0.25) !important;
-  color: #ffffff;
+  box-shadow: 0 20px 50px rgba(0, 35, 75, 0.25) !important;
+}
+
+/* ─── 3D Footer in Ocean Blue & Red Trim ───────────────────── */
+.site-footer {
+  background: linear-gradient(135deg, #002244 0%, #003b75 60%, #002855 100%) !important;
+  border-top: 5px solid #e61e25 !important;
+  color: rgba(255, 255, 255, 0.9) !important;
+}
+
+/* ─── 3D QR Modal Friendly Ocean Blue & Red ────────────────── */
+.qr-modal-box {
+  background: #ffffff !important;
+  border: 3px solid #0054a6 !important;
+  border-bottom: 8px solid #e61e25 !important;
+  border-radius: 26px !important;
+  box-shadow: 0 25px 60px rgba(0, 35, 75, 0.5) !important;
+  color: #0f2540 !important;
 }
 .qr-title {
-  color: #ffffff !important;
-  font-size: 18px !important;
-  font-weight: 800 !important;
+  color: #0054a6 !important;
+  font-size: 19px !important;
+  font-weight: 900 !important;
+}
+.qr-sub {
+  color: #36506c !important;
 }
 .qr-code-wrap {
-  border: 2px solid rgba(56, 189, 248, 0.4) !important;
-  box-shadow: 0 0 25px rgba(56, 189, 248, 0.2) !important;
+  border: 2px solid #0054a6 !important;
+  box-shadow: 0 8px 24px rgba(0, 84, 166, 0.18) !important;
 }
 .qr-scanning-line {
-  background: linear-gradient(to bottom, rgba(0, 242, 254, 0), #00f2fe, rgba(0, 242, 254, 0)) !important;
-  box-shadow: 0 0 15px #00f2fe !important;
+  background: linear-gradient(to bottom, rgba(230, 30, 37, 0), #e61e25, rgba(230, 30, 37, 0)) !important;
+  box-shadow: 0 0 14px #e61e25 !important;
 }
 .qr-demo-item {
-  background: rgba(255, 255, 255, 0.05) !important;
-  border: 1px solid rgba(255, 255, 255, 0.1) !important;
-  border-radius: 12px !important;
+  background: #f0f7ff !important;
+  border: 1.5px solid #c5d9ed !important;
+  border-radius: 14px !important;
+  box-shadow: 0 3px 0 #c5d9ed !important;
   transition: all 0.2s ease !important;
 }
 .qr-demo-item:hover {
-  background: rgba(56, 189, 248, 0.15) !important;
-  border-color: #38bdf8 !important;
+  background: #e6f2ff !important;
+  border-color: #e61e25 !important;
+  box-shadow: 0 4px 0 #e61e25 !important;
   transform: translateY(-2px);
 }
 .qr-demo-info .name {
-  color: #ffffff !important;
+  color: #00356b !important;
+  font-weight: 800 !important;
+}
+.qr-login-btn {
+  background: linear-gradient(180deg, #ff3b42 0%, #e61e25 100%) !important;
+  box-shadow: 0 4px 0 #9e0e13, 0 8px 18px rgba(230, 30, 37, 0.35) !important;
 }
 
-/* ─── Smooth Glowing Scrollbar ─────────────────────────────── */
+/* ─── VPS-Shield™ 3D Security Badge & Dynamic Watermark ────── */
+.vps-shield-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  border-radius: 99px;
+  background: rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(255, 215, 0, 0.55);
+  color: #ffffff;
+  font-size: 11.5px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+.vps-shield-pill:hover {
+  background: #e61e25;
+  border-color: #ffffff;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(230, 30, 37, 0.45);
+}
+
+.vps-dynamic-watermark {
+  position: absolute;
+  z-index: 40;
+  pointer-events: none;
+  user-select: none;
+  font-size: 12px;
+  font-weight: 800;
+  color: rgba(255, 255, 255, 0.32);
+  background: rgba(0, 45, 90, 0.22);
+  padding: 4px 10px;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+  white-space: nowrap;
+  transition: top 3.5s linear, left 3.5s linear;
+}
+
+/* ─── Smooth Ocean Blue & Red Scrollbar ────────────────────── */
 ::-webkit-scrollbar {
-  width: 8px;
+  width: 9px;
 }
 ::-webkit-scrollbar-track {
-  background: #080f1e;
+  background: #e6f0fa;
 }
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, #1e3a8a, #0284c7);
+  background: linear-gradient(180deg, #0054a6, #e61e25);
   border-radius: 99px;
-  border: 2px solid #080f1e;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(180deg, #0284c7, #00f2fe);
+  border: 2px solid #e6f0fa;
 }
 
 /* ─── Responsive Adjustments ───────────────────────────────── */
@@ -642,10 +896,10 @@ body {
     padding: 40px 20px;
   }
   .hero-badge-3d {
-    margin: 0 auto 20px;
+    margin: 0 auto 18px;
   }
   .hero-desc-3d {
-    margin: 0 auto 28px;
+    margin: 0 auto 26px;
   }
   .hero-actions {
     justify-content: center;
@@ -654,6 +908,6 @@ body {
     justify-content: center;
   }
   .hero-card-float {
-    margin: 32px auto 0;
+    margin: 30px auto 0;
   }
 }

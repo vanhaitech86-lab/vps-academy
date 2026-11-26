@@ -1,29 +1,37 @@
 /**
  * ============================================================
- * VPS ACADEMY – 3D SPATIAL INTERACTIVE ENGINE v3.0
- * Ultra-Modern WebGL 3D Scene + Real-time 3D Card Tilt + Parallax
+ * VPS ACADEMY – 3D SPATIAL INTERACTIVE ENGINE v4.0
+ * Tone màu thương hiệu TẬP ĐOÀN VPS:
+ *   - Xanh nước biển (Ocean Blue): #0054A6 / #0077E6
+ *   - Đỏ ngôi sao (Crimson Red):   #E61E25 / #FF3B42
+ *   - Vàng ngôi sao (Star Gold):   #FFD700
  * ============================================================
  */
 
 (function () {
   'use strict';
 
-  // ─── 1. THREE.JS 3D HERO SCENE ─────────────────────────────
+  // ─── 0. AUTO-INJECT OFFICIAL VPS GROUP LOGO ─────────────────
+  function injectVPSBrandLogo() {
+    const logoContainers = document.querySelectorAll(
+      '.logo-icon, .auth-logo-icon, .admin-logo-icon, .f-logo-icon'
+    );
+    logoContainers.forEach((el) => {
+      if (!el.querySelector('img')) {
+        el.innerHTML = '<img src="images/logo-vps.png" alt="Tập Đoàn VPS Logo" loading="eager">';
+      }
+    });
+  }
+
+  // ─── 1. THREE.JS 3D HERO SCENE (VPS GROUP OCEAN BLUE & RED) ─
   function initHero3DScene() {
     const canvas = document.getElementById('hero3DCanvas');
-    if (!canvas) return;
-
-    // Check if Three is loaded
-    if (typeof THREE === 'undefined') {
-      console.warn('Three.js not loaded. Falling back to CSS 3D effects.');
-      return;
-    }
+    if (!canvas || typeof THREE === 'undefined') return;
 
     const container = canvas.parentElement;
     let width = container.clientWidth || window.innerWidth;
     let height = container.clientHeight || 560;
 
-    // Scene, Camera, Renderer
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 1000);
     camera.position.set(0, 0, 14);
@@ -37,169 +45,167 @@
     renderer.setSize(width, height);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
-    // Lights
-    const ambientLight = new THREE.AmbientLight(0x0f1c3f, 2.0);
+    // Friendly Bright 3D Lighting in Ocean Blue, Crimson Red & Gold
+    const ambientLight = new THREE.AmbientLight(0xdbeafe, 2.2);
     scene.add(ambientLight);
 
-    // Dynamic point lights for 3D specular reflections
-    const cyanLight = new THREE.PointLight(0x00f2fe, 3.5, 30);
-    cyanLight.position.set(6, 4, 6);
-    scene.add(cyanLight);
+    const oceanBlueLight = new THREE.PointLight(0x0088ff, 4.0, 35);
+    oceanBlueLight.position.set(6, 4, 6);
+    scene.add(oceanBlueLight);
 
-    const purpleLight = new THREE.PointLight(0xa855f7, 3.0, 30);
-    purpleLight.position.set(-6, -3, 5);
-    scene.add(purpleLight);
+    const crimsonRedLight = new THREE.PointLight(0xe61e25, 3.8, 35);
+    crimsonRedLight.position.set(-6, -3, 6);
+    scene.add(crimsonRedLight);
 
-    const goldLight = new THREE.PointLight(0xf59e0b, 2.5, 30);
-    goldLight.position.set(0, 6, -3);
-    scene.add(goldLight);
+    const starGoldLight = new THREE.PointLight(0xffd700, 3.0, 30);
+    starGoldLight.position.set(0, 6, 4);
+    scene.add(starGoldLight);
 
-    // Group to hold all 3D core elements (for interactive rotation & parallax)
     const coreGroup = new THREE.Group();
     scene.add(coreGroup);
 
-    // Shift group slightly to the right side on desktop so text on the left stays legible
     function updateGroupPosition() {
       if (window.innerWidth > 992) {
-        coreGroup.position.set(2.5, 0, 0);
+        coreGroup.position.set(2.4, 0, 0);
       } else {
-        coreGroup.position.set(0, 0.5, 0);
+        coreGroup.position.set(0, 0.4, 0);
       }
     }
     updateGroupPosition();
 
-    // ── Mesh 1: Glowing 3D Icosahedron Tech Core ──
-    const icoGeo = new THREE.IcosahedronGeometry(2.3, 1);
+    // ── Mesh 1: Ocean Blue 3D Tech Globe Core (#0054A6) ──
+    const icoGeo = new THREE.IcosahedronGeometry(2.25, 2);
     const icoMat = new THREE.MeshStandardMaterial({
-      color: 0x1e3a8a,
-      emissive: 0x0284c7,
-      emissiveIntensity: 0.45,
-      roughness: 0.2,
-      metalness: 0.9,
-      wireframe: false,
+      color: 0x0054a6,
+      emissive: 0x003d7a,
+      emissiveIntensity: 0.55,
+      roughness: 0.18,
+      metalness: 0.85,
       transparent: true,
-      opacity: 0.85
+      opacity: 0.9
     });
     const icosahedron = new THREE.Mesh(icoGeo, icoMat);
     coreGroup.add(icosahedron);
 
-    // Wireframe overlay for futuristic holographic tech look
-    const wireGeo = new THREE.IcosahedronGeometry(2.34, 1);
+    // Glowing Ocean Sky Wireframe Lattice
+    const wireGeo = new THREE.IcosahedronGeometry(2.3, 2);
     const wireMat = new THREE.MeshBasicMaterial({
-      color: 0x00f2fe,
+      color: 0x7dd3fc,
       wireframe: true,
       transparent: true,
-      opacity: 0.5
+      opacity: 0.45
     });
     const wireMesh = new THREE.Mesh(wireGeo, wireMat);
     coreGroup.add(wireMesh);
 
-    // ── Mesh 2: Inner Pulsing Crystal Core ──
-    const innerGeo = new THREE.OctahedronGeometry(1.2, 0);
+    // ── Mesh 2: Golden 3D Center Star (Ngôi sao vàng trung tâm chữ VPS) ──
+    const innerGeo = new THREE.OctahedronGeometry(1.15, 0);
     const innerMat = new THREE.MeshStandardMaterial({
-      color: 0xf59e0b,
-      emissive: 0xfbbf24,
-      emissiveIntensity: 0.9,
-      roughness: 0.1,
-      metalness: 0.8
+      color: 0xffd700,
+      emissive: 0xf59e0b,
+      emissiveIntensity: 0.85,
+      roughness: 0.12,
+      metalness: 0.9
     });
     const innerCrystal = new THREE.Mesh(innerGeo, innerMat);
     coreGroup.add(innerCrystal);
 
-    // ── Mesh 3 & 4: Dual 3D Holographic Orbital Rings ──
-    const ringGeo1 = new THREE.TorusGeometry(3.6, 0.05, 16, 100);
-    const ringMat1 = new THREE.MeshBasicMaterial({
-      color: 0x38bdf8,
-      transparent: true,
-      opacity: 0.65
+    // ── Mesh 3 & 4: Crimson Red & Ocean Blue 3D Orbital Rings ──
+    const ringGeo1 = new THREE.TorusGeometry(3.55, 0.065, 20, 120);
+    const ringMat1 = new THREE.MeshStandardMaterial({
+      color: 0xe61e25,
+      emissive: 0xe61e25,
+      emissiveIntensity: 0.75,
+      roughness: 0.2,
+      metalness: 0.7
     });
     const ring1 = new THREE.Mesh(ringGeo1, ringMat1);
     ring1.rotation.x = Math.PI / 3;
     ring1.rotation.y = Math.PI / 6;
     coreGroup.add(ring1);
 
-    const ringGeo2 = new THREE.TorusGeometry(4.2, 0.04, 16, 100);
-    const ringMat2 = new THREE.MeshBasicMaterial({
-      color: 0xa855f7,
+    const ringGeo2 = new THREE.TorusGeometry(4.15, 0.05, 16, 120);
+    const ringMat2 = new THREE.MeshStandardMaterial({
+      color: 0x38bdf8,
+      emissive: 0x0077e6,
+      emissiveIntensity: 0.6,
       transparent: true,
-      opacity: 0.55
+      opacity: 0.85
     });
     const ring2 = new THREE.Mesh(ringGeo2, ringMat2);
-    ring2.rotation.x = -Math.PI / 4;
+    ring2.rotation.x = -Math.PI / 3.5;
     ring2.rotation.z = Math.PI / 4;
     coreGroup.add(ring2);
 
-    // ── Mesh 5: Orbiting 3D Tech Nodes (Photocopy, AI, Print, Skills) ──
+    // ── Mesh 5: 11 Orbiting 3D Crimson Red Stars (11 Ngôi sao đỏ Tập đoàn VPS) ──
     const satellites = [];
-    const satColors = [0x00f2fe, 0xf59e0b, 0x10b981, 0xec4899];
-    const satGeo = new THREE.BoxGeometry(0.35, 0.35, 0.35);
+    const starGeo = new THREE.OctahedronGeometry(0.28, 0);
 
-    for (let i = 0; i < 4; i++) {
+    for (let i = 0; i < 11; i++) {
+      const isGoldStar = i === 5; // Top middle star accent
+      const starColor = isGoldStar ? 0xffd700 : 0xe61e25;
       const satMat = new THREE.MeshStandardMaterial({
-        color: satColors[i],
-        emissive: satColors[i],
-        emissiveIntensity: 0.7,
-        roughness: 0.2,
-        metalness: 0.8
+        color: starColor,
+        emissive: starColor,
+        emissiveIntensity: 0.85,
+        roughness: 0.15,
+        metalness: 0.85
       });
-      const satMesh = new THREE.Mesh(satGeo, satMat);
+      const satMesh = new THREE.Mesh(starGeo, satMat);
       coreGroup.add(satMesh);
       satellites.push({
         mesh: satMesh,
-        speed: 0.015 + i * 0.005,
-        radius: 3.8 + (i % 2) * 0.5,
-        angle: (i * Math.PI) / 2,
-        yOffset: (i - 1.5) * 0.8
+        speed: 0.008 + (i % 3) * 0.003,
+        radius: 3.75 + (i % 2) * 0.35,
+        angle: (i * Math.PI * 2) / 11,
+        yOffset: Math.sin((i / 11) * Math.PI) * 1.2 - 0.4
       });
     }
 
-    // ── Mesh 6: Starfield / 3D Constellation Particles ──
-    const particleCount = 650;
+    // ── Mesh 6: Friendly 3D Ocean & Red Starfield Particles ──
+    const particleCount = 520;
     const particleGeo = new THREE.BufferGeometry();
     const particlePos = new Float32Array(particleCount * 3);
     const particleColors = new Float32Array(particleCount * 3);
 
-    const cCyan = new THREE.Color(0x00f2fe);
-    const cPurple = new THREE.Color(0xa855f7);
-    const cGold = new THREE.Color(0xf59e0b);
+    const cOcean = new THREE.Color(0x7dd3fc);
+    const cRed = new THREE.Color(0xff4d54);
+    const cGold = new THREE.Color(0xffd700);
     const cWhite = new THREE.Color(0xffffff);
-    const colorChoices = [cCyan, cPurple, cGold, cWhite];
+    const colorChoices = [cOcean, cRed, cGold, cWhite, cOcean];
 
     for (let i = 0; i < particleCount; i++) {
-      // Spread across 3D volume
       particlePos[i * 3] = (Math.random() - 0.5) * 36;
       particlePos[i * 3 + 1] = (Math.random() - 0.5) * 22;
       particlePos[i * 3 + 2] = (Math.random() - 0.5) * 20;
 
-      const chosenColor = colorChoices[Math.floor(Math.random() * colorChoices.length)];
-      particleColors[i * 3] = chosenColor.r;
-      particleColors[i * 3 + 1] = chosenColor.g;
-      particleColors[i * 3 + 2] = chosenColor.b;
+      const chosen = colorChoices[Math.floor(Math.random() * colorChoices.length)];
+      particleColors[i * 3] = chosen.r;
+      particleColors[i * 3 + 1] = chosen.g;
+      particleColors[i * 3 + 2] = chosen.b;
     }
 
     particleGeo.setAttribute('position', new THREE.BufferAttribute(particlePos, 3));
     particleGeo.setAttribute('color', new THREE.BufferAttribute(particleColors, 3));
 
-    // Custom circular sprite particle texture
     const pCanvas = document.createElement('canvas');
     pCanvas.width = 32;
     pCanvas.height = 32;
     const pCtx = pCanvas.getContext('2d');
     const pGrad = pCtx.createRadialGradient(16, 16, 0, 16, 16, 16);
     pGrad.addColorStop(0, 'rgba(255,255,255,1)');
-    pGrad.addColorStop(0.3, 'rgba(255,255,255,0.8)');
-    pGrad.addColorStop(0.7, 'rgba(255,255,255,0.2)');
+    pGrad.addColorStop(0.35, 'rgba(255,255,255,0.85)');
     pGrad.addColorStop(1, 'rgba(255,255,255,0)');
     pCtx.fillStyle = pGrad;
     pCtx.fillRect(0, 0, 32, 32);
 
     const particleTexture = new THREE.CanvasTexture(pCanvas);
     const particleMat = new THREE.PointsMaterial({
-      size: 0.18,
+      size: 0.2,
       vertexColors: true,
       map: particleTexture,
       transparent: true,
-      opacity: 0.8,
+      opacity: 0.85,
       blending: THREE.AdditiveBlending,
       depthWrite: false
     });
@@ -207,48 +213,37 @@
     const particleSystem = new THREE.Points(particleGeo, particleMat);
     scene.add(particleSystem);
 
-    // ── Mouse / Touch Parallax & Inertial Orbit Interaction ──
-    let mouseX = 0;
-    let mouseY = 0;
+    // ── Interactive Mouse/Touch Orbit ──
     let targetX = 0;
     let targetY = 0;
-
     let isDragging = false;
-    let previousPointerX = 0;
-    let previousPointerY = 0;
-    let dragVelocityX = 0;
-    let dragVelocityY = 0;
+    let prevX = 0;
+    let prevY = 0;
+    let velX = 0;
+    let velY = 0;
 
     function onPointerMove(e) {
       const clientX = e.touches ? e.touches[0].clientX : e.clientX;
       const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-
-      mouseX = (clientX / window.innerWidth) * 2 - 1;
-      mouseY = -(clientY / window.innerHeight) * 2 + 1;
-
-      targetX = mouseX * 0.8;
-      targetY = mouseY * 0.5;
+      targetX = ((clientX / window.innerWidth) * 2 - 1) * 0.75;
+      targetY = (-(clientY / window.innerHeight) * 2 + 1) * 0.45;
 
       if (isDragging) {
-        const deltaX = clientX - previousPointerX;
-        const deltaY = clientY - previousPointerY;
-        dragVelocityX = deltaX * 0.006;
-        dragVelocityY = deltaY * 0.006;
-        coreGroup.rotation.y += dragVelocityX;
-        coreGroup.rotation.x += dragVelocityY;
-        previousPointerX = clientX;
-        previousPointerY = clientY;
+        velX = (clientX - prevX) * 0.006;
+        velY = (clientY - prevY) * 0.006;
+        coreGroup.rotation.y += velX;
+        coreGroup.rotation.x += velY;
+        prevX = clientX;
+        prevY = clientY;
       }
     }
 
     function onPointerDown(e) {
       isDragging = true;
-      const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-      const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-      previousPointerX = clientX;
-      previousPointerY = clientY;
-      dragVelocityX = 0;
-      dragVelocityY = 0;
+      prevX = e.touches ? e.touches[0].clientX : e.clientX;
+      prevY = e.touches ? e.touches[0].clientY : e.clientY;
+      velX = 0;
+      velY = 0;
     }
 
     function onPointerUp() {
@@ -262,77 +257,53 @@
     window.addEventListener('mouseup', onPointerUp);
     window.addEventListener('touchend', onPointerUp);
 
-    // Handle Window Resize
-    function onResize() {
+    window.addEventListener('resize', () => {
       width = container.clientWidth || window.innerWidth;
       height = container.clientHeight || 560;
       camera.aspect = width / height;
       camera.updateProjectionMatrix();
       renderer.setSize(width, height);
       updateGroupPosition();
-    }
-    window.addEventListener('resize', onResize);
+    });
 
-    // ── Animation Loop ──
-    let clock = new THREE.Clock();
-    let frameId;
+    const clock = new THREE.Clock();
 
     function animate() {
-      frameId = requestAnimationFrame(animate);
-      const elapsedTime = clock.getElapsedTime();
+      requestAnimationFrame(animate);
+      const t = clock.getElapsedTime();
 
-      // Smooth camera parallax
-      camera.position.x += (targetX * 2 - camera.position.x) * 0.04;
-      camera.position.y += (targetY * 1.5 - camera.position.y) * 0.04;
+      camera.position.x += (targetX * 1.8 - camera.position.x) * 0.04;
+      camera.position.y += (targetY * 1.4 - camera.position.y) * 0.04;
       camera.lookAt(coreGroup.position.x * 0.5, 0, 0);
 
-      // Inertial damping if dragged
       if (!isDragging) {
-        dragVelocityX *= 0.94;
-        dragVelocityY *= 0.94;
-        coreGroup.rotation.y += dragVelocityX;
-        coreGroup.rotation.x += dragVelocityY;
-
-        // Ambient rotation
-        coreGroup.rotation.y += 0.004;
-        coreGroup.rotation.x += 0.002;
+        velX *= 0.94;
+        velY *= 0.94;
+        coreGroup.rotation.y += velX + 0.0035;
+        coreGroup.rotation.x += velY + 0.0015;
       }
 
-      // Rotate individual components
-      icosahedron.rotation.y += 0.005;
-      wireMesh.rotation.y -= 0.003;
+      icosahedron.rotation.y += 0.004;
+      wireMesh.rotation.y -= 0.0025;
       innerCrystal.rotation.x += 0.012;
       innerCrystal.rotation.y += 0.015;
 
-      // Pulse inner crystal
-      const scale = 1.0 + Math.sin(elapsedTime * 2.5) * 0.12;
-      innerCrystal.scale.set(scale, scale, scale);
+      const pulse = 1.0 + Math.sin(t * 2.4) * 0.1;
+      innerCrystal.scale.set(pulse, pulse, pulse);
 
-      // Rings spin
-      ring1.rotation.z += 0.008;
-      ring2.rotation.z -= 0.006;
+      ring1.rotation.z += 0.007;
+      ring2.rotation.z -= 0.005;
 
-      // Orbiting Satellites
       satellites.forEach((sat) => {
         sat.angle += sat.speed;
         sat.mesh.position.x = Math.cos(sat.angle) * sat.radius;
         sat.mesh.position.z = Math.sin(sat.angle) * sat.radius;
-        sat.mesh.position.y = Math.sin(elapsedTime * 2 + sat.angle) * 0.5 + sat.yOffset;
-        sat.mesh.rotation.x += 0.03;
-        sat.mesh.rotation.y += 0.03;
+        sat.mesh.position.y = Math.sin(t * 2 + sat.angle) * 0.45 + sat.yOffset;
+        sat.mesh.rotation.x += 0.035;
+        sat.mesh.rotation.y += 0.035;
       });
 
-      // Slowly rotate particle field
-      particleSystem.rotation.y = elapsedTime * 0.02;
-      particleSystem.rotation.x = Math.sin(elapsedTime * 0.01) * 0.05;
-
-      // Orbit point lights for dynamic illumination
-      cyanLight.position.x = Math.sin(elapsedTime * 0.8) * 7;
-      cyanLight.position.z = Math.cos(elapsedTime * 0.8) * 7;
-
-      purpleLight.position.x = Math.cos(elapsedTime * 0.7) * -7;
-      purpleLight.position.z = Math.sin(elapsedTime * 0.7) * -7;
-
+      particleSystem.rotation.y = t * 0.018;
       renderer.render(scene, camera);
     }
 
@@ -343,11 +314,8 @@
   function attach3DTiltToCard(card) {
     if (card._has3DTilt) return;
     card._has3DTilt = true;
-
-    // Ensure card has 3D preserve context
     card.classList.add('has-3d-tilt');
 
-    // Create dynamic specular glare layer if not present
     let glare = card.querySelector('.card-3d-glare');
     if (!glare) {
       glare = document.createElement('div');
@@ -355,7 +323,6 @@
       card.appendChild(glare);
     }
 
-    let isHovered = false;
     let reqId = null;
 
     function onMouseMove(e) {
@@ -363,39 +330,29 @@
       const x = e.clientX - rect.left;
       const y = e.clientY - rect.top;
 
-      // Normalized coordinates (-1 to 1)
       const xPercent = (x / rect.width) * 2 - 1;
       const yPercent = (y / rect.height) * 2 - 1;
 
-      // 3D rotation angles (degrees)
-      const rotateX = -yPercent * 12;
-      const rotateY = xPercent * 12;
+      const rotateX = -yPercent * 9;
+      const rotateY = xPercent * 9;
 
-      // Cancel previous rAF
       if (reqId) cancelAnimationFrame(reqId);
 
       reqId = requestAnimationFrame(() => {
-        card.style.transform = `perspective(1000px) rotateX(${rotateX.toFixed(2)}deg) rotateY(${rotateY.toFixed(2)}deg) translateZ(12px) scale3d(1.025, 1.025, 1.025)`;
-
-        // Update glare position
+        card.style.transform = `perspective(1000px) rotateX(${rotateX.toFixed(2)}deg) rotateY(${rotateY.toFixed(2)}deg) translateY(-4px) scale3d(1.015, 1.015, 1.015)`;
         glare.style.opacity = '1';
-        glare.style.background = `radial-gradient(circle at ${x}px ${y}px, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0.05) 45%, transparent 75%)`;
+        glare.style.background = `radial-gradient(circle at ${x}px ${y}px, rgba(255, 255, 255, 0.35) 0%, rgba(0, 84, 166, 0.06) 45%, transparent 75%)`;
       });
     }
 
     function onMouseEnter() {
-      isHovered = true;
       card.style.transition = 'transform 0.12s ease-out, box-shadow 0.25s ease';
     }
 
     function onMouseLeave() {
-      isHovered = false;
       if (reqId) cancelAnimationFrame(reqId);
-
-      // Smooth reset transition
-      card.style.transition = 'transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.5s cubic-bezier(0.2, 0.8, 0.2, 1)';
-      card.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) translateZ(0px) scale3d(1, 1, 1)';
-
+      card.style.transition = 'transform 0.45s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.45s ease';
+      card.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) translateY(0px) scale3d(1, 1, 1)';
       glare.style.opacity = '0';
     }
 
@@ -406,23 +363,19 @@
 
   function initAll3DTilts() {
     const cards = document.querySelectorAll(
-      '.course-card, .feature-card-3d, .hero-card-float, .auth-card, .course-sidebar-card, .stat-box-3d, .qr-modal-box'
+      '.course-card, .feature-card-3d, .hero-card-float, .course-sidebar-card, .stat-box-3d'
     );
     cards.forEach(attach3DTiltToCard);
   }
 
-  // Observe dynamically rendered cards (e.g. from CourseDB or search filter)
   function observeDynamicCards() {
     const observer = new MutationObserver(() => {
       initAll3DTilts();
     });
-
     const targetGrid = document.getElementById('coursesGrid');
     if (targetGrid) {
       observer.observe(targetGrid, { childList: true, subtree: true });
     }
-
-    // Also observe body in case other modals/views pop in
     observer.observe(document.body, { childList: true });
   }
 
@@ -443,21 +396,21 @@
         title: 'Trí tuệ nhân tạo (AI) VPS',
         desc: 'Tự động hóa tác vụ văn phòng, chatbot tư vấn & phân tích hợp đồng thông minh',
         badge: '🚀 Đột phá 2026',
-        badgeColor: 'linear-gradient(135deg, #00f2fe, #4facfe)'
+        badgeColor: 'linear-gradient(135deg, #e61e25, #ff3b42)'
       },
       photocopy: {
         icon: '🖨️',
         title: 'Thiết bị Photocopy & In ấn',
         desc: 'Mô phỏng 3D phần cứng Ricoh, FujiFilm, Konica Minolta và khắc phục sự cố',
         badge: '⚡ Chuyên sâu',
-        badgeColor: 'linear-gradient(135deg, #f59e0b, #d97706)'
+        badgeColor: 'linear-gradient(135deg, #0054a6, #0077e6)'
       },
       papercut: {
         icon: '⚙️',
         title: 'Giải pháp PaperCut MF / Hive',
         desc: 'Bảo mật tài liệu in ấn cấp doanh nghiệp, kiểm soát định lượng & mã hóa dữ liệu',
-        badge: '💎 Chuẩn Enterprise',
-        badgeColor: 'linear-gradient(135deg, #a855f7, #6366f1)'
+        badge: '🛡️ Bảo mật VPS',
+        badgeColor: 'linear-gradient(135deg, #b81218, #e61e25)'
       }
     };
 
@@ -471,7 +424,6 @@
         const data = widgetData[key];
         if (!data) return;
 
-        // 3D Flip animation
         const visualCard = widget.querySelector('.hw-card-inner');
         if (visualCard) {
           visualCard.style.transform = 'rotateY(90deg) scale(0.95)';
@@ -493,35 +445,11 @@
     });
   }
 
-  // ─── 4. 3D SOUND & INTERACTION FEEDBACK (Haptic / Tactile) ─
-  function initTactileInteractions() {
-    // Subtle button click depression
-    document.querySelectorAll('.btn, .cat-item, .hero-dot').forEach((el) => {
-      el.addEventListener('mousedown', () => {
-        el.style.transform = 'scale(0.97) translateY(1px)';
-      });
-      el.addEventListener('mouseup', () => {
-        el.style.transform = '';
-      });
-      el.addEventListener('mouseleave', () => {
-        el.style.transform = '';
-      });
-    });
-  }
-
-  // ─── 5. INITIALIZATION ─────────────────────────────────────
   document.addEventListener('DOMContentLoaded', () => {
+    injectVPSBrandLogo();
     initHero3DScene();
     initAll3DTilts();
     observeDynamicCards();
     initHeroWidgetInteraction();
-    initTactileInteractions();
   });
-
-  // Export for external calls
-  window.VPS3D = {
-    initHero3DScene,
-    initAll3DTilts,
-    attach3DTiltToCard
-  };
 })();

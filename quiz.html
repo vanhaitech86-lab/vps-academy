@@ -15,8 +15,8 @@
 <header class="site-header">
   <div class="header-inner">
     <a href="index.html" class="logo">
-      <div class="logo-icon">🎓</div>
-      <div class="logo-text"><strong>VPS Academy</strong><span>Bài kiểm tra</span></div>
+      <div class="logo-icon"><img src="images/logo-vps.png" alt="Tập Đoàn VPS"></div>
+      <div class="logo-text"><strong>TẬP ĐOÀN VPS</strong><span>Bài kiểm tra 3D</span></div>
     </a>
     <div style="flex:1;padding:0 24px;">
       <div id="quizCourseTitle" style="color:rgba(255,255,255,.7);font-size:14px;font-weight:600;"></div>
@@ -145,7 +145,20 @@
         </div>
       </div>`;
     startTimer();
+    if (window.VPSSecurity) setTimeout(() => window.VPSSecurity.initDynamicWatermark(), 100);
   }
+
+  // Giám sát chống gian lận chuyển Tab khi đang thi
+  let tabViolations = 0;
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden && !quizSubmitted) {
+      tabViolations++;
+      if (window.VPSSecurity) {
+        window.VPSSecurity.logEvent('ALERT', `Thí sinh ${user.email} rời màn hình thi lần ${tabViolations} (${quiz.title})`);
+      }
+      showToast(`🛡️ Cảnh báo VPS-Shield™ (Lần ${tabViolations}): Không được rời khỏi màn hình trong khi làm bài kiểm tra!`, 'error', 4500);
+    }
+  });
 
   window.selectOption = function(idx) {
     if (quizSubmitted) return;

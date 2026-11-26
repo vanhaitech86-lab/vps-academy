@@ -182,23 +182,45 @@
 
   // ─── Vi phạm – tua nhanh ────────────────────────────────────
   function _handleViolation() {
-    if (!ytPlayer) return;
-
-    // Dừng và reset về đầu
-    ytPlayer.pauseVideo();
-    maxWatched = 0;
-    lastTime   = 0;
-    localStorage.removeItem(sessionKey);
-    ytPlayer.seekTo(0, true);
-
-    // Hiện cảnh báo
+    if (window.VPSSecurity) {
+      window.VPSSecurity.logEvent('ALERT', 'Học viên vi phạm tua nhanh video bài học -> Reset về 0:00');
+    }
+    if (ytPlayer) {
+      ytPlayer.pauseVideo();
+      maxWatched = 0;
+      lastTime   = 0;
+      localStorage.removeItem(sessionKey);
+      ytPlayer.seekTo(0, true);
+    }
     _showOverlay('violation');
   }
 
+  // ─── Tự động tạm dừng khi học viên chuyển Tab / Rời màn hình ─
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) {
+      let pausedAny = false;
+      if (ytPlayer && typeof ytPlayer.pauseVideo === 'function') {
+        try { ytPlayer.pauseVideo(); pausedAny = true; } catch (e) {}
+      }
+      if (window._html5Vid && !window._html5Vid.paused) {
+        window._html5Vid.pause();
+        pausedAny = true;
+      }
+      if (pausedAny) {
+        if (window.VPSSecurity) {
+          window.VPSSecurity.logEvent('WARNING', 'Tự động dừng video do học viên chuyển sang tab/cửa sổ khác');
+        }
+        if (typeof showToast === 'function') {
+          showToast('🛡️ VPS-Shield™: Video đã tạm dừng do bạn rời khỏi màn hình học tập!', 'warning', 4000);
+        }
+      }
+    }
+  });
+
   // ─── Interactive Question ────────────────────────────────────
   function _triggerQuestion(q) {
-    if (!ytPlayer) return;
-    ytPlayer.pauseVideo();
+    if (ytPlayer && typeof ytPlayer.pauseVideo === 'function') ytPlayer.pauseVideo();
+    if (window._html5Vid && !window._html5Vid.paused) window._html5Vid.pause();
     interactionPaused = true;
 
     const modal   = document.getElementById('iqModal');
@@ -235,7 +257,8 @@
       setTimeout(() => {
         document.getElementById('iqModal').classList.remove('show');
         interactionPaused = false;
-        ytPlayer && ytPlayer.playVideo();
+        if (ytPlayer && typeof ytPlayer.playVideo === 'function') ytPlayer.playVideo();
+        if (window._html5Vid) window._html5Vid.play();
       }, 1500);
     } else {
       btn.classList.add('wrong');
@@ -285,31 +308,45 @@
     wrap.innerHTML = '';
 
     const vid = document.createElement('video');
+    window._html5Vid = vid;
     vid.src      = url;
     vid.controls = true;
     vid.style    = 'width:100%;height:100%;background:#000;object-fit:contain;';
-    vid.controlsList = 'nodownload';
+    vid.controlsList = 'nodownload noplaybackrate';
     vid.disablePictureInPicture = true;
     if (isLocal) vid.setAttribute('playsinline', '');
     wrap.appendChild(vid);
+
+    if (window.VPSSecurity) setTimeout(() => window.VPSSecurity.initDynamicWatermark(), 100);
 
     let html5Max = maxWatched;
 
     vid.addEventListener('loadedmetadata', () => {
       videoDuration = vid.duration;
       if (html5Max > 5 && html5Max < videoDuration - 5) vid.currentTime = html5Max;
-      // Mở khóa nút hoàn thành sau khi video load xong
-      const btn = document.getElementById('completeLessonBtn');
-      if (btn && videoDuration > 0) { btn.disabled = false; btn.classList.remove('locked'); }
+    });
+
+    // Chặn tăng tốc độ phát > 1.0x
+    vid.addEventListener('ratechange', () => {
+      if (vid.playbackRate > 1.0) {
+        vid.playbackRate = 1.0;
+        if (typeof showToast === 'function') {
+          showToast('🛡️ VPS-Shield™: Không được phép tua nhanh tốc độ phát video!', 'warning');
+        }
+      }
     });
 
     vid.addEventListener('seeking', () => {
       const seekTo = vid.currentTime;
       if (seekTo > html5Max + SEEK_TOLERANCE_SEC) {
+        vid.pause();
         vid.currentTime = 0;
         html5Max = 0;
         maxWatched = 0;
         localStorage.removeItem(sessionKey);
+        if (window.VPSSecurity) {
+          window.VPSSecurity.logEvent('ALERT', 'Học viên vi phạm tua nhanh video HTML5 -> Reset về 0:00');
+        }
         _showOverlay('violation');
       }
     });
@@ -318,6 +355,22 @@
       if (vid.currentTime > html5Max) html5Max = vid.currentTime;
       if (vid.currentTime > maxWatched) maxWatched = vid.currentTime;
       _updateProgress(vid.currentTime, videoDuration);
+
+      // Mở khóa nút hoàn thành khi đạt >= 85%
+      if (videoDuration > 0 && (maxWatched / videoDuration) >= 0.85) {
+        const btn = document.getElementById('completeLessonBtn');
+        if (btn) { btn.disabled = false; btn.style.opacity = '1'; btn.classList.remove('locked'); }
+      }
+
+      // Kiểm tra câu hỏi tương tác 2 chiều trên HTML5 video
+      if (!interactionPaused && interactiveQs && interactiveQs.length) {
+        for (const q of interactiveQs) {
+          if (!answeredSet.has(q.id) && Math.abs(vid.currentTime - q.timestamp) < 1.2) {
+            _triggerQuestion(q);
+            break;
+          }
+        }
+      }
     });
 
     vid.addEventListener('ended', _onVideoEnd);
