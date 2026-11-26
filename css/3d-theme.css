@@ -560,39 +560,81 @@ body {
   box-shadow: 0 8px 0 #7dd3fc, 0 14px 28px rgba(0, 25, 55, 0.28) !important;
 }
 
-/* ─── 3D Category Floating Bar ─────────────────────────────── */
+/* ─── 3D Category Floating Bar (Hiển thị đầy đủ 9 danh mục) ── */
 .category-bar {
   background: #ffffff !important;
   border-bottom: 2px solid #d0e1f5 !important;
   box-shadow: 0 6px 20px rgba(0, 84, 166, 0.07) !important;
   position: relative;
   z-index: 10;
+  width: 100%;
+}
+
+.category-bar-inner {
+  max-width: 1380px !important;
+  width: 100% !important;
+  margin: 0 auto !important;
+  padding: 12px 24px !important;
+  display: grid !important;
+  grid-template-columns: repeat(9, minmax(0, 1fr)) !important;
+  gap: 10px !important;
+  overflow: visible !important;
 }
 
 .cat-item {
-  border-radius: 14px 14px 0 0 !important;
-  transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+  border-radius: 16px !important;
+  padding: 12px 6px !important;
+  min-width: 0 !important;
+  width: 100% !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  text-align: center !important;
+  background: #f4f9ff !important;
+  border: 1.5px solid #d3e2f2 !important;
+  border-bottom: 4px solid #b3cce6 !important;
+  transition: all 0.22s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
   font-weight: 700 !important;
   color: #1e3a5f !important;
 }
 
+.cat-item .cat-label {
+  white-space: normal !important;
+  word-break: break-word !important;
+  line-height: 1.28 !important;
+  font-size: 12px !important;
+  font-weight: 700 !important;
+  color: #1e3a5f !important;
+  text-align: center !important;
+}
+
 .cat-item:hover {
   transform: translateY(-3px) !important;
-  background: #f0f7ff !important;
+  background: #e0f2fe !important;
+  border-color: #38bdf8 !important;
+  border-bottom: 4px solid #0284c7 !important;
   color: #0054a6 !important;
 }
 
 .cat-item.active {
   background: linear-gradient(180deg, #e0f2fe 0%, #ffffff 100%) !important;
   color: #0054a6 !important;
-  border-bottom: 4px solid #0284c7 !important;
+  border-color: #38bdf8 !important;
+  border-bottom: 4px solid #0054a6 !important;
+  box-shadow: 0 6px 16px rgba(2, 132, 199, 0.16) !important;
+}
+
+.cat-item.active .cat-label {
+  color: #0054a6 !important;
+  font-weight: 800 !important;
 }
 
 .cat-item .cat-icon {
   transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 .cat-item:hover .cat-icon {
-  transform: scale(1.22) translateY(-2px);
+  transform: scale(1.18) translateY(-2px);
 }
 
 /* ─── 3D Course Cards (Friendly Ocean Blue & Sky Cyan Depth) ─ */
@@ -879,18 +921,55 @@ body {
   border: 2px solid #e6f0fa;
 }
 
-/* ─── Responsive Adjustments ───────────────────────────────── */
+/* ─── Responsive Adjustments (Full Laptop & Mobile Alignment) ─ */
+.container,
+.header-inner,
+.hero-content {
+  max-width: 1380px !important;
+  width: 100% !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+
+@media (min-width: 1024px) {
+  .header-inner {
+    gap: 16px !important;
+    padding: 0 24px !important;
+  }
+  .header-search {
+    max-width: 300px !important;
+  }
+  .nav-link {
+    padding: 8px 11px !important;
+    font-size: 13.5px !important;
+    white-space: nowrap;
+  }
+  .courses-grid {
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)) !important;
+    gap: 24px !important;
+  }
+}
+
+@media (max-width: 1023px) {
+  .category-bar-inner {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: 10px !important;
+    padding: 12px 16px !important;
+  }
+}
+
 @media (max-width: 992px) {
   .hero-content {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr !important;
     text-align: center;
-    padding: 40px 20px;
+    padding: 36px 18px !important;
+    gap: 28px !important;
   }
   .hero-badge-3d {
-    margin: 0 auto 18px;
+    margin: 0 auto 16px;
   }
   .hero-desc-3d {
-    margin: 0 auto 26px;
+    margin: 0 auto 24px;
   }
   .hero-actions {
     justify-content: center;
@@ -899,6 +978,87 @@ body {
     justify-content: center;
   }
   .hero-card-float {
-    margin: 30px auto 0;
+    margin: 12px auto 0 !important;
+    width: 100% !important;
+    max-width: 420px !important;
+  }
+}
+
+@media (max-width: 768px) {
+  html, body {
+    overflow-x: hidden !important;
+    width: 100% !important;
+  }
+  .header-inner {
+    height: 62px !important;
+    padding: 0 14px !important;
+    gap: 10px !important;
+    justify-content: space-between !important;
+  }
+  .logo-icon {
+    width: 40px !important;
+    height: 40px !important;
+  }
+  .logo-text strong {
+    font-size: 15px !important;
+  }
+  .logo-text span {
+    font-size: 9px !important;
+  }
+  .category-bar-inner {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: 8px !important;
+    padding: 12px !important;
+  }
+  .cat-item {
+    padding: 10px 4px !important;
+    border-radius: 13px !important;
+  }
+  .cat-item .cat-icon {
+    font-size: 21px !important;
+  }
+  .cat-item .cat-label {
+    font-size: 11px !important;
+    line-height: 1.25 !important;
+  }
+  .hero {
+    min-height: auto !important;
+  }
+  .hero-title-3d {
+    font-size: 26px !important;
+  }
+  .hero-desc-3d {
+    font-size: 14px !important;
+  }
+  .hero-stats-3d {
+    display: grid !important;
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 8px !important;
+    width: 100% !important;
+    margin-top: 22px !important;
+  }
+  .stat-box-3d {
+    padding: 10px 8px !important;
+  }
+  .stat-box-3d .number {
+    font-size: 22px !important;
+  }
+  .stat-box-3d .label {
+    font-size: 11px !important;
+  }
+  .hero-prev, .hero-next {
+    display: none !important;
+  }
+  .container {
+    padding-left: 14px !important;
+    padding-right: 14px !important;
+  }
+  .features-grid-3d {
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
+    margin-top: 24px !important;
+  }
+  .feature-card-3d {
+    padding: 24px 18px !important;
   }
 }

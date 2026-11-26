@@ -26,7 +26,7 @@ const DEFAULT_CATEGORIES = [
   { id: 5, name: 'Giải pháp in ấn', icon: '🔧', color: '#d97706', description: 'HP Advanced, PaperCut, WXP – Giải pháp quản lý in ấn chuyên nghiệp' },
   { id: 6, name: 'Kỹ năng mềm & Bán hàng', icon: '💡', color: '#f5a623', description: 'Kỹ năng giao tiếp, tư vấn và bán hàng thiết bị văn phòng chuyên nghiệp' },
   { id: 7, name: 'Quy trình Nội bộ', icon: '📋', color: '#28a745', description: 'Quy trình, quy định và văn hóa doanh nghiệp VPS' },
-  { id: 8, name: 'Văn hóa Doanh nghiệp', icon: '🏢', color: '#e11d48', description: 'Giá trị cốt lõi, văn hóa doanh nghiệp VPS – Haitech AI và môi trường làm việc chuyên nghiệp' },
+  { id: 8, name: 'Văn hóa Doanh nghiệp', icon: '🏢', color: '#0284c7', description: 'Giá trị cốt lõi, văn hóa doanh nghiệp VPS – Haitech AI và môi trường làm việc chuyên nghiệp' },
 ];
 
 const DEFAULT_COURSES = [
@@ -337,6 +337,7 @@ function initDB() {
     DEFAULT_CATEGORIES.forEach(dc => {
       const exists = storedCats.find(sc => sc.id === dc.id || sc.name === dc.name);
       if (!exists) { storedCats.push(dc); changed = true; }
+      else if (exists.color === '#e11d48') { exists.color = dc.color; changed = true; }
     });
     if (changed) setDB(DB_KEYS.categories, storedCats);
   }

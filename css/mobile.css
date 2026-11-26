@@ -5,80 +5,96 @@
  * Updated: 2026-07-20 – Văn hóa Doanh nghiệp hiển thị rõ
  */
 
-/* ─── Category Bar – Mobile enhanced ───────────────────────── */
+/* ─── Category Bar – Mobile 3x3 Full Grid (Hiển thị đầy đủ 9 danh mục) ─ */
 @media (max-width: 768px) {
+  html, body {
+    overflow-x: hidden !important;
+    max-width: 100vw !important;
+  }
+
   .category-bar {
     background: white;
-    position: sticky;
-    top: 60px;
-    z-index: 90;
-    box-shadow: 0 2px 8px rgba(0,0,0,.08);
-    border-bottom: 1px solid var(--gray-100);
+    position: relative !important;
+    top: 0 !important;
+    z-index: 20;
+    box-shadow: 0 4px 14px rgba(0, 84, 166, .08);
+    border-bottom: 2px solid #d0e1f5;
+    width: 100%;
   }
+
   .category-bar-inner {
-    display: flex;
-    overflow-x: auto;
-    scrollbar-width: none;
-    -ms-overflow-style: none;
-    gap: 6px;
-    padding: 10px 12px;
-    scroll-snap-type: x mandatory;
+    display: grid !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: 8px !important;
+    padding: 12px !important;
+    overflow: visible !important;
+    width: 100% !important;
   }
-  .category-bar-inner::-webkit-scrollbar { display: none; }
-  
+
   .cat-item {
     display: flex !important;
     flex-direction: column !important;
     align-items: center !important;
-    gap: 4px !important;
-    padding: 8px 14px !important;
-    background: var(--gray-50) !important;
+    justify-content: center !important;
+    gap: 5px !important;
+    padding: 10px 6px !important;
+    background: #f4f9ff !important;
     border-radius: 14px !important;
-    border: 2px solid transparent !important;
-    border-bottom: 2px solid transparent !important;
+    border: 1.5px solid #d3e2f2 !important;
+    border-bottom: 3px solid #b3cce6 !important;
     white-space: normal !important;
     text-align: center !important;
-    scroll-snap-align: start;
-    min-width: 68px !important;
-    max-width: 90px !important;
+    min-width: 0 !important;
+    max-width: none !important;
+    width: 100% !important;
     cursor: pointer;
     transition: all .2s !important;
   }
+
   .cat-item.active {
-    background: rgba(26,58,107,.1) !important;
-    border-color: var(--primary) !important;
+    background: linear-gradient(180deg, #e0f2fe 0%, #ffffff 100%) !important;
+    border-color: #38bdf8 !important;
+    border-bottom: 3px solid #0054a6 !important;
   }
+
   .cat-icon {
-    font-size: 24px !important;
+    font-size: 22px !important;
     display: block;
-    line-height: 1 !important;
+    line-height: 1.1 !important;
   }
+
   .cat-label {
-    font-size: 10px !important;
+    font-size: 11px !important;
     font-weight: 700 !important;
-    color: var(--gray-600) !important;
+    color: #1e3a5f !important;
     white-space: normal !important;
     word-break: break-word !important;
-    line-height: 1.3 !important;
+    line-height: 1.25 !important;
     display: block !important;
   }
-  .cat-item.active .cat-label { color: var(--primary) !important; }
 
-  /* ── Văn hóa Doanh nghiệp – nổi bật màu đỏ ── */
+  .cat-item.active .cat-label {
+    color: #0054a6 !important;
+    font-weight: 800 !important;
+  }
+
+  /* ── Văn hóa Doanh nghiệp – đồng bộ tone Xanh Nước Biển & Sao Vàng ── */
   .cat-item.cat-highlight,
   .cat-item[data-cat="8"] {
-    background: linear-gradient(135deg, rgba(225,29,72,.1), rgba(225,29,72,.05)) !important;
-    border-color: rgba(225,29,72,.5) !important;
+    background: linear-gradient(180deg, #f0f9ff 0%, #e0f2fe 100%) !important;
+    border-color: #7dd3fc !important;
+    border-bottom: 3px solid #0284c7 !important;
   }
   .cat-item.cat-highlight .cat-label,
   .cat-item[data-cat="8"] .cat-label {
-    color: #e11d48 !important;
+    color: #0054a6 !important;
     font-weight: 800 !important;
   }
   .cat-item.cat-highlight.active,
   .cat-item[data-cat="8"].active {
-    background: rgba(225,29,72,.15) !important;
-    border-color: #e11d48 !important;
+    background: linear-gradient(180deg, #bae6fd 0%, #e0f2fe 100%) !important;
+    border-color: #0284c7 !important;
+    border-bottom: 3px solid #0054a6 !important;
   }
 }
 
@@ -179,25 +195,13 @@
   .course-card .course-cta { font-size: 11px !important; padding: 4px 10px !important; }
   .course-card .course-level-badge { top: 6px !important; right: 6px !important; font-size: 9px !important; padding: 2px 6px !important; }
 
-  /* Category bar – scroll horizontal */
+  /* Category bar – 3x3 full grid on mobile */
   .category-bar-inner {
-    padding: 0 12px;
-    gap: 6px;
+    display: grid !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    padding: 12px !important;
+    gap: 8px !important;
   }
-  .cat-item {
-    padding: 10px 14px !important;
-    border-radius: 12px !important;
-    background: var(--gray-50);
-    border-bottom: none !important;
-    border: 2px solid transparent;
-  }
-  .cat-item.active {
-    background: rgba(26,58,107,.08) !important;
-    border-color: var(--primary) !important;
-    border-bottom: none !important;
-  }
-  .cat-icon { font-size: 18px !important; }
-  .cat-label { font-size: 10px !important; font-weight: 700 !important; }
 
   /* Section headers */
   .section-header {
@@ -389,17 +393,17 @@
   .swipe-hint { display: flex; }
 }
 
-/* ─── Mobile-only category highlight ───────────────────────────*/
+/* ─── Mobile-only category highlight (Ocean Blue & Sky Cyan) ──*/
 @media (max-width: 768px) {
   .cat-item[data-cat="8"] {
-    background: linear-gradient(135deg, rgba(225,29,72,.08), rgba(225,29,72,.04)) !important;
-    border-color: #e11d48 !important;
+    background: linear-gradient(180deg, #f0f9ff 0%, #e0f2fe 100%) !important;
+    border-color: #38bdf8 !important;
   }
   .cat-item[data-cat="8"] .cat-label {
-    color: #e11d48 !important;
+    color: #0054a6 !important;
     font-weight: 800 !important;
   }
   .cat-item[data-cat="8"].active {
-    background: rgba(225,29,72,.15) !important;
+    background: linear-gradient(180deg, #bae6fd 0%, #e0f2fe 100%) !important;
   }
 }
