@@ -74,7 +74,7 @@ function buildCourseCard(course, currentUser) {
 // ─── Load Homepage ─────────────────────────────────────────────
 function loadHomepage() {
   const user = Auth.getCurrentUser();
-  const allCourses = user ? CourseDB.getByRole(user.role) : CourseDB.getAll().filter(c => c.status === 'active');
+  const allCourses = user ? CourseDB.getByRole(user.role, user.unit) : [];
   const categories = CategoryDB.getAll();
 
   // Category bar
@@ -123,7 +123,7 @@ window.filterCourses = function(catId, el) {
   document.querySelectorAll('.cat-item').forEach(i => i.classList.remove('active'));
   if (el) el.classList.add('active');
   const user = Auth.getCurrentUser();
-  const allCourses = user ? CourseDB.getByRole(user.role) : CourseDB.getAll().filter(c => c.status === 'active');
+  const allCourses = user ? CourseDB.getByRole(user.role, user.unit) : [];
   const filtered = catId === 'all' ? allCourses : allCourses.filter(c => c.categoryId === parseInt(catId));
   renderCourseGrid(filtered, user);
 };
@@ -131,7 +131,7 @@ window.filterCourses = function(catId, el) {
 // ─── Load Courses Page ─────────────────────────────────────────
 function loadCoursesPage() {
   const user = Auth.getCurrentUser();
-  const allCourses = user ? CourseDB.getByRole(user.role) : CourseDB.getAll().filter(c => c.status === 'active');
+  const allCourses = user ? CourseDB.getByRole(user.role, user.unit) : [];
   const categories = CategoryDB.getAll();
   const params = new URLSearchParams(window.location.search);
   const searchQ = (params.get('q') || '').toLowerCase();

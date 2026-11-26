@@ -7,15 +7,34 @@ const DB_KEYS = {
   lessons: 'vps_lessons', quizzes: 'vps_quizzes', results: 'vps_results',
   enrollments: 'vps_enrollments', progress: 'vps_progress', session: 'vps_session',
 };
-const DB_VERSION = '2.3';
+const DB_VERSION = '2.5';
+
+// ─── Danh sách Đơn vị Thành viên Tập Đoàn VPS ────────────────
+const MEMBER_UNITS = [
+  'Văn phòng VPS',
+  'Công ty Tân Hồng Hà',
+  'Công ty Việt',
+  'Công ty ITSS',
+  'Công ty XESCO',
+  'Công ty ITSSS',
+];
+window.MEMBER_UNITS = MEMBER_UNITS;
 
 // ─── Default Data ─────────────────────────────────────────────
 const DEFAULT_USERS = [
-  { id: 1, name: 'Văn Hải Admin', email: 'vanhaitech.86@gmail.com', password: 'Admin6789a@', role: 'admin', phone: '0988739896', department: 'Ban Giám Đốc', avatar: '', status: 'active', createdAt: '2026-01-01' },
-  { id: 2, name: 'Nguyễn Văn An', email: 'nhanvien.moi@vps.vn', password: '123456', role: 'employee_new', phone: '0912345678', department: 'Kinh doanh', avatar: '', status: 'active', createdAt: '2026-06-01' },
-  { id: 3, name: 'Trần Thị Bình', email: 'nhanvien.cu@vps.vn', password: '123456', role: 'employee_old', phone: '0923456789', department: 'Kỹ thuật', avatar: '', status: 'active', createdAt: '2025-01-15' },
-  { id: 4, name: 'Lê Minh Cường', email: 'khachhang@gmail.com', password: '123456', role: 'customer', phone: '0934567890', department: '', avatar: '', status: 'active', createdAt: '2026-03-10' },
-  { id: 5, name: 'Phạm Thu Hà', email: 'phamtuha@vps.vn', password: '123456', role: 'employee_new', phone: '0945678901', department: 'Hỗ trợ kỹ thuật', avatar: '', status: 'active', createdAt: '2026-07-01' },
+  { id: 1,  name: 'Văn Hải Admin',            email: 'vanhaitech.86@gmail.com',   password: 'Admin6789a@', role: 'admin',            unit: 'Toàn Tập đoàn',       phone: '0988739896', department: 'Ban Quản Trị',       avatar: '', status: 'active', createdAt: '2026-01-01' },
+  { id: 10, name: 'CEO Tập Đoàn VPS',         email: 'ceo@vpsgroup.vn',           password: 'Vps@2026',    role: 'ceo',              unit: 'Toàn Tập đoàn',       phone: '0988739896', department: 'Hội đồng Quản trị',  avatar: '', status: 'active', createdAt: '2026-01-01' },
+  { id: 11, name: 'Tổng Giám Đốc VPS',        email: 'tgd@vpsgroup.vn',           password: 'Vps@2026',    role: 'general_director', unit: 'Toàn Tập đoàn',       phone: '0988739896', department: 'Ban Tổng Giám Đốc', avatar: '', status: 'active', createdAt: '2026-01-01' },
+  { id: 12, name: 'GĐ Văn phòng VPS',         email: 'gd.vanphong@vpsgroup.vn',   password: 'Vps@2026',    role: 'unit_director',    unit: 'Văn phòng VPS',       phone: '0911000001', department: 'Ban Giám Đốc Đơn Vị', avatar: '', status: 'active', createdAt: '2026-01-10' },
+  { id: 13, name: 'GĐ Công ty Tân Hồng Hà',   email: 'gd.tanhongha@vpsgroup.vn',  password: 'Vps@2026',    role: 'unit_director',    unit: 'Công ty Tân Hồng Hà', phone: '0911000002', department: 'Ban Giám Đốc Đơn Vị', avatar: '', status: 'active', createdAt: '2026-01-10' },
+  { id: 14, name: 'GĐ Công ty Việt',          email: 'gd.congtyviet@vpsgroup.vn', password: 'Vps@2026',    role: 'unit_director',    unit: 'Công ty Việt',        phone: '0911000003', department: 'Ban Giám Đốc Đơn Vị', avatar: '', status: 'active', createdAt: '2026-01-10' },
+  { id: 15, name: 'GĐ Công ty ITSS',          email: 'gd.itss@vpsgroup.vn',       password: 'Vps@2026',    role: 'unit_director',    unit: 'Công ty ITSS',        phone: '0911000004', department: 'Ban Giám Đốc Đơn Vị', avatar: '', status: 'active', createdAt: '2026-01-10' },
+  { id: 16, name: 'GĐ Công ty XESCO',         email: 'gd.xesco@vpsgroup.vn',      password: 'Vps@2026',    role: 'unit_director',    unit: 'Công ty XESCO',       phone: '0911000005', department: 'Ban Giám Đốc Đơn Vị', avatar: '', status: 'active', createdAt: '2026-01-10' },
+  { id: 17, name: 'GĐ Công ty ITSSS',         email: 'gd.itsss@vpsgroup.vn',      password: 'Vps@2026',    role: 'unit_director',    unit: 'Công ty ITSSS',       phone: '0911000006', department: 'Ban Giám Đốc Đơn Vị', avatar: '', status: 'active', createdAt: '2026-01-10' },
+  { id: 2,  name: 'Nguyễn Văn An',            email: 'nhanvien.moi@vps.vn',       password: '123456',      role: 'employee_new',     unit: 'Văn phòng VPS',       phone: '0912345678', department: 'Kinh doanh',         avatar: '', status: 'active', createdAt: '2026-06-01' },
+  { id: 3,  name: 'Trần Thị Bình',            email: 'nhanvien.cu@vps.vn',        password: '123456',      role: 'employee_old',     unit: 'Công ty Tân Hồng Hà', phone: '0923456789', department: 'Kỹ thuật',           avatar: '', status: 'active', createdAt: '2025-01-15' },
+  { id: 4,  name: 'Lê Minh Cường',            email: 'khachhang@gmail.com',       password: '123456',      role: 'customer',         unit: 'Công ty Việt',        phone: '0934567890', department: 'Khách hàng',         avatar: '', status: 'active', createdAt: '2026-03-10' },
+  { id: 5,  name: 'Phạm Thu Hà',              email: 'phamtuha@vps.vn',           password: '123456',      role: 'employee_new',     unit: 'Công ty ITSS',        phone: '0945678901', department: 'Hỗ trợ kỹ thuật',    avatar: '', status: 'active', createdAt: '2026-07-01' },
 ];
 
 const DEFAULT_CATEGORIES = [
@@ -352,20 +371,37 @@ function initDB() {
   });
   if (lessonChanged) setDB(DB_KEYS.lessons, storedLessons);
 
-  // ── Luôn đồng bộ thông tin admin (id=1) từ DEFAULT_USERS ──
-  // Đảm bảo đổi email/mật khẩu trong code là có hiệu lực ngay
-  const adminDefault = DEFAULT_USERS.find(u => u.id === 1);
-  if (adminDefault) {
-    const storedUsers = getDB(DB_KEYS.users);
-    const adminIdx = storedUsers.findIndex(u => u.id === 1);
-    if (adminIdx >= 0) {
-      storedUsers[adminIdx].email    = adminDefault.email;
-      storedUsers[adminIdx].password = adminDefault.password;
-      storedUsers[adminIdx].name     = adminDefault.name;
-      storedUsers[adminIdx].role     = 'admin';
-      setDB(DB_KEYS.users, storedUsers);
+  // ── Luôn đồng bộ thông tin admin & các tài khoản lãnh đạo đơn vị từ DEFAULT_USERS ──
+  const storedUsers = getDB(DB_KEYS.users);
+  let usersChanged = false;
+  DEFAULT_USERS.forEach(du => {
+    const idx = storedUsers.findIndex(u => u.id === du.id || u.email.toLowerCase() === du.email.toLowerCase());
+    if (idx < 0) {
+      storedUsers.push(du);
+      usersChanged = true;
+    } else {
+      if (!storedUsers[idx].unit) {
+        storedUsers[idx].unit = du.unit || 'Văn phòng VPS';
+        usersChanged = true;
+      }
+      if (du.id === 1) {
+        storedUsers[idx].email    = du.email;
+        storedUsers[idx].password = du.password;
+        storedUsers[idx].name     = du.name;
+        storedUsers[idx].role     = 'admin';
+        storedUsers[idx].unit     = 'Toàn Tập đoàn';
+        usersChanged = true;
+      }
     }
-  }
+  });
+  // Đảm bảo mọi user cũ đều có trường unit
+  storedUsers.forEach(u => {
+    if (!u.unit) {
+      u.unit = ['admin', 'ceo', 'general_director'].includes(u.role) ? 'Toàn Tập đoàn' : 'Văn phòng VPS';
+      usersChanged = true;
+    }
+  });
+  if (usersChanged) setDB(DB_KEYS.users, storedUsers);
 }
 
 
@@ -387,7 +423,13 @@ const UserDB = {
 const CourseDB = {
   getAll: () => getDB(DB_KEYS.courses),
   getById: (id) => getDB(DB_KEYS.courses).find(c => c.id === parseInt(id)),
-  getByRole: (role) => getDB(DB_KEYS.courses).filter(c => c.allowedRoles.includes(role) && c.status === 'active'),
+  getByRole: (role, unit) => getDB(DB_KEYS.courses).filter(c => {
+    if (c.status !== 'active') return false;
+    if (['admin', 'ceo', 'general_director'].includes(role)) return true;
+    const roleAllowed = role === 'unit_director' || (c.allowedRoles || []).includes(role);
+    const unitAllowed = !c.allowedUnits || !c.allowedUnits.length || c.allowedUnits.includes('ALL') || !unit || c.allowedUnits.includes(unit);
+    return roleAllowed && unitAllowed;
+  }),
   create: (data) => { const courses = getDB(DB_KEYS.courses); const c = { ...data, id: Date.now(), enrollCount: 0, createdAt: new Date().toISOString().split('T')[0] }; courses.push(c); setDB(DB_KEYS.courses, courses); return c; },
   update: (id, data) => { const courses = getDB(DB_KEYS.courses); const i = courses.findIndex(c => c.id === parseInt(id)); if (i < 0) return null; courses[i] = { ...courses[i], ...data }; setDB(DB_KEYS.courses, courses); return courses[i]; },
   delete: (id) => { setDB(DB_KEYS.courses, getDB(DB_KEYS.courses).filter(c => c.id !== parseInt(id))); },
@@ -466,9 +508,25 @@ const CategoryDB = {
 };
 
 // ─── Constants ────────────────────────────────────────────────
-const ROLE_LABELS = { admin: 'Quản trị viên', employee_new: 'Nhân viên mới', employee_old: 'Nhân viên', customer: 'Khách hàng' };
-const ROLE_COLORS = { admin: '#dc3545', employee_new: '#17a2b8', employee_old: '#1a3a6b', customer: '#28a745' };
-const LEVEL_COLORS = { 'Cơ bản': '#28a745', 'Trung cấp': '#f5a623', 'Nâng cao': '#dc3545' };
+const ROLE_LABELS = {
+  admin: 'Admin Hệ thống',
+  ceo: 'CEO Tập đoàn',
+  general_director: 'Tổng Giám Đốc',
+  unit_director: 'Giám đốc Đơn vị',
+  employee_old: 'Nhân viên chính thức',
+  employee_new: 'Nhân viên mới',
+  customer: 'Khách hàng'
+};
+const ROLE_COLORS = {
+  admin: '#0054a6',
+  ceo: '#0284c7',
+  general_director: '#0369a1',
+  unit_director: '#0d9488',
+  employee_old: '#1e3a8a',
+  employee_new: '#0ea5e9',
+  customer: '#10b981'
+};
+const LEVEL_COLORS = { 'Cơ bản': '#10b981', 'Trung cấp': '#f59e0b', 'Nâng cao': '#0284c7' };
 
 function formatDate(s) { if (!s) return '—'; const d = new Date(s); return `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}/${d.getFullYear()}`; }
 function generateStars(r) { let s = ''; for (let i = 0; i < Math.floor(r); i++) s += '★'; if (r % 1 >= 0.5) s += '☆'; return s; }

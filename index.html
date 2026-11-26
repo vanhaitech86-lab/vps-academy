@@ -17,101 +17,17 @@
 </head>
 <body data-page="home">
 
-<!-- ─── QR Login Modal ────────────────────────────────────── -->
-<div class="qr-modal-overlay" id="qrLoginModal">
-  <div class="qr-modal-box">
-    <button class="qr-close" onclick="closeQR()">✕</button>
-    <div class="qr-title">📱 Quét mã QR để đăng nhập</div>
-    <div class="qr-sub">Mở camera điện thoại, quét mã QR bên dưới hoặc chọn tài khoản demo để đăng nhập nhanh</div>
-    <div class="qr-code-wrap">
-      <div class="qr-corner qr-corner-tl"></div>
-      <div class="qr-corner qr-corner-tr"></div>
-      <div class="qr-corner qr-corner-bl"></div>
-      <div class="qr-corner qr-corner-br"></div>
-      <div class="qr-scanning-line"></div>
-      <svg width="160" height="160" viewBox="0 0 160 160" style="display:block;">
-        <!-- QR Pattern - VPS Academy login URL -->
-        <rect width="160" height="160" fill="white"/>
-        <!-- Top-left finder -->
-        <rect x="8" y="8" width="44" height="44" rx="4" fill="#1a3a6b"/>
-        <rect x="14" y="14" width="32" height="32" rx="2" fill="white"/>
-        <rect x="20" y="20" width="20" height="20" rx="1" fill="#1a3a6b"/>
-        <!-- Top-right finder -->
-        <rect x="108" y="8" width="44" height="44" rx="4" fill="#1a3a6b"/>
-        <rect x="114" y="14" width="32" height="32" rx="2" fill="white"/>
-        <rect x="120" y="20" width="20" height="20" rx="1" fill="#1a3a6b"/>
-        <!-- Bottom-left finder -->
-        <rect x="8" y="108" width="44" height="44" rx="4" fill="#1a3a6b"/>
-        <rect x="14" y="114" width="32" height="32" rx="2" fill="white"/>
-        <rect x="20" y="120" width="20" height="20" rx="1" fill="#1a3a6b"/>
-        <!-- Data modules -->
-        <rect x="60" y="8" width="8" height="8" fill="#1a3a6b"/><rect x="72" y="8" width="8" height="8" fill="#1a3a6b"/>
-        <rect x="60" y="20" width="8" height="8" fill="#1a3a6b"/><rect x="84" y="20" width="8" height="8" fill="#1a3a6b"/>
-        <rect x="72" y="32" width="8" height="8" fill="#1a3a6b"/><rect x="60" y="44" width="8" height="8" fill="#1a3a6b"/>
-        <rect x="84" y="44" width="8" height="8" fill="#1a3a6b"/><rect x="60" y="60" width="8" height="8" fill="#1a3a6b"/>
-        <rect x="72" y="60" width="8" height="8" fill="#1a3a6b"/><rect x="84" y="60" width="8" height="8" fill="#1a3a6b"/>
-        <rect x="96" y="60" width="8" height="8" fill="#1a3a6b"/><rect x="108" y="60" width="8" height="8" fill="#1a3a6b"/>
-        <rect x="8" y="60" width="8" height="8" fill="#1a3a6b"/><rect x="20" y="60" width="8" height="8" fill="#1a3a6b"/>
-        <rect x="44" y="60" width="8" height="8" fill="#1a3a6b"/><rect x="8" y="72" width="8" height="8" fill="#1a3a6b"/>
-        <rect x="32" y="72" width="8" height="8" fill="#1a3a6b"/><rect x="60" y="72" width="8" height="8" fill="#1a3a6b"/>
-        <rect x="84" y="72" width="8" height="8" fill="#1a3a6b"/><rect x="108" y="72" width="8" height="8" fill="#1a3a6b"/>
-        <rect x="132" y="72" width="8" height="8" fill="#1a3a6b"/><rect x="144" y="72" width="8" height="8" fill="#1a3a6b"/>
-        <rect x="8" y="84" width="8" height="8" fill="#1a3a6b"/><rect x="20" y="84" width="8" height="8" fill="#1a3a6b"/>
-        <rect x="44" y="84" width="8" height="8" fill="#1a3a6b"/><rect x="60" y="84" width="8" height="8" fill="#1a3a6b"/>
-        <rect x="72" y="84" width="8" height="8" fill="#1a3a6b"/><rect x="96" y="84" width="8" height="8" fill="#1a3a6b"/>
-        <rect x="120" y="84" width="8" height="8" fill="#1a3a6b"/><rect x="144" y="84" width="8" height="8" fill="#1a3a6b"/>
-        <rect x="8" y="96" width="8" height="8" fill="#1a3a6b"/><rect x="32" y="96" width="8" height="8" fill="#1a3a6b"/>
-        <rect x="60" y="96" width="8" height="8" fill="#1a3a6b"/><rect x="84" y="96" width="8" height="8" fill="#1a3a6b"/>
-        <rect x="108" y="96" width="8" height="8" fill="#1a3a6b"/><rect x="132" y="96" width="8" height="8" fill="#1a3a6b"/>
-        <rect x="60" y="108" width="8" height="8" fill="#1a3a6b"/><rect x="72" y="108" width="8" height="8" fill="#1a3a6b"/>
-        <rect x="96" y="108" width="8" height="8" fill="#1a3a6b"/><rect x="120" y="108" width="8" height="8" fill="#1a3a6b"/>
-        <rect x="144" y="108" width="8" height="8" fill="#1a3a6b"/><rect x="60" y="120" width="8" height="8" fill="#1a3a6b"/>
-        <rect x="84" y="120" width="8" height="8" fill="#1a3a6b"/><rect x="108" y="120" width="8" height="8" fill="#1a3a6b"/>
-        <rect x="132" y="120" width="8" height="8" fill="#1a3a6b"/><rect x="60" y="132" width="8" height="8" fill="#1a3a6b"/>
-        <rect x="72" y="132" width="8" height="8" fill="#1a3a6b"/><rect x="96" y="132" width="8" height="8" fill="#1a3a6b"/>
-        <rect x="120" y="132" width="8" height="8" fill="#1a3a6b"/><rect x="144" y="132" width="8" height="8" fill="#1a3a6b"/>
-        <rect x="60" y="144" width="8" height="8" fill="#1a3a6b"/><rect x="84" y="144" width="8" height="8" fill="#1a3a6b"/>
-        <rect x="108" y="144" width="8" height="8" fill="#1a3a6b"/>
-      </svg>
-    </div>
-    <div style="font-size:12px;color:var(--gray-400);margin-bottom:12px;">Hoặc chọn tài khoản đăng nhập nhanh:</div>
-    <div class="qr-demo-accounts">
-      <div class="qr-demo-item" onclick="window.location.href='auth.html'">
-        <span class="qr-demo-icon">🛡️</span>
-        <div class="qr-demo-info"><div class="name">Admin Tập Đoàn VPS</div><div class="role">Yêu cầu xác thực mật khẩu bảo mật</div></div>
-      </div>
-      <div class="qr-demo-item" onclick="qrLogin('nhanvien.moi@vps.vn','123456')">
-        <span class="qr-demo-icon">🆕</span>
-        <div class="qr-demo-info"><div class="name">Nhân viên mới</div><div class="role">nhanvien.moi@vps.vn</div></div>
-      </div>
-      <div class="qr-demo-item" onclick="qrLogin('nhanvien.cu@vps.vn','123456')">
-        <span class="qr-demo-icon">👨‍💼</span>
-        <div class="qr-demo-info"><div class="name">Nhân viên</div><div class="role">nhanvien.cu@vps.vn</div></div>
-      </div>
-      <div class="qr-demo-item" onclick="qrLogin('khachhang@gmail.com','123456')">
-        <span class="qr-demo-icon">👤</span>
-        <div class="qr-demo-info"><div class="name">Khách hàng</div><div class="role">khachhang@gmail.com</div></div>
-      </div>
-    </div>
-    <button class="qr-login-btn" onclick="window.location.href='auth.html'">🔐 Đăng nhập bằng tài khoản</button>
-  </div>
-</div>
-
 <!-- ─── Mobile Nav Overlay & Panel ───────────────────────── -->
 <div class="mobile-nav-overlay" id="mobileNavOverlay" onclick="closeMobileNav()"></div>
 <div class="mobile-nav-panel" id="mobileNavPanel">
   <a href="index.html" class="nav-link"><span class="nav-icon">🏠</span> Trang chủ</a>
   <a href="courses.html" class="nav-link"><span class="nav-icon">📚</span> Khóa học</a>
-  <a href="#" class="nav-link" id="mobileAdminLink" style="display:none;"><span class="nav-icon">⚙️</span> Quản trị</a>
-  <div style="padding:16px 24px;border-top:1px solid rgba(255,255,255,.1);margin-top:8px;">
-    <button onclick="openQR()" style="width:100%;padding:12px;background:rgba(255,255,255,.1);color:white;border:1px solid rgba(255,255,255,.2);border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;margin-bottom:10px;display:flex;align-items:center;gap:8px;justify-content:center;">📷 Quét mã QR đăng nhập</button>
-  </div>
-  <a href="auth.html" class="btn btn-login" id="mobileLoginBtn" style="margin:0 24px 10px;">🔐 Đăng nhập</a>
-  <a href="auth.html?tab=register" class="btn-register" id="mobileRegisterBtn">📝 Đăng ký tài khoản</a>
+  <a href="admin.html" class="nav-link" id="mobileAdminLink" style="display:none;"><span class="nav-icon">⚙️</span> Quản trị</a>
+  <a href="auth.html" class="btn btn-login" id="mobileLoginBtn" style="margin:12px 24px 10px;">🔐 Đăng nhập</a>
   <div id="mobileUserInfo" style="display:none;padding:16px 24px;">
     <div style="color:rgba(255,255,255,.6);font-size:12px;margin-bottom:8px;">Đăng nhập với:</div>
     <div style="color:white;font-weight:700;" id="mobileUserName"></div>
-    <div style="color:var(--secondary);font-size:12px;margin-bottom:12px;" id="mobileUserRole"></div>
+    <div style="color:#7dd3fc;font-size:12px;margin-bottom:12px;" id="mobileUserRole"></div>
     <button onclick="Auth.logout()" style="width:100%;padding:10px;background:rgba(231,76,60,.2);color:#ff6b6b;border:1px solid rgba(231,76,60,.3);border-radius:8px;font-size:13px;cursor:pointer;">🚪 Đăng xuất</button>
   </div>
 </div>
@@ -135,9 +51,7 @@
     <nav class="header-nav">
       <a href="index.html" class="nav-link active"><span class="nav-icon">🏠</span> Trang chủ</a>
       <a href="courses.html" class="nav-link"><span class="nav-icon">📚</span> Khóa học</a>
-      <a href="auth.html?tab=register" class="nav-link" id="registerNavBtn"><span class="nav-icon">📝</span> Đăng ký</a>
       <a href="admin.html" class="nav-link" id="adminNavLink" style="display:none;"><span class="nav-icon">⚙️</span> Quản trị</a>
-      <button onclick="openQR()" class="nav-link" style="background:none;border:none;cursor:pointer;color:rgba(255,255,255,.8);" title="Quét QR đăng nhập"><span class="nav-icon">📷</span> QR Login</button>
       <a href="auth.html" class="btn btn-login" id="loginBtn">
         <span>Đăng nhập</span>
       </a>
@@ -394,17 +308,13 @@
     <span class="bn-icon">📚</span>
     <span class="bn-label">Khóa học</span>
   </a>
-  <a href="#" onclick="openQR();return false;" class="bn-item bn-qr ripple">
-    <span class="bn-icon">📷</span>
-    <span class="bn-label">QR Login</span>
-  </a>
-  <a href="auth.html" class="bn-item ripple" id="bnLogin">
-    <span class="bn-icon">🔐</span>
-    <span class="bn-label">Đăng nhập</span>
-  </a>
   <a href="admin.html" class="bn-item ripple" id="bnAdmin" style="display:none;">
     <span class="bn-icon">⚙️</span>
     <span class="bn-label">Quản trị</span>
+  </a>
+  <a href="#" onclick="Auth.logout();return false;" class="bn-item ripple" id="bnLogout">
+    <span class="bn-icon">🚪</span>
+    <span class="bn-label">Đăng xuất</span>
   </a>
 </nav>
 
@@ -485,27 +395,22 @@
   document.addEventListener('DOMContentLoaded', () => {
     const user = Auth.getCurrentUser();
     const mobileLogin = document.getElementById('mobileLoginBtn');
-    const mobileRegister = document.getElementById('mobileRegisterBtn');
     const mobileUserInfo = document.getElementById('mobileUserInfo');
     const mobileAdmin = document.getElementById('mobileAdminLink');
+    const bnAdmin = document.getElementById('bnAdmin');
     if (user) {
       if (mobileLogin) mobileLogin.style.display = 'none';
-      if (mobileRegister) mobileRegister.style.display = 'none';
       if (mobileUserInfo) {
         mobileUserInfo.style.display = 'block';
         document.getElementById('mobileUserName').textContent = user.name;
-        document.getElementById('mobileUserRole').textContent = ROLE_LABELS[user.role] || user.role;
+        const rLabel = ROLE_LABELS[user.role] || user.role;
+        document.getElementById('mobileUserRole').textContent = user.unit ? `${rLabel} • ${user.unit}` : rLabel;
       }
-      if (mobileAdmin && user.role === 'admin') {
-        mobileAdmin.style.display = 'flex';
-        mobileAdmin.href = 'admin.html';
+      if (Auth.canAccessAdmin(user)) {
+        if (mobileAdmin) { mobileAdmin.style.display = 'flex'; mobileAdmin.href = 'admin.html'; }
+        if (bnAdmin) bnAdmin.style.display = 'flex';
       }
     }
-  });
-
-  // Close QR on backdrop click
-  document.getElementById('qrLoginModal').addEventListener('click', function(e) {
-    if (e.target === this) closeQR();
   });
 </script>
 </body>

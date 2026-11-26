@@ -102,7 +102,7 @@
           <div class="ta-avatar" id="adminAvatar">A</div>
           <div>
             <div class="ta-name" id="adminName">Admin</div>
-            <div style="font-size:11px;color:var(--gray-500);">Quản trị viên</div>
+            <div style="font-size:11px;color:#0284c7;font-weight:700;" id="adminRoleUnit">Quản trị viên</div>
           </div>
         </div>
       </div>
@@ -128,8 +128,13 @@
     if (user) {
       const av = document.getElementById('adminAvatar');
       const nm = document.getElementById('adminName');
+      const ru = document.getElementById('adminRoleUnit');
       if (av) av.textContent = user.name.charAt(0);
       if (nm) nm.textContent = user.name;
+      if (ru) {
+        const rLabel = (typeof ROLE_LABELS !== 'undefined' && ROLE_LABELS[user.role]) ? ROLE_LABELS[user.role] : user.role;
+        ru.textContent = user.unit ? `${rLabel} • ${user.unit}` : rLabel;
+      }
     }
     // Clock
     function updateClock() {

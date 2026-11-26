@@ -4,8 +4,46 @@
 
 let currentAdminTab = 'dashboard';
 
+// ─── Phân cấp Phạm vi Quản lý theo Đơn vị Thành viên ─────────
+function _getAdminScope() {
+  const user = Auth.getCurrentUser();
+  const isFull = Auth.hasFullAccess(user); // Admin, CEO, Tổng Giám Đốc
+  const isUnitDir = Auth.isUnitDirector(user); // Giám đốc Đơn vị
+  const unit = user ? (user.unit || 'Văn phòng VPS') : '';
+  return { user, isFull, isUnitDir, unit };
+}
+
+function _getScopedUsers(unitFilter = '') {
+  const { isFull, unit } = _getAdminScope();
+  let all = UserDB.getAll();
+  if (!isFull) {
+    all = all.filter(u => u.unit === unit);
+  } else if (unitFilter) {
+    all = all.filter(u => u.unit === unitFilter);
+  }
+  return all;
+}
+
+function _getScopedResults(unitFilter = '') {
+  const scopedUserIds = new Set(_getScopedUsers(unitFilter).map(u => u.id));
+  return ResultDB.getAll().filter(r => scopedUserIds.has(r.userId));
+}
+
+function _getScopedEnrollments(unitFilter = '') {
+  const scopedUserIds = new Set(_getScopedUsers(unitFilter).map(u => u.id));
+  return EnrollmentDB.getAll().filter(e => scopedUserIds.has(e.userId));
+}
+
 function initAdmin() {
   if (!Auth.requireAdmin()) return;
+  const { isFull } = _getAdminScope();
+  // Ẩn tab Cài đặt hệ thống & Danh mục gốc nếu chỉ là Giám đốc Đơn vị
+  if (!isFull) {
+    ['categories', 'settings', 'courses', 'lessons', 'quizzes'].forEach(t => {
+      const navEl = document.querySelector(`.admin-nav-item[data-tab="${t}"]`);
+      if (navEl && (t === 'settings' || t === 'categories')) navEl.style.display = 'none';
+    });
+  }
   loadTab('dashboard');
   // Nav items
   document.querySelectorAll('.admin-nav-item[data-tab]').forEach(item => {
@@ -40,11 +78,19 @@ function loadTab(tab) {
 }
 
 // ─── Dashboard ────────────────────────────────────────────────
+window._dashUnitFilter = '';
+window.changeDashUnitFilter = function(val) {
+  window._dashUnitFilter = val;
+  renderDashboard(document.getElementById('adminContent'));
+};
+
 function renderDashboard(el) {
-  const users = UserDB.getAll();
+  const { user, isFull, unit } = _getAdminScope();
+  const activeUnitFilter = isFull ? (window._dashUnitFilter || '') : unit;
+  const users = _getScopedUsers(activeUnitFilter);
   const courses = CourseDB.getAll();
-  const results = ResultDB.getAll();
-  const enrollments = EnrollmentDB.getAll();
+  const results = _getScopedResults(activeUnitFilter);
+  const enrollments = _getScopedEnrollments(activeUnitFilter);
   const passedCount = results.filter(r => r.passed).length;
   const avgScore = results.length ? Math.round(results.reduce((a, r) => a + r.score, 0) / results.length) : 0;
 
@@ -58,11 +104,36 @@ function renderDashboard(el) {
   // Recent results
   const recentResults = [...results].sort((a, b) => new Date(b.submittedAt) - new Date(a.submittedAt)).slice(0, 8);
 
+  const unitList = window.MEMBER_UNITS || ['Văn phòng VPS','Công ty Tân Hồng Hà','Công ty Việt','Công ty ITSS','Công ty XESCO','Công ty ITSSS'];
+
   el.innerHTML = `
+    <!-- Scope Banner -->
+    <div style="background:linear-gradient(135deg,#002b59 0%,#0054a6 60%,#0284c7 100%);color:white;padding:16px 22px;border-radius:16px;margin-bottom:22px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;box-shadow:0 8px 24px rgba(0,84,166,0.18);">
+      <div>
+        <div style="font-size:11.5px;color:#7dd3fc;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;">
+          ${isFull ? '👑 QUYỀN ĐIỀU HÀNH TOÀN TẬP ĐOÀN (CEO / TỔNG GIÁM ĐỐC / ADMIN)' : '🏢 QUYỀN QUẢN LÝ CẤP ĐƠN VỊ THÀNH VIÊN'}
+        </div>
+        <div style="font-size:17px;font-weight:800;margin-top:2px;">
+          ${isFull
+            ? (activeUnitFilter ? `Đang xem dữ liệu: ${activeUnitFilter}` : 'Toàn Tập Đoàn VPS (Tất cả Đơn vị thành viên)')
+            : `Đơn vị quản lý: ${unit}`}
+        </div>
+      </div>
+      ${isFull ? `
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span style="font-size:12.5px;font-weight:600;color:#e0f2fe;">🏢 Lọc theo đơn vị:</span>
+          <select onchange="changeDashUnitFilter(this.value)" style="padding:8px 14px;border-radius:10px;border:1px solid rgba(255,255,255,0.3);background:rgba(255,255,255,0.95);color:#00356b;font-weight:700;font-size:13px;cursor:pointer;">
+            <option value="" ${!activeUnitFilter ? 'selected' : ''}>🌐 Toàn Tập đoàn VPS</option>
+            ${unitList.map(uName => `<option value="${uName}" ${activeUnitFilter === uName ? 'selected' : ''}>🏢 ${uName}</option>`).join('')}
+          </select>
+        </div>
+      ` : `<span style="background:rgba(255,255,255,0.18);padding:6px 14px;border-radius:99px;font-size:12px;font-weight:700;">🔒 Chỉ hiển thị dữ liệu của ${unit}</span>`}
+    </div>
+
     <div class="stats-grid fade-in-up">
       <div class="stat-card">
-        <div class="stat-icon" style="background:rgba(26,58,107,.1)">👥</div>
-        <div class="stat-info"><div class="label">Tổng người dùng</div><div class="value">${users.length}</div><div class="change">▲ ${users.filter(u=>u.role==='employee_new').length} nhân viên mới</div></div>
+        <div class="stat-icon" style="background:rgba(0,84,166,.1)">👥</div>
+        <div class="stat-info"><div class="label">Nhân sự / Học viên</div><div class="value">${users.length}</div><div class="change">▲ ${users.filter(u=>u.role==='employee_new').length} nhân viên mới</div></div>
       </div>
       <div class="stat-card">
         <div class="stat-icon" style="background:rgba(245,166,35,.1)">📚</div>
@@ -77,6 +148,29 @@ function renderDashboard(el) {
         <div class="stat-info"><div class="label">Điểm trung bình</div><div class="value">${avgScore}%</div><div class="change">📊 ${enrollments.length} lượt đăng ký</div></div>
       </div>
     </div>
+
+    ${isFull && !activeUnitFilter ? `
+      <div class="admin-table-card" style="margin-bottom:24px;">
+        <div class="table-header"><span class="table-title">🏢 Thống kê theo Đơn vị Thành viên Tập Đoàn VPS</span></div>
+        <div style="padding:18px 24px;display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;">
+          ${unitList.map(uName => {
+            const uUsers = UserDB.getAll().filter(x => x.unit === uName);
+            const uIds = new Set(uUsers.map(x => x.id));
+            const uResults = ResultDB.getAll().filter(r => uIds.has(r.userId));
+            const dir = uUsers.find(x => x.role === 'unit_director');
+            return `
+              <div onclick="changeDashUnitFilter('${uName}')" style="background:#f4f9ff;border:1.5px solid #d0e1f5;border-bottom:4px solid #0284c7;border-radius:14px;padding:14px;cursor:pointer;transition:all .2s;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='none'">
+                <div style="font-size:13.5px;font-weight:800;color:#00356b;margin-bottom:4px;">🏢 ${uName}</div>
+                <div style="font-size:11.5px;color:#526f8e;margin-bottom:8px;">GĐ: <strong>${dir ? dir.name : 'Chưa gán'}</strong></div>
+                <div style="display:flex;justify-content:space-between;font-size:12px;font-weight:700;color:#0284c7;">
+                  <span>👥 ${uUsers.length} nhân sự</span>
+                  <span>📝 ${uResults.length} bài thi</span>
+                </div>
+              </div>`;
+          }).join('')}
+        </div>
+      </div>
+    ` : ''}
 
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:24px;">
       <!-- Chart -->
@@ -99,19 +193,19 @@ function renderDashboard(el) {
       </div>
       <!-- Phân bổ user -->
       <div class="admin-table-card">
-        <div class="table-header"><span class="table-title">👥 Phân bổ người dùng</span></div>
+        <div class="table-header"><span class="table-title">👥 Phân bổ theo cấp bậc</span></div>
         <div style="padding:24px;">
           ${Object.entries(ROLE_LABELS).map(([role, label]) => {
             const count = users.filter(u => u.role === role).length;
             const pct = Math.round((count / Math.max(users.length, 1)) * 100);
             return `
-              <div style="margin-bottom:14px;">
-                <div style="display:flex;justify-content:space-between;margin-bottom:6px;">
-                  <span style="font-size:13px;font-weight:600;color:var(--gray-700);">${label}</span>
-                  <span style="font-size:13px;color:var(--gray-500);">${count} người (${pct}%)</span>
+              <div style="margin-bottom:12px;">
+                <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
+                  <span style="font-size:12.5px;font-weight:600;color:var(--gray-700);">${label}</span>
+                  <span style="font-size:12.5px;color:var(--gray-500);">${count} người (${pct}%)</span>
                 </div>
-                <div class="progress-bar" style="height:8px;">
-                  <div class="progress-fill" style="width:${pct}%;background:${ROLE_COLORS[role]}"></div>
+                <div class="progress-bar" style="height:7px;">
+                  <div class="progress-fill" style="width:${pct}%;background:${ROLE_COLORS[role] || '#0054a6'}"></div>
                 </div>
               </div>`;
           }).join('')}
@@ -127,13 +221,14 @@ function renderDashboard(el) {
       </div>
       ${recentResults.length ? `
         <table class="data-table">
-          <thead><tr><th>Học viên</th><th>Khóa học</th><th>Điểm</th><th>Kết quả</th><th>Ngày nộp</th></tr></thead>
+          <thead><tr><th>Học viên</th><th>Đơn vị</th><th>Khóa học</th><th>Điểm</th><th>Kết quả</th><th>Ngày nộp</th></tr></thead>
           <tbody>
             ${recentResults.map(r => {
               const u = UserDB.getById(r.userId);
               const c = CourseDB.getById(r.courseId);
               return `<tr>
                 <td><div class="user-cell"><div class="avatar">${u ? u.name.charAt(0) : '?'}</div><div><div class="u-name">${u ? u.name : 'Đã xóa'}</div><div class="u-email">${u ? u.email : ''}</div></div></div></td>
+                <td style="font-size:12.5px;font-weight:600;color:#0054a6;">${u ? (u.unit || '–') : '–'}</td>
                 <td style="font-size:13px;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${c ? c.title : 'Đã xóa'}</td>
                 <td><strong style="font-size:16px;color:${r.passed ? 'var(--success)' : 'var(--danger)'};">${r.score}%</strong></td>
                 <td><span class="badge ${r.passed ? 'badge-active' : 'badge-inactive'}">${r.passed ? '✅ Đạt' : '❌ Chưa đạt'}</span></td>
@@ -145,20 +240,30 @@ function renderDashboard(el) {
     </div>`;
 }
 
-// ─── Users ─────────────────────────────────────────────────────
+// ─── Users (Phân quyền theo Đơn vị Thành viên) ─────────────────
 function renderUsers(el) {
-  const users = UserDB.getAll();
+  const { isFull, unit } = _getAdminScope();
+  const users = _getScopedUsers();
+  const unitList = window.MEMBER_UNITS || ['Văn phòng VPS','Công ty Tân Hồng Hà','Công ty Việt','Công ty ITSS','Công ty XESCO','Công ty ITSSS'];
+
   el.innerHTML = `
     <div class="admin-table-card">
-      <div class="table-header">
-        <span class="table-title">Danh sách người dùng (${users.length})</span>
-        <div class="table-actions">
-          <input type="text" class="search-input" id="userSearch" placeholder="Tìm kiếm..." oninput="filterUsers(this.value)">
-          <button class="btn btn-primary btn-sm" onclick="openUserModal()">+ Thêm người dùng</button>
+      <div class="table-header" style="flex-wrap:wrap;gap:10px;">
+        <span class="table-title">Danh sách nhân sự ${isFull ? 'Toàn Tập đoàn' : '– ' + unit} (${users.length})</span>
+        <div class="table-actions" style="flex-wrap:wrap;gap:8px;">
+          ${isFull ? `
+            <select class="filter-select" id="userUnitFilter" onchange="filterUsers()">
+              <option value="">🏢 Tất cả Đơn vị</option>
+              <option value="Toàn Tập đoàn">👑 Toàn Tập đoàn (Lãnh đạo)</option>
+              ${unitList.map(uName => `<option value="${uName}">🏢 ${uName}</option>`).join('')}
+            </select>
+          ` : `<span class="badge" style="background:#e0f2fe;color:#0054a6;padding:6px 12px;font-weight:700;">🏢 Đơn vị: ${unit}</span>`}
+          <input type="text" class="search-input" id="userSearch" placeholder="Tìm tên, email..." oninput="filterUsers()">
+          <button class="btn btn-primary btn-sm" onclick="openUserModal()">+ Cấp tài khoản mới</button>
         </div>
       </div>
       <table class="data-table" id="usersTable">
-        <thead><tr><th>Người dùng</th><th>Vai trò</th><th>Phòng ban</th><th>Trạng thái</th><th>Ngày tạo</th><th>Thao tác</th></tr></thead>
+        <thead><tr><th>Người dùng</th><th>Cấp bậc / Vai trò</th><th>Đơn vị thành viên</th><th>Phòng ban</th><th>Trạng thái</th><th>Thao tác</th></tr></thead>
         <tbody id="usersBody">${renderUsersRows(users)}</tbody>
       </table>
     </div>
@@ -166,126 +271,181 @@ function renderUsers(el) {
 }
 
 function renderUsersRows(users) {
-  return users.map(u => `
+  const { isFull, user: currentUser } = _getAdminScope();
+  return users.map(u => {
+    const canDelete = u.id !== 1 && u.id !== (currentUser && currentUser.id) && (isFull || !['admin','ceo','general_director','unit_director'].includes(u.role));
+    const canEdit = isFull || !['admin','ceo','general_director'].includes(u.role);
+    return `
     <tr id="user-row-${u.id}">
       <td><div class="user-cell">
-        <div class="avatar" style="background:${ROLE_COLORS[u.role]}">${u.name.charAt(0)}</div>
+        <div class="avatar" style="background:${ROLE_COLORS[u.role] || '#0054a6'}">${u.name.charAt(0)}</div>
         <div><div class="u-name">${u.name}</div><div class="u-email">${u.email}</div></div>
       </div></td>
-      <td><span class="badge badge-${u.role}">${ROLE_LABELS[u.role]}</span></td>
+      <td><span class="badge" style="background:${(ROLE_COLORS[u.role]||'#0054a6')}18;color:${ROLE_COLORS[u.role]||'#0054a6'};font-weight:700;">${ROLE_LABELS[u.role] || u.role}</span></td>
+      <td><strong style="font-size:12.5px;color:#00356b;">🏢 ${u.unit || 'Văn phòng VPS'}</strong></td>
       <td style="font-size:13px;">${u.department || '–'}</td>
       <td><span class="badge badge-${u.status}">${u.status === 'active' ? '✅ Hoạt động' : '❌ Vô hiệu'}</span></td>
-      <td style="font-size:13px;color:var(--gray-500);">${formatDate(u.createdAt)}</td>
       <td><div class="action-btns">
-        <button class="action-btn edit" onclick="openUserModal(${u.id})">✏️ Sửa</button>
-        ${u.role !== 'admin' ? `<button class="action-btn del" onclick="deleteUser(${u.id})">🗑️ Xóa</button>` : ''}
+        ${canEdit ? `<button class="action-btn edit" onclick="openUserModal(${u.id})">✏️ Sửa</button>` : ''}
+        ${canDelete ? `<button class="action-btn del" onclick="deleteUser(${u.id})">🗑️ Xóa</button>` : ''}
       </div></td>
-    </tr>`).join('');
+    </tr>`;
+  }).join('');
 }
 
-window.filterUsers = function(q) {
-  const users = UserDB.getAll().filter(u => u.name.toLowerCase().includes(q.toLowerCase()) || u.email.toLowerCase().includes(q.toLowerCase()));
+window.filterUsers = function() {
+  const q = (document.getElementById('userSearch')?.value || '').toLowerCase();
+  const unitF = document.getElementById('userUnitFilter')?.value || '';
+  const users = _getScopedUsers(unitF).filter(u =>
+    u.name.toLowerCase().includes(q) ||
+    u.email.toLowerCase().includes(q) ||
+    (u.unit || '').toLowerCase().includes(q)
+  );
   const body = document.getElementById('usersBody');
   if (body) body.innerHTML = renderUsersRows(users);
 };
 
 function userModal() {
+  const { isFull, unit } = _getAdminScope();
+  const unitList = window.MEMBER_UNITS || ['Văn phòng VPS','Công ty Tân Hồng Hà','Công ty Việt','Công ty ITSS','Công ty XESCO','Công ty ITSSS'];
+
   return `
   <div class="modal-overlay" id="userModal">
     <div class="modal">
       <div class="modal-header">
-        <h2 class="modal-title" id="userModalTitle">Thêm người dùng</h2>
+        <h2 class="modal-title" id="userModalTitle">Cấp tài khoản người dùng</h2>
         <button class="modal-close" onclick="closeModal('userModal')">✕</button>
       </div>
       <div class="modal-body">
         <input type="hidden" id="umId">
         <div class="form-row">
           <div class="form-group"><label class="form-label">Họ và tên <span class="required">*</span></label><input type="text" class="form-control" id="umName" placeholder="Nguyễn Văn A"></div>
-          <div class="form-group"><label class="form-label">Email <span class="required">*</span></label><input type="email" class="form-control" id="umEmail" placeholder="email@vps.vn"></div>
+          <div class="form-group"><label class="form-label">Email đăng nhập <span class="required">*</span></label><input type="email" class="form-control" id="umEmail" placeholder="email@vpsgroup.vn"></div>
         </div>
         <div class="form-row">
-          <div class="form-group"><label class="form-label">Mật khẩu</label><input type="password" class="form-control" id="umPass" placeholder="Để trống = không thay đổi"></div>
+          <div class="form-group"><label class="form-label">Mật khẩu <span class="required">*</span></label><input type="password" class="form-control" id="umPass" placeholder="Nhập mật khẩu cấp cho nhân sự"></div>
           <div class="form-group"><label class="form-label">Số điện thoại</label><input type="tel" class="form-control" id="umPhone" placeholder="0901234567"></div>
         </div>
         <div class="form-row">
-          <div class="form-group"><label class="form-label">Vai trò <span class="required">*</span></label>
-            <select class="form-control" id="umRole">
-              <option value="employee_new">Nhân viên mới</option>
-              <option value="employee_old">Nhân viên</option>
-              <option value="customer">Khách hàng</option>
-              <option value="admin">Quản trị viên</option>
+          <div class="form-group"><label class="form-label">🏢 Đơn vị thành viên <span class="required">*</span></label>
+            <select class="form-control" id="umUnit" ${!isFull ? 'disabled' : ''}>
+              ${isFull ? `<option value="Toàn Tập đoàn">👑 Toàn Tập đoàn VPS (CEO / TGĐ / Admin)</option>` : ''}
+              ${unitList.map(uName => `<option value="${uName}" ${(!isFull && uName === unit) ? 'selected' : ''}>🏢 ${uName}</option>`).join('')}
             </select>
           </div>
-          <div class="form-group"><label class="form-label">Phòng ban</label><input type="text" class="form-control" id="umDept" placeholder="Phòng Môi giới"></div>
+          <div class="form-group"><label class="form-label">🎖️ Cấp bậc / Phân quyền <span class="required">*</span></label>
+            <select class="form-control" id="umRole">
+              <option value="employee_new">Nhân viên mới</option>
+              <option value="employee_old">Nhân viên chính thức</option>
+              <option value="customer">Khách hàng</option>
+              <option value="unit_director">Giám đốc Đơn vị (Quản lý đơn vị)</option>
+              ${isFull ? `
+                <option value="general_director">Tổng Giám Đốc (Toàn quyền)</option>
+                <option value="ceo">CEO Tập đoàn (Toàn quyền)</option>
+                <option value="admin">Admin Hệ thống (Toàn quyền)</option>
+              ` : ''}
+            </select>
+          </div>
         </div>
-        <div class="form-group"><label class="form-label">Trạng thái</label>
-          <select class="form-control" id="umStatus">
-            <option value="active">Hoạt động</option>
-            <option value="inactive">Vô hiệu hóa</option>
-          </select>
+        <div class="form-row">
+          <div class="form-group"><label class="form-label">Phòng ban / Bộ phận</label><input type="text" class="form-control" id="umDept" placeholder="Kinh doanh / Kỹ thuật..."></div>
+          <div class="form-group"><label class="form-label">Trạng thái</label>
+            <select class="form-control" id="umStatus">
+              <option value="active">✅ Hoạt động (Cho phép truy cập)</option>
+              <option value="inactive">🔒 Vô hiệu hóa (Khóa truy cập)</option>
+            </select>
+          </div>
         </div>
       </div>
       <div class="modal-footer">
         <button class="btn btn-secondary" onclick="closeModal('userModal')">Hủy</button>
-        <button class="btn btn-primary" onclick="saveUser()">💾 Lưu</button>
+        <button class="btn btn-primary" onclick="saveUser()">💾 Lưu tài khoản</button>
       </div>
     </div>
   </div>`;
 }
 
 window.openUserModal = function(id) {
+  const { isFull, unit } = _getAdminScope();
   const titleEl = document.getElementById('userModalTitle');
   const idEl = document.getElementById('umId');
+  const unitEl = document.getElementById('umUnit');
   if (id) {
     const u = UserDB.getById(id);
     if (!u) return;
-    if (titleEl) titleEl.textContent = 'Chỉnh sửa người dùng';
+    if (!isFull && u.unit !== unit) {
+      showToast('Bạn chỉ có quyền chỉnh sửa nhân sự thuộc đơn vị ' + unit, 'error');
+      return;
+    }
+    if (titleEl) titleEl.textContent = 'Chỉnh sửa tài khoản';
     if (idEl) idEl.value = u.id;
     document.getElementById('umName').value = u.name;
     document.getElementById('umEmail').value = u.email;
     document.getElementById('umPass').value = '';
     document.getElementById('umPhone').value = u.phone || '';
     document.getElementById('umRole').value = u.role;
+    if (unitEl) unitEl.value = u.unit || unit || 'Văn phòng VPS';
     document.getElementById('umDept').value = u.department || '';
     document.getElementById('umStatus').value = u.status;
   } else {
-    if (titleEl) titleEl.textContent = 'Thêm người dùng';
+    if (titleEl) titleEl.textContent = 'Cấp tài khoản mới';
     if (idEl) idEl.value = '';
-    ['umName','umEmail','umPass','umPhone','umDept'].forEach(id => document.getElementById(id).value = '');
+    ['umName','umEmail','umPass','umPhone','umDept'].forEach(i => document.getElementById(i).value = '');
     document.getElementById('umRole').value = 'employee_new';
+    if (unitEl) unitEl.value = isFull ? 'Văn phòng VPS' : unit;
     document.getElementById('umStatus').value = 'active';
   }
   openModal('userModal');
 };
 
 window.saveUser = function() {
+  const { isFull, unit: managerUnit } = _getAdminScope();
   const id = document.getElementById('umId').value;
   const name = document.getElementById('umName').value.trim();
   const email = document.getElementById('umEmail').value.trim();
   const pass = document.getElementById('umPass').value;
   const phone = document.getElementById('umPhone').value.trim();
-  const role = document.getElementById('umRole').value;
+  let role = document.getElementById('umRole').value;
+  let unit = isFull ? (document.getElementById('umUnit')?.value || 'Văn phòng VPS') : managerUnit;
   const dept = document.getElementById('umDept').value.trim();
   const status = document.getElementById('umStatus').value;
-  if (!name || !email) { showToast('Vui lòng điền đầy đủ thông tin bắt buộc', 'error'); return; }
-  if (!id && !pass) { showToast('Vui lòng nhập mật khẩu cho người dùng mới', 'error'); return; }
-  const data = { name, email, role, phone, department: dept, status };
+
+  if (!isFull && ['admin', 'ceo', 'general_director'].includes(role)) {
+    showToast('Giám đốc đơn vị không có quyền tạo tài khoản cấp Tập đoàn!', 'error');
+    return;
+  }
+  if (['admin', 'ceo', 'general_director'].includes(role)) {
+    unit = 'Toàn Tập đoàn';
+  }
+
+  if (!name || !email) { showToast('Vui lòng điền đầy đủ Họ tên và Email', 'error'); return; }
+  if (!id && !pass) { showToast('Vui lòng nhập mật khẩu cấp cho tài khoản mới', 'error'); return; }
+  const data = { name, email, role, unit, phone, department: dept, status };
   if (pass) data.password = pass;
-  if (id) { UserDB.update(id, data); showToast('Cập nhật người dùng thành công!', 'success'); }
-  else { 
+  if (id) {
+    UserDB.update(id, data);
+    showToast('Cập nhật tài khoản thành công!', 'success');
+  } else {
     const existing = UserDB.getByEmail(email);
     if (existing) { showToast('Email đã tồn tại trong hệ thống!', 'error'); return; }
-    UserDB.create({ ...data, password: pass }); 
-    showToast('Thêm người dùng thành công!', 'success'); 
+    UserDB.create({ ...data, password: pass });
+    showToast('Đã cấp tài khoản mới thành công!', 'success');
   }
   closeModal('userModal');
   renderUsers(document.getElementById('adminContent'));
 };
 
 window.deleteUser = function(id) {
-  if (!confirm('Bạn có chắc chắn muốn xóa người dùng này?')) return;
+  const { isFull, unit } = _getAdminScope();
+  const target = UserDB.getById(id);
+  if (!target) return;
+  if (!isFull && (target.unit !== unit || ['admin','ceo','general_director','unit_director'].includes(target.role))) {
+    showToast('Bạn không có quyền xóa tài khoản này!', 'error');
+    return;
+  }
+  if (!confirm('Bạn có chắc chắn muốn xóa tài khoản này?')) return;
   UserDB.delete(id);
-  showToast('Đã xóa người dùng', 'success');
+  showToast('Đã xóa tài khoản', 'success');
   renderUsers(document.getElementById('adminContent'));
 };
 
@@ -404,12 +564,23 @@ function courseModal(categories) {
 
         <!-- Tab 3: Access -->
         <div id="courseTabAccess" style="display:none;">
-          <div class="form-group"><label class="form-label">👥 Đối tượng học <span class="required">*</span></label>
-            <div style="display:flex;flex-direction:column;gap:10px;">
+          <div class="form-group">
+            <label class="form-label">🏢 Đơn vị thành viên được học <span class="required">*</span></label>
+            <div style="font-size:12px;color:var(--gray-500);margin-bottom:8px;">Không tích chọn đơn vị nào = Áp dụng cho Toàn Tập Đoàn VPS</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px;">
+              ${(window.MEMBER_UNITS || ['Văn phòng VPS','Công ty Tân Hồng Hà','Công ty Việt','Công ty ITSS','Công ty XESCO','Công ty ITSSS']).map(uName => `
+                <label style="display:flex;align-items:center;gap:10px;padding:10px 14px;border:1.5px solid var(--gray-200);border-radius:10px;cursor:pointer;background:#f8fbff;">
+                  <input type="checkbox" value="${uName}" class="cm-unit-cb" style="width:16px;height:16px;cursor:pointer;">
+                  <span style="font-size:13px;font-weight:700;color:#00356b;">🏢 ${uName}</span>
+                </label>`).join('')}
+            </div>
+          </div>
+          <div class="form-group"><label class="form-label">👥 Cấp bậc / Đối tượng học <span class="required">*</span></label>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
               ${Object.entries(ROLE_LABELS).map(([role, label]) => `
-                <label style="display:flex;align-items:center;gap:12px;padding:12px 16px;border:2px solid var(--gray-200);border-radius:var(--radius);cursor:pointer;transition:all .2s;" onclick="this.style.borderColor=this.querySelector('input').checked?'var(--gray-200)':'var(--primary)';this.style.background=this.querySelector('input').checked?'':'rgba(26,58,107,.04)';">
-                  <input type="checkbox" value="${role}" class="cm-role-cb" style="width:18px;height:18px;cursor:pointer;">
-                  <span style="font-size:14px;font-weight:600;color:var(--gray-700);">${label}</span>
+                <label style="display:flex;align-items:center;gap:10px;padding:10px 14px;border:1.5px solid var(--gray-200);border-radius:10px;cursor:pointer;">
+                  <input type="checkbox" value="${role}" class="cm-role-cb" style="width:16px;height:16px;cursor:pointer;">
+                  <span style="font-size:13px;font-weight:600;color:var(--gray-700);">${label}</span>
                 </label>`).join('')}
             </div>
           </div>
@@ -465,7 +636,10 @@ window.openCourseModal = function(id) {
     const prereqEl = document.getElementById('cmPrerequisites');
     if (prereqEl) prereqEl.value = c.prerequisites || '';
     document.querySelectorAll('.cm-role-cb').forEach(cb => {
-      cb.checked = c.allowedRoles.includes(cb.value);
+      cb.checked = (c.allowedRoles || []).includes(cb.value);
+    });
+    document.querySelectorAll('.cm-unit-cb').forEach(cb => {
+      cb.checked = (c.allowedUnits || []).includes(cb.value);
     });
   } else {
     if (titleEl) titleEl.textContent = 'Thêm khóa học';
@@ -474,7 +648,8 @@ window.openCourseModal = function(id) {
     ['cmThumbnail','cmObjectives','cmOutline','cmPrerequisites'].forEach(i => { const el = document.getElementById(i); if(el) el.value=''; });
     document.getElementById('cmLevel').value = 'Cơ bản';
     document.getElementById('cmStatus').value = 'active';
-    document.querySelectorAll('.cm-role-cb').forEach(cb => { cb.checked = false; });
+    document.querySelectorAll('.cm-role-cb').forEach(cb => { cb.checked = true; });
+    document.querySelectorAll('.cm-unit-cb').forEach(cb => { cb.checked = false; });
   }
   openModal('courseModal');
 };
@@ -483,6 +658,7 @@ window.saveCourse = function() {
   const id = document.getElementById('cmId').value;
   const title = document.getElementById('cmTitle').value.trim();
   const roles = [...document.querySelectorAll('.cm-role-cb:checked')].map(cb => cb.value);
+  const units = [...document.querySelectorAll('.cm-unit-cb:checked')].map(cb => cb.value);
   if (!title) { showToast('Vui lòng nhập tên khóa học', 'error'); return; }
   if (!roles.length) { showToast('Vui lòng chọn ít nhất một đối tượng học', 'error'); return; }
   const data = {
@@ -499,6 +675,7 @@ window.saveCourse = function() {
     outline: (document.getElementById('cmOutline') || {}).value || '',
     prerequisites: (document.getElementById('cmPrerequisites') || {}).value || '',
     allowedRoles: roles,
+    allowedUnits: units.length ? units : ['ALL'],
     rating: 4.5, totalLessons: 0, lessonIds: [],
   };
   if (id) { CourseDB.update(id, data); showToast('Cập nhật khóa học thành công!', 'success'); }
@@ -1225,17 +1402,24 @@ window.deleteQuiz = function(id) {
   renderQuizzes(document.getElementById('adminContent'));
 };
 
-// ─── Results ───────────────────────────────────────────────────
+// ─── Results (Phân quyền xem theo Đơn vị Thành viên) ──────────
 function renderResults(el) {
-  const results = [...ResultDB.getAll()].sort((a, b) => new Date(b.submittedAt) - new Date(a.submittedAt));
-  const users = UserDB.getAll();
+  const { isFull, unit } = _getAdminScope();
+  const results = [..._getScopedResults()].sort((a, b) => new Date(b.submittedAt) - new Date(a.submittedAt));
   const courses = CourseDB.getAll();
+  const unitList = window.MEMBER_UNITS || ['Văn phòng VPS','Công ty Tân Hồng Hà','Công ty Việt','Công ty ITSS','Công ty XESCO','Công ty ITSSS'];
 
   el.innerHTML = `
     <div class="admin-table-card">
-      <div class="table-header">
-        <span class="table-title">Kết quả bài kiểm tra (${results.length} bài nộp)</span>
-        <div class="table-actions">
+      <div class="table-header" style="flex-wrap:wrap;gap:10px;">
+        <span class="table-title">Kết quả học tập &amp; kiểm tra ${isFull ? 'Toàn Tập đoàn' : '– ' + unit} (${results.length} bài nộp)</span>
+        <div class="table-actions" style="flex-wrap:wrap;gap:8px;">
+          ${isFull ? `
+            <select class="filter-select" id="resultUnitFilter" onchange="filterResults()">
+              <option value="">🏢 Tất cả Đơn vị</option>
+              ${unitList.map(uName => `<option value="${uName}">🏢 ${uName}</option>`).join('')}
+            </select>
+          ` : `<span class="badge" style="background:#e0f2fe;color:#0054a6;padding:6px 12px;font-weight:700;">🏢 Đơn vị: ${unit}</span>`}
           <select class="filter-select" id="resultRoleFilter" onchange="filterResults()">
             <option value="">Tất cả vai trò</option>
             ${Object.entries(ROLE_LABELS).map(([r, l]) => `<option value="${r}">${l}</option>`).join('')}
@@ -1253,17 +1437,18 @@ function renderResults(el) {
 }
 
 function renderResultRows(results) {
-  if (!results.length) return '<div class="empty-state"><div class="empty-icon">📭</div><div class="empty-title">Chưa có kết quả</div><div class="empty-desc">Học viên chưa nộp bài kiểm tra nào.</div></div>';
+  if (!results.length) return '<div class="empty-state"><div class="empty-icon">📭</div><div class="empty-title">Chưa có kết quả</div><div class="empty-desc">Chưa có bài kiểm tra nào trong phạm vi đơn vị này.</div></div>';
   return `<table class="data-table">
-    <thead><tr><th>Học viên</th><th>Vai trò</th><th>Khóa học</th><th>Điểm</th><th>Kết quả</th><th>Câu đúng</th><th>Thời gian</th><th>Ngày nộp</th></tr></thead>
+    <thead><tr><th>Học viên</th><th>Đơn vị thành viên</th><th>Vai trò</th><th>Khóa học</th><th>Điểm</th><th>Kết quả</th><th>Câu đúng</th><th>Thời gian</th><th>Ngày nộp</th></tr></thead>
     <tbody>${results.map(r => {
       const u = UserDB.getById(r.userId);
       const c = CourseDB.getById(r.courseId);
       const mins = Math.floor((r.timeTaken||0)/60);
       const secs = (r.timeTaken||0) % 60;
       return `<tr>
-        <td><div class="user-cell"><div class="avatar" style="background:${u ? ROLE_COLORS[u.role] : '#ccc'}">${u ? u.name.charAt(0) : '?'}</div><div><div class="u-name">${u ? u.name : 'Đã xóa'}</div><div class="u-email">${u ? u.email : ''}</div></div></div></td>
-        <td>${u ? `<span class="badge badge-${u.role}">${ROLE_LABELS[u.role]}</span>` : '–'}</td>
+        <td><div class="user-cell"><div class="avatar" style="background:${u ? (ROLE_COLORS[u.role]||'#0054a6') : '#ccc'}">${u ? u.name.charAt(0) : '?'}</div><div><div class="u-name">${u ? u.name : 'Đã xóa'}</div><div class="u-email">${u ? u.email : ''}</div></div></div></td>
+        <td><strong style="font-size:12.5px;color:#0054a6;">🏢 ${u ? (u.unit || '–') : '–'}</strong></td>
+        <td>${u ? `<span class="badge" style="background:${(ROLE_COLORS[u.role]||'#0054a6')}18;color:${ROLE_COLORS[u.role]||'#0054a6'};">${ROLE_LABELS[u.role] || u.role}</span>` : '–'}</td>
         <td style="font-size:13px;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${c ? c.title : 'Đã xóa'}</td>
         <td><strong style="font-size:18px;color:${r.passed ? 'var(--success)' : 'var(--danger)'};">${r.score}%</strong></td>
         <td><span class="badge ${r.passed ? 'badge-active' : 'badge-inactive'}">${r.passed ? '✅ Đạt' : '❌ Chưa đạt'}</span></td>
@@ -1275,11 +1460,12 @@ function renderResultRows(results) {
 }
 
 window.filterResults = function() {
-  const roleF = document.getElementById('resultRoleFilter').value;
-  const courseF = document.getElementById('resultCourseFilter').value;
-  let results = [...ResultDB.getAll()].sort((a, b) => new Date(b.submittedAt) - new Date(a.submittedAt));
+  const unitF = document.getElementById('resultUnitFilter')?.value || '';
+  const roleF = document.getElementById('resultRoleFilter')?.value || '';
+  const courseF = document.getElementById('resultCourseFilter')?.value || '';
+  let results = [..._getScopedResults(unitF)].sort((a, b) => new Date(b.submittedAt) - new Date(a.submittedAt));
   if (roleF) {
-    const uids = UserDB.getAll().filter(u => u.role === roleF).map(u => u.id);
+    const uids = _getScopedUsers(unitF).filter(u => u.role === roleF).map(u => u.id);
     results = results.filter(r => uids.includes(r.userId));
   }
   if (courseF) results = results.filter(r => r.courseId === parseInt(courseF));

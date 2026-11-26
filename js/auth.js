@@ -260,19 +260,10 @@ const VPSSecurity = (() => {
     });
   }
 
-  // ── 8. Huy hiệu & Bảng điều khiển Bảo mật 3D VPS-Shield™ ────
+  // ── 8. Ẩn nút Bảo mật VPS trên giao diện theo yêu cầu ────
   function initSecurityBadge() {
-    const nav = document.querySelector('.header-nav') || document.querySelector('.admin-topbar-right');
-    if (nav && !document.getElementById('vpsShieldBtn')) {
-      const btn = document.createElement('button');
-      btn.id = 'vpsShieldBtn';
-      btn.type = 'button';
-      btn.className = 'vps-shield-pill';
-      btn.title = 'Xem trạng thái Bảo mật cấp cao VPS-Shield™';
-      btn.innerHTML = '<span>🛡️</span><span>Bảo mật VPS</span>';
-      btn.onclick = openSecurityModal;
-      nav.insertBefore(btn, nav.firstChild);
-    }
+    const existing = document.getElementById('vpsShieldBtn');
+    if (existing) existing.remove();
   }
 
   function openSecurityModal() {
@@ -451,32 +442,55 @@ const Auth = {
     return user.role === role;
   },
 
-  // Check if admin
-  isAdmin() { return this.hasRole('admin'); },
+  // Toàn quyền Tập đoàn: Admin, CEO, Tổng Giám Đốc
+  hasFullAccess(userObj) {
+    const user = userObj || this.getCurrentUser();
+    if (!user) return false;
+    return ['admin', 'ceo', 'general_director'].includes(user.role);
+  },
 
-  // Can access course
+  // Giám đốc Đơn vị thành viên
+  isUnitDirector(userObj) {
+    const user = userObj || this.getCurrentUser();
+    if (!user) return false;
+    return user.role === 'unit_director';
+  },
+
+  // Được phép truy cập trang Quản trị (Admin, CEO, TGĐ, Giám đốc Đơn vị)
+  canAccessAdmin(userObj) {
+    const user = userObj || this.getCurrentUser();
+    return this.hasFullAccess(user) || this.isUnitDirector(user);
+  },
+
+  // Check if admin / full access
+  isAdmin() { return this.canAccessAdmin(); },
+
+  // Can access course (kiểm tra cả Vai trò và Đơn vị)
   canAccessCourse(course) {
     const user = this.getCurrentUser();
     if (!user) return false;
-    return course.allowedRoles.includes(user.role);
+    if (this.hasFullAccess(user)) return true;
+    const roleAllowed = this.isUnitDirector(user) || (course.allowedRoles || []).includes(user.role);
+    const unitAllowed = !course.allowedUnits || !course.allowedUnits.length || course.allowedUnits.includes('ALL') || !user.unit || course.allowedUnits.includes(user.unit);
+    return roleAllowed && unitAllowed;
   },
 
   // Require login – redirect to auth if not logged in
   requireLogin() {
     if (!this.isLoggedIn()) {
-      window.location.href = 'auth.html?redirect=' + encodeURIComponent(window.location.href);
+      window.location.href = 'auth.html';
       return false;
     }
     return true;
   },
 
-  // Require admin – redirect if not admin
+  // Require admin or unit director – redirect if not authorized
   requireAdmin() {
     if (!this.isLoggedIn()) {
       window.location.href = 'auth.html';
       return false;
     }
-    if (!this.isAdmin()) {
+    if (!this.canAccessAdmin()) {
       VPSSecurity.logEvent('ALERT', 'Ngăn chặn truy cập trái phép vào trang Quản trị (Admin Panel)');
       showToast('🛡️ Bạn không có quyền truy cập trang Quản trị!', 'error');
       setTimeout(() => window.location.href = 'index.html', 1200);
@@ -529,19 +543,33 @@ document.addEventListener('click', (e) => {
 
 // ─── Update Header Auth State ─────────────────────────────────
 function updateHeaderAuth() {
+  const isAuthPage = window.location.pathname.endsWith('auth.html') || document.querySelector('.auth-page');
+  if (!isAuthPage && !Auth.isLoggedIn()) {
+    window.location.href = 'auth.html';
+    return;
+  }
+
   const user = Auth.getCurrentUser();
   const loginBtn = document.getElementById('loginBtn');
   const userMenu = document.getElementById('userMenu');
   const userName = document.getElementById('userName');
   const userAvatar = document.getElementById('userAvatar');
   const adminLink = document.getElementById('adminNavLink');
+  const regBtn = document.getElementById('registerNavBtn');
+  const roleBadge = document.getElementById('userRoleBadge');
+
+  if (regBtn) regBtn.style.display = 'none';
 
   if (user) {
     if (loginBtn) loginBtn.style.display = 'none';
     if (userMenu) userMenu.style.display = 'flex';
     if (userName) userName.textContent = user.name;
     if (userAvatar) userAvatar.textContent = user.name.charAt(0).toUpperCase();
-    if (adminLink) adminLink.style.display = user.role === 'admin' ? 'flex' : 'none';
+    if (adminLink) adminLink.style.display = Auth.canAccessAdmin(user) ? 'flex' : 'none';
+    if (roleBadge) {
+      const rLabel = (typeof ROLE_LABELS !== 'undefined' && ROLE_LABELS[user.role]) ? ROLE_LABELS[user.role] : user.role;
+      roleBadge.textContent = user.unit ? `${rLabel} • ${user.unit}` : rLabel;
+    }
   } else {
     if (loginBtn) loginBtn.style.display = 'flex';
     if (userMenu) userMenu.style.display = 'none';
